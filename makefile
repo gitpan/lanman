@@ -93,6 +93,8 @@ cpp_add_flags=/D PERL_5_6_0
 link_add_flags=perl56.lib
 # dll name to create
 dllname=$(prj).dll
+# prefix output tar.gz file
+targz_prefix=5.6.
 
 !elseif "$(cfg)" == "perl.5xx"
 
@@ -112,6 +114,8 @@ cpp_add_flags=/D PERL_5005_03
 link_add_flags=
 # dll name to create
 dllname=$(prj).dll
+# prefix output tar.gz file
+targz_prefix=
 
 !elseif "$(cfg)" == "perl.3xx"
 
@@ -207,7 +211,7 @@ objfiles=$(outdir)\access.obj	\
 #
 !if "$(cfg)" != "perl.3xx"
 
-all : $(outdir) $(outdir)\$(dllname) $(instdir)\$(cfg)\x86 $(instdir)\$(cfg)\x86\win32-$(prj).tar.gz	\
+all : $(outdir) $(outdir)\$(dllname) $(instdir)\$(cfg)\x86 $(instdir)\$(cfg)\x86\win32-$(prj).$(targz_prefix)tar.gz	\
 	$(instdir)\$(cfg)\win32-$(prj).ppd
 
 !else
@@ -369,7 +373,7 @@ $(instdir)\$(cfg)\$(prj).pm : $(miscdir)\$(prj).pm
 #
 # create tar.gz file
 #
-$(instdir)\$(cfg)\x86\win32-$(prj).tar.gz : $(outdir)\$(dllname) $(instdir)\$(cfg)\x86
+$(instdir)\$(cfg)\x86\win32-$(prj).$(targz_prefix)tar.gz : $(outdir)\$(dllname) $(instdir)\$(cfg)\x86
 	if not exist $(instdir)\$(cfg)\mkgz\blib\arch\auto\win32\$(prj) mkdir $(instdir)\$(cfg)\mkgz\blib\arch\auto\win32\$(prj)
 	if not exist $(instdir)\$(cfg)\mkgz\blib\arch\auto\win32\.exists copy nul $(instdir)\$(cfg)\mkgz\blib\arch\auto\win32\.exists
 	if not exist $(instdir)\$(cfg)\mkgz\blib\arch\auto\win32\$(prj)\.exists copy nul $(instdir)\$(cfg)\mkgz\blib\arch\auto\win32\$(prj)\.exists
@@ -404,7 +408,7 @@ $(instdir)\$(cfg)\x86\win32-$(prj).tar.gz : $(outdir)\$(dllname) $(instdir)\$(cf
 		-e	"blib\html\lib\site\$(prj)\.exists"	\
 		-e	"blib\html\lib\site\$(prj)\$(prj).html/;"	\
 		-e "$$tar->add_files(@files); $$tar->write('win32-$(prj).tar.gz', 1);"
-	copy $(instdir)\$(cfg)\mkgz\win32-$(prj).tar.gz $(instdir)\$(cfg)\x86\win32-$(prj).tar.gz
+	copy $(instdir)\$(cfg)\mkgz\win32-$(prj).tar.gz $(instdir)\$(cfg)\x86\win32-$(prj).$(targz_prefix)tar.gz
          
 #
 # create ppm file
@@ -417,7 +421,7 @@ $(instdir)\$(cfg)\win32-$(prj).ppd :
 #
 !if "$(cfg)" != "perl.3xx"
 
-install : $(instdir)\$(cfg)\x86\win32-$(prj).tar.gz $(instdir)\$(cfg)\win32-$(prj).ppd
+install : $(instdir)\$(cfg)\x86\win32-$(prj).$(targz_prefix)tar.gz $(instdir)\$(cfg)\win32-$(prj).ppd
 	ppm install -location=$(instdir)\$(cfg) win32-$(prj)
 
 !else
@@ -445,8 +449,8 @@ $(zipdir)\x86 :
 #
 # create tar.gz files
 #
-$(zipdir)\x86\win32-$(prj).5.6.tar.gz : $(instdir)\perl.6xx\x86\win32-$(prj).tar.gz
-	copy $(instdir)\perl.6xx\x86\win32-$(prj).tar.gz $(zipdir)\x86\win32-$(prj).5.6.tar.gz
+$(zipdir)\x86\win32-$(prj).5.6.tar.gz : $(instdir)\perl.6xx\x86\win32-$(prj).5.6.tar.gz
+	copy $(instdir)\perl.6xx\x86\win32-$(prj).5.6.tar.gz $(zipdir)\x86\win32-$(prj).5.6.tar.gz
 
 $(zipdir)\x86\win32-$(prj).tar.gz : $(instdir)\perl.5xx\x86\win32-$(prj).tar.gz
 	copy $(instdir)\perl.5xx\x86\win32-$(prj).tar.gz $(zipdir)\x86\win32-$(prj).tar.gz
@@ -458,18 +462,11 @@ $(zipdir)\x86\win32-$(prj).tar.gz : $(instdir)\perl.5xx\x86\win32-$(prj).tar.gz
 $(zipdir)\win32-$(prj).ppd : $(instdir)\perl.5xx\win32-$(prj).ppd
 	copy $(instdir)\perl.5xx\win32-$(prj).ppd $(zipdir)\win32-$(prj).ppd
 
-$(zipdir)\win32-$(prj).5.6.ppd : $(instdir)\perl.6xx\win32-$(prj).ppd
-	-@perl	-e "open f, '$(instdir)\\perl.6xx\\win32-$(prj).ppd';"	\
-		-e "@l=<f>;"	\
-		-e "open f, '> $(zipdir)\\win32-$(prj).5.6.ppd';"	\
-		-e "foreach $$l(@l) { $$l =~ s/(CODEBASE HREF=.*$(prj))/$$1\.5\.6/i; print f $$l; };"	\
-		-e ";"
-
 #
 # zip the package
 #
 zip : $(zipdir)\x86 $(zipdir)\x86\win32-$(prj).tar.gz	$(zipdir)\win32-$(prj).ppd	\
-	$(zipdir)\x86\win32-$(prj).5.6.tar.gz $(zipdir)\win32-$(prj).5.6.ppd
+	$(zipdir)\x86\win32-$(prj).5.6.tar.gz
 	copy .\*.cpp .\$(zipdir)\*
 	copy .\*.h .\$(zipdir)\*
 	copy .\resource.rc .\$(zipdir)\*

@@ -286,7 +286,7 @@ XS(XS_NT__Lanman_NetUserEnum)
 				LastError(NetUserEnum(server, level = 10, filter, (PBYTE*)&info10, 
 															0xffffffff, &entries, &total, &handle));
 			
-			if(LastError())
+			if(!LastError())
 			{
 				for(DWORD count = 0; count < entries; count++)
 				{
@@ -403,7 +403,7 @@ XS(XS_NT__Lanman_NetUserGetGroups)
 			DWORD total = 0;
 
 			// get all groups
-			if(LastError(NetUserGetGroups(server, user, 1, (PBYTE*)&info, 0xffffffff, &entries, 
+			if(!LastError(NetUserGetGroups(server, user, 1, (PBYTE*)&info, 0xffffffff, &entries, 
 																		&total)))
 			{
 				for(DWORD count = 0; count < entries; count++)
@@ -685,7 +685,7 @@ XS(XS_NT__Lanman_NetUserSetGroups)
 	if(items == 3 &&  CHK_ASSIGN_AREF(groups, ST(2)))
 	{
 		PWSTR server = NULL, user = NULL;
-		PGROUP_USERS_INFO_1 info = NULL;
+		PGROUP_USERS_INFO_0 info = NULL;
 
 		int numGroups = AV_LEN(groups) + 1;
 
@@ -700,18 +700,16 @@ XS(XS_NT__Lanman_NetUserSetGroups)
 			user = S2W(SvPV(ST(1), PL_na));
 		
 			// store user groups
-			info = (PGROUP_USERS_INFO_1)NewMem(sizeof(GROUP_USERS_INFO_1) * numGroups);
+			info = (PGROUP_USERS_INFO_0)NewMem(sizeof(GROUP_USERS_INFO_0) * numGroups);
 
 			for(int count = 0; count < numGroups; count++)
 			{
-				info[count].grui1_name = 
+				info[count].grui0_name = 
 					H_FETCH_WSTR(A_FETCH_RHASH(groups, count), "name");
-				info[count].grui1_attributes = 
-					H_FETCH_INT(A_FETCH_RHASH(groups, count), "attributes");
 			}
 
 			// set group membership
-			LastError(NetUserSetGroups(server, user, 1, (PBYTE)info, numGroups));
+			LastError(NetUserSetGroups(server, user, 0, (PBYTE)info, numGroups));
 		}
 		__except(SetExceptCode(excode))
 		{
@@ -722,7 +720,7 @@ XS(XS_NT__Lanman_NetUserSetGroups)
 		// clean up
 		if(info)
 			for(int count = 0; count < numGroups; count++)
-				CleanPtr(info[count].grui1_name);
+				CleanPtr(info[count].grui0_name);
 
 		FreeStr(server);
 		FreeStr(user);

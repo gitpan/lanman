@@ -293,7 +293,7 @@ NetRemoteComputerSupports			- returns the correct supported options now
 NetValidateName					- returns the correct result now
 NetValidateName					- returns the correct result now
 NetDfsAdd					- bug with preceding backslashes in the server parameter corrected
-NetUserGetUsers					- returns all group users users now
+NetGroupGetUsers				- returns all group users now
 
 New:
 
@@ -324,12 +324,22 @@ SC_ACTION_RESTART				- constant added support services
 SC_ACTION_RUN_COMMAND				- constant added support services
 SC_STATUS_PROCESS_INFO				- constant added support services
 
-
-
 ChangeServiceConfig2				- W2K api
 QueryServiceConfig2				- W2K api
 QueryServiceStatusEx				- W2K api
 EnumServicesStatusEx				- W2K api
 
 Documentation for the W2K api completed.
+
+#########################################################################################################
+
+Version 1.0.8.1	2000/16/09
+
+Fixed Bugs:
+
+NetUserEnum					- returns the correct result now
+NetUserGetGroups				- returns the correct result now
+NetUserSetGroups				- returns the correct result now
+
+New:
 

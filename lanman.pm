@@ -10,7 +10,7 @@ package Win32::Lanman;
 # you can use this module under the GNU public licence
 #
 #
-# version 1.08 from 08/22/2000
+# version 1.081 from 09/16/2000
 #
 # not all functions are completely tested - use this at your own risk
 #
@@ -21,7 +21,7 @@ package Win32::Lanman;
 require Exporter;
 require DynaLoader;
 
-$Version = 1.08;
+$Version = 1.081;
 $Package = "Win32::Lanman";
 
 die "The $Package module works only on Windows NT/Windows 2000" 
