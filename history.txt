@@ -1,10 +1,10 @@
-#########################################################################################################
+###################################################################################################
 
 Version 0.98	01/20/1999
 
 contains the core lanmanager calls
 
-#########################################################################################################
+###################################################################################################
 
 Version 1.00	04/17/1999
 
@@ -28,7 +28,7 @@ EnumServicesStatus
 EnumDependentServices
 ChangeServiceConfig
 
-#########################################################################################################
+###################################################################################################
 
 Version 1.01	04/17/1999
 
@@ -47,7 +47,7 @@ QueryServiceStatus
 QueryServiceObjectSecurity
 SetServiceObjectSecurity
 
-#########################################################################################################
+###################################################################################################
 
 Version 1.02	05/12/1999
 
@@ -63,7 +63,7 @@ LogonControlTransportNotify
 LogonControlFindUser
 I_NetGetDCList
 
-#########################################################################################################
+###################################################################################################
 
 Version 1.03	08/06/1999
 
@@ -115,7 +115,7 @@ ReportEvent
 GetNumberOfEventLogRecords
 GetOldestEventLogRecord
 
-#########################################################################################################
+###################################################################################################
 
 Version 1.04	11/17/1999
 
@@ -133,11 +133,12 @@ ActivePerl 518 or above
 
 New:
 
-BuildSecurityDescriptor	- builds a security descriptor structure to set permissions on shares or services
+BuildSecurityDescriptor	- builds a security descriptor structure to set permissions on shares or 
+			  services
 
 PPM ready installation (Win32-Lanman.ppd)
 
-#########################################################################################################
+###################################################################################################
 
 Version 1.04a	11/30/1999
 
@@ -152,7 +153,7 @@ NetWkstaGetInfo		- error 998 if the server is not NT
 New:
 
 
-#########################################################################################################
+###################################################################################################
 
 Version 1.05	01/25/2000
 
@@ -165,8 +166,8 @@ New:
 
 Version information is available now in the lanman.pll and lanman.dll files.
 
-It's not longer necessary to put two backslashes in front of a server name. The module will preface all 
-server names with two backslashes if they are missing.
+It's not longer necessary to put two backslashes in front of a server name. The module will preface
+all server names with two backslashes if they are missing.
 
 Jenda Krynicky made a better layout and removed some mistakes in the lanman.pm. Thanks again.
 
@@ -204,7 +205,7 @@ KERB_LOGON_UPDATE_STATISTICS
 has been removed because they are no longer supported in the platform sdk.
 
 
-#########################################################################################################
+###################################################################################################
 
 Version 1.05a	03/29/2000
 
@@ -213,16 +214,17 @@ Fixed Bugs:
 WTSQuerySessionInformation			- second definition removed from lanman.cpp
 WTSInfoClassAll					- second definition removed from lanman.pm
 WTSSetUserConfig				- setting some properties fixed
-ReadEventLog					- reads events from the eventlog or events from a file saved with 
-						  BackupEventLog; memory leaks fixed
+ReadEventLog					- reads events from the eventlog or events from a 
+						  file saved with BackupEventLog; memory leaks fixed
 QueryServiceObjectSecurity			- error 6 - invalid handle
-ChangeServiceConfig				- several properties of a sevice may be changed now without to 
+ChangeServiceConfig				- several properties of a sevice may be changed now
+						  without to 
 						  call QueryServiceConfig before
 
 New:
 
 
-#########################################################################################################
+###################################################################################################
 
 Version 1.06	06/22/2000
 
@@ -236,10 +238,14 @@ OWNER_SECURITY_INFORMATION			- constant added to retrieve/set security
 GROUP_SECURITY_INFORMATION			- constant added to retrieve/set security
 DACL_SECURITY_INFORMATION			- constant added to retrieve/set security
 SACL_SECURITY_INFORMATION			- constant added to retrieve/set security
-PROTECTED_DACL_SECURITY_INFORMATION		- constant added to retrieve/set security (not tested)
-PROTECTED_SACL_SECURITY_INFORMATION		- constant added to retrieve/set security (not tested)
-UNPROTECTED_DACL_SECURITY_INFORMATION		- constant added to retrieve/set security (not tested)
-UNPROTECTED_SACL_SECURITY_INFORMATION		- constant added to retrieve/set security (not tested)
+PROTECTED_DACL_SECURITY_INFORMATION		- constant added to retrieve/set security
+						 (not tested)
+PROTECTED_SACL_SECURITY_INFORMATION		- constant added to retrieve/set security
+						 (not tested)
+UNPROTECTED_DACL_SECURITY_INFORMATION		- constant added to retrieve/set security
+						 (not tested)
+UNPROTECTED_SACL_SECURITY_INFORMATION		- constant added to retrieve/set security
+						 (not tested)
 DFS_STORAGE_STATE_ACTIVE			- constant added to retrieve/set dfs state
 
 SV_TYPES		 			- returns a hash with the SV_* constants
@@ -248,11 +254,13 @@ SERVICE_TYPES					- returns a hash with the service types
 WTS_STATES					- returns a hash with the wts event states
 USER_ENUM_FILTERS				- returns a hash with the user enum filter values
 
-SidToString					- converts a binary sid to a textual form like S-1-...
+SidToString					- converts a binary sid to a textual form like 
+						  S-1-...
 StringToSid					- converts a text sid to binary
 
 NetConnectionEnum				- enums connections to a share or from a computer
-NetRemoteComputerSupports			- retrieves the optional features the remote server supports
+NetRemoteComputerSupports			- retrieves the optional features the remote server
+						  supports
 
 NetGetJoinableOUs				- W2K api
 NetGetJoinInformation				- W2K api
@@ -273,7 +281,7 @@ NetDfsGetClientInfo				- W2K api
 NetDfsSetClientInfo				- W2K api
 NetDfsGetDcAddress				- W2K api
 
-#########################################################################################################
+###################################################################################################
 
 Version 1.07	10/07/2000
 
@@ -283,7 +291,7 @@ New:
 
 Support for Perl 5.6
 
-#########################################################################################################
+###################################################################################################
 
 Version 1.08	08/25/2000
 
@@ -292,7 +300,8 @@ Fixed Bugs:
 NetRemoteComputerSupports			- returns the correct supported options now
 NetValidateName					- returns the correct result now
 NetValidateName					- returns the correct result now
-NetDfsAdd					- bug with preceding backslashes in the server parameter corrected
+NetDfsAdd					- bug with preceding backslashes in the server 
+						  parameter corrected
 NetGroupGetUsers				- returns all group users now
 
 New:
@@ -331,7 +340,7 @@ EnumServicesStatusEx				- W2K api
 
 Documentation for the W2K api completed.
 
-#########################################################################################################
+###################################################################################################
 
 Version 1.0.8.1	09/16/2000
 
@@ -343,7 +352,7 @@ NetUserSetGroups				- returns the correct result now
 
 New:
 
-#########################################################################################################
+###################################################################################################
 
 Version 1.0.9.0	05/24/2001
 
@@ -354,16 +363,16 @@ Fixed Bugs:
 
 NetUserGetInfo					- returns the user flags as unicode string
 NetUserSetInfo					- destruction of user wts settings fixed
-NetLocalGroupGetMembers				- if an account was moved from the domain to the AD or was
-						  removed in a account domain NetLocalGroupGetMembers
-						  returns only the account sid; in earlier versions 
-						  NetLocalGroupGetMembers failed with an error 2220 
-						  (NERR_GroupNotFound)
-NetDfsRemove					- the server parameter may not begin with backslashes;
-						  this is in contrast with the msdn documentation and 
-						  seems to be a bug in the dfs implementation; however,
-						  a server name without backslashes will be passed to the
-						  NT function
+NetLocalGroupGetMembers				- if an account was moved from the domain to the AD
+						  or was removed in a account domain 
+						  NetLocalGroupGetMembers returns only the account 
+						  sid; in earlier versions NetLocalGroupGetMembers 
+						  failed with an error 2220 (NERR_GroupNotFound)
+NetDfsRemove					- the server parameter may not begin with 
+						  backslashes; this is in contrast with the msdn 
+						  documentation and seems to be a bug in the dfs 
+						  implementation; however, a server name without 
+						  backslashes will be passed to the NT function
 NetDfsEnum					- memory leak fixed
 NetDfsGetInfo					- memory leak fixed
 NetDfsGetClientInfo				- memory leak fixed
@@ -403,25 +412,36 @@ NetWkstaUserEnum				- memory leak fixed
 
 New constants:
 
-CONNDLG_CONN_POINT				- constant added to support WNetConnectionDialog call
-CONNDLG_HIDE_BOX				- constant added to support WNetConnectionDialog call
-CONNDLG_NOT_PERSIST				- constant added to support WNetConnectionDialog call
-CONNDLG_PERSIST					- constant added to support WNetConnectionDialog call
-CONNDLG_RO_PATH					- constant added to support WNetConnectionDialog call
-CONNDLG_USE_MRU					- constant added to support WNetConnectionDialog call
+CONNDLG_CONN_POINT				- constant added to support WNetConnectionDialog 
+						  call
+CONNDLG_HIDE_BOX				- constant added to support WNetConnectionDialog 
+						  call
+CONNDLG_NOT_PERSIST				- constant added to support WNetConnectionDialog 
+						  call
+CONNDLG_PERSIST					- constant added to support WNetConnectionDialog 
+						  call
+CONNDLG_RO_PATH					- constant added to support WNetConnectionDialog 
+						  call
+CONNDLG_USE_MRU					- constant added to support WNetConnectionDialog 
+						  call
 CONNECT_INTERACTIVE				- constant added to support WNetUseConnection call
 CONNECT_LOCALDRIVE				- constant added to support WNetUseConnection call
 CONNECT_PROMPT					- constant added to support WNetUseConnection call
 CONNECT_REDIRECT				- constant added to support WNetUseConnection call
 CONNECT_UPDATE_PROFILE				- constant added to support WNetAddConnection call
-DISC_UPDATE_PROFILE				- constant added to support WNetDisconnectDialog call
-DISC_NO_FORCE					- constant added to support WNetDisconnectDialog call
-REMOTE_NAME_INFO_LEVEL				- constant added to support WNetGetUniversalName call
+DISC_UPDATE_PROFILE				- constant added to support WNetDisconnectDialog 
+						  call
+DISC_NO_FORCE					- constant added to support WNetDisconnectDialog
+						  call
+REMOTE_NAME_INFO_LEVEL				- constant added to support WNetGetUniversalName
+						  call
 RESOURCE_CONTEXT				- constant added to support WNetEnumResource call
 RESOURCE_RECENT					- constant added to support WNetEnumResource call
 RESOURCEUSAGE_ALL				- constant added to support WNetEnumResource call
-UNIVERSAL_NAME_INFO_LEVEL			- constant added to support WNetGetUniversalName call
-WNNC_*						- constants added to support WNetGetNetworkInformation call
+UNIVERSAL_NAME_INFO_LEVEL			- constant added to support WNetGetUniversalName 
+						  call
+WNNC_*						- constants added to support WNetGetNetworkInformation
+						  call
 
 New functions:
 
@@ -473,7 +493,7 @@ WRITE_DAC
 WRITE_OWNER
 has been removed because they are not used by the module.
 
-#########################################################################################################
+###################################################################################################
 
 Version 1.0.9.1	01/10/2002
 
@@ -485,7 +505,21 @@ NetGroupEnum					- does not run in an infinite loop furthermore
 NetGroupGetUsers				- does not run in an infinite loop furthermore
 NetMessageNameEnum				- does not run in an infinite loop furthermore
 ReadEventLog					- out of memory bug fixed
-GetEventDescription				- bug fixed if more than one dll is registered for an event
+GetEventDescription				- bug fixed if more than one dll is registered for 
+						  an event
+
+$Version variable changed to $VERSION in lanman.pm (because of the CPAN indexer)
+
+New:
+
+###################################################################################################
+
+Version 1.0.9.2	02/01/2002
+
+Fixed Bugs:
+
+Bug fixed which caused that Perl hangs and eats up memory if you proviously called a function from 
+the modul.  
 
 New:
 

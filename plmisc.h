@@ -86,6 +86,7 @@
 #define A_FETCH_RHASH(array, idx)			HashFromArray(P_PERL array, idx, FALSE, TRUE)
 #define A_FETCH_ARRAY(array, idx)			ArrayFromArray(P_PERL array, idx, FALSE, FALSE)
 #define A_FETCH_RARRAY(array, idx) 		ArrayFromArray(P_PERL array, idx, FALSE, TRUE)
+#define A_FETCH_SCALAR(array, idx)		ScalarFromArray(P_PERL array, idx, FALSE)
 
 #define AR_FETCH_WSTR(array, idx)			WStrFromArray(P_PERL array, idx, TRUE)
 #define AR_FETCH_STR(array, idx)			StrFromArray(P_PERL array, idx, TRUE)
@@ -97,6 +98,7 @@
 #define AR_FETCH_RHASH(array, idx)		HashFromArray(P_PERL array, idx, TRUE, TRUE)
 #define AR_FETCH_ARRAY(array, idx)		ArrayFromArray(P_PERL array, idx, TRUE, FALSE)
 #define AR_FETCH_RARRAY(array, idx)		ArrayFromArray(P_PERL array, idx, TRUE, TRUE)
+#define AR_FETCH_SCALAR(array, idx)		ScalarFromArray(P_PERL array, idx, TRUE)
 
 #define H_FETCH_WSTR(hash, idx)				WStrFromHash(P_PERL hash, idx, FALSE)
 #define H_FETCH_STR(hash, idx)				StrFromHash(P_PERL hash, idx, FALSE)
@@ -108,6 +110,7 @@
 #define H_FETCH_RHASH(hash, idx)			HashFromHash(P_PERL hash, idx, FALSE, TRUE)
 #define H_FETCH_ARRAY(hash, idx)			ArrayFromHash(P_PERL hash, idx, FALSE, FALSE)
 #define H_FETCH_RARRAY(hash, idx) 		ArrayFromHash(P_PERL hash, idx, FALSE, TRUE)
+#define H_FETCH_SCALAR(hash, idx)			ScalarFromHash(P_PERL hash, idx, FALSE)
 
 #define HR_FETCH_WSTR(hash, idx)			WStrFromHash(P_PERL hash, idx, TRUE)
 #define HR_FETCH_STR(hash, idx)				StrFromHash(P_PERL hash, idx, TRUE)
@@ -119,9 +122,12 @@
 #define HR_FETCH_RHASH(hash, idx)			HashFromHash(P_PERL hash, idx, TRUE, TRUE)
 #define HR_FETCH_ARRAY(hash, idx)			ArrayFromHash(P_PERL hash, idx, TRUE, FALSE)
 #define HR_FETCH_RARRAY(hash, idx)		ArrayFromHash(P_PERL hash, idx, TRUE, TRUE)
+#define HR_FETCH_SCALAR(hash, idx)		ScalarFromHash(P_PERL hash, idx, TRUE)
 
 #define S_FETCH_WSTR(scalar)					WStrFromScalar(P_PERL scalar, FALSE)
 #define S_FETCH_STR(scalar)						StrFromScalar(P_PERL scalar, FALSE)
+#define S_FETCH_NE_WSTR(scalar)				NonEmptyWStrFromScalar(P_PERL scalar, FALSE)
+#define S_FETCH_NE_STR(scalar)				NonEmptyStrFromScalar(P_PERL scalar, FALSE)
 #define S_FETCH_INT(scalar)						IntFromScalar(P_PERL scalar, FALSE)
 #define S_FETCH_SLEN(scalar)					SLenFromScalar(P_PERL scalar, FALSE)
 #define S_FETCH_SIZE(scalar)					(SLenFromScalar(P_PERL scalar, FALSE) + 1)
@@ -193,7 +199,7 @@
 #define NewAV NewArray(P_PERL_SINGLE)
 
 // creates a new reference; if there is not enougth memory an execption will be raised
-#define NewRV NewReference(P_PERL refobj)
+#define NewRV(refobj) NewReference(P_PERL (SV*)refobj)
 
 // deletes a scalar
 #define SV_CLEAR(scalar) { if(scalar) sv_setpv(scalar, NULL); }
@@ -259,6 +265,8 @@ HV *HashFromHash(PERL_CALL HV *hash, PSTR idx, BOOL isRef, BOOL convRef);
 
 AV *ArrayFromHash(PERL_CALL HV *hash, PSTR idx, BOOL isRef, BOOL convRef);
 
+SV* ScalarFromHash(PERL_CALL HV *hash, PSTR idx, BOOL isRef);
+
 PWSTR WStrFromArray(PERL_CALL AV *array, int idx, BOOL isRef);
 
 PSTR StrFromArray(PERL_CALL AV *array, int idx, BOOL isRef);
@@ -273,9 +281,15 @@ HV *HashFromArray(PERL_CALL AV *array, int idx, BOOL isRef, BOOL convRef);
 
 AV *ArrayFromArray(PERL_CALL AV *array, int idx, BOOL isRef, BOOL convRef);
 
+SV *ScalarFromArray(PERL_CALL AV *array, int idx, BOOL isRef);
+
 PWSTR WStrFromScalar(PERL_CALL SV *string, BOOL isRef);
 
 PSTR StrFromScalar(PERL_CALL SV *string, BOOL isRef);
+
+PWSTR NonEmptyWStrFromScalar(PERL_CALL SV *string, BOOL isRef);
+
+PSTR NonEmptyStrFromScalar(PERL_CALL SV *string, BOOL isRef);
 
 int SLenFromScalar(PERL_CALL SV *string, BOOL isRef);
 
@@ -325,6 +339,8 @@ HV *NewHash(PERL_CALL_SINGLE);
 AV *NewArray(PERL_CALL_SINGLE);
 
 SV *NewReference(PERL_CALL SV *refObj);
+SV *NewReference(PERL_CALL AV *refObj);
+SV *NewReference(PERL_CALL HV *refObj);
 
 
 ///////////////////////////////////////////////////////////////////////////////

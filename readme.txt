@@ -4,7 +4,7 @@ you should read these notes.
 
 Installation:
 
-Unzip the lanman.1.0.9.1.zip file to a folder. Make this folder your current directory.
+Unzip the lanman.1.0.9.2.zip file to a folder. Make this folder your current directory.
 In contrast to the installation procedure for the module version 1.08, you don't need to
 distinguish between perl 5.6 and perl 5.005. The Win32-lanman.ppd file does this job for
 you (thanks for the hint to Jenda Krynicky). Type in 

@@ -193,6 +193,23 @@ AV *ArrayFromHash(PERL_CALL HV *hash, PSTR idx, BOOL isRef, BOOL convRef)
 }
 
 
+SV* ScalarFromHash(PERL_CALL HV *hash, PSTR idx, BOOL isRef)
+{
+	if(isRef && hash)
+	{
+		if(!(hash = SvROK(hash) ? (HV*)SvRV(hash) : NULL))
+			return NULL;
+
+		if(SvTYPE(hash) != SVt_PVHV)
+			return NULL;
+	}
+
+	SV **item = hash ? hv_fetch(hash, idx, strlen(idx), 0) : NULL;
+
+	return item ? *item : NULL;
+}
+
+
 PWSTR WStrFromArray(PERL_CALL AV *array, int idx, BOOL isRef)
 {
 	if(isRef && array)
@@ -341,6 +358,23 @@ AV *ArrayFromArray(PERL_CALL AV *array, int idx, BOOL isRef, BOOL convRef)
 }
 
 
+SV *ScalarFromArray(PERL_CALL AV *array, int idx, BOOL isRef)
+{
+	if(isRef && array)
+	{
+		if(!(array = SvROK(array) ? (AV*)SvRV(array) : NULL))
+			return NULL;
+
+		if(SvTYPE(array) != SVt_PVAV)
+			return NULL;
+	}
+
+	SV **item = array ? av_fetch(array, idx, 0) : NULL;
+
+	return item ? *item : NULL;
+}
+
+
 PWSTR WStrFromScalar(PERL_CALL SV *string, BOOL isRef)
 {
 	if(!string)
@@ -362,6 +396,37 @@ PSTR StrFromScalar(PERL_CALL SV *string, BOOL isRef)
 			return NULL;
 
 	return SvPV(string, PL_na);
+}
+
+
+PWSTR NonEmptyWStrFromScalar(PERL_CALL SV *string, BOOL isRef)
+{
+	if(!string)
+		return NULL;
+
+	if(isRef && !(string = SvROK(string) ? SvRV(string) : NULL))
+			return NULL;
+
+	PSTR str = SvPV(string, PL_na);
+	
+	if(str && *str)
+		return S2W(str);
+
+	return NULL;
+}
+
+
+PSTR NonEmptyStrFromScalar(PERL_CALL SV *string, BOOL isRef)
+{
+	if(!string)
+		return NULL;
+
+	if(isRef && !(string = SvROK(string) ? SvRV(string) : NULL))
+			return NULL;
+
+	PSTR str = SvPV(string, PL_na);
+	
+	return str && *str ? str : NULL;
 }
 
 
@@ -631,13 +696,23 @@ AV *NewArray(PERL_CALL_SINGLE)
 }
 
 SV *NewReference(PERL_CALL SV *refObj) 
-{ 
+{
 	SV *reference = NULL; 
 	
 	if(!refObj || !(reference = newRV(refObj))) 
 		RaiseException(STATUS_NO_MEMORY, 0, 0, NULL); 
 	
 	return reference; 
+}
+
+SV *NewReference(PERL_CALL AV *refObj) 
+{ 
+	return NewReference(P_PERL (SV*)refObj);
+}
+
+SV *NewReference(PERL_CALL HV *refObj) 
+{ 
+	return NewReference(P_PERL (SV*)refObj);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
