@@ -91,6 +91,8 @@ XS(XS_NT__Lanman_ReadEventLog)
 		HANDLE hEventLog = NULL;
 		PEVENTLOGRECORD record = NULL;
 
+		int c = 0;
+
 		__try
 		{
 			server = ServerAsAnsi(SvPV(ST(0), PL_na));
@@ -186,7 +188,6 @@ XS(XS_NT__Lanman_ReadEventLog)
 							H_STORE_STR(event, "sourcename", nextItem);
 							H_STORE_STR(event, "computername", nextItem + strlen(nextItem) + 1);
 
-
 							A_STORE_REF(events, event);
 
 							// decrement reference count
@@ -195,11 +196,13 @@ XS(XS_NT__Lanman_ReadEventLog)
 							if(direction == EVENTLOG_FORWARDS_READ ? ++first > last : --first < last)
 								break;
 
-							if((PSTR)recordPtr >= (PSTR)record + readSize)
+							// check maximum allowed buffer length
+							if((PSTR)recordPtr + recordPtr->Length >= (PSTR)record + readSize)
 								break;
 
+							// seek to the next record
 							recordPtr = (PEVENTLOGRECORD)((PSTR)recordPtr + recordPtr->Length);
-						}
+						} // while(recordPtr->Length)
 
 						// reset the nextSize
 						nextSize = 0;
@@ -817,13 +820,31 @@ XS(XS_NT__Lanman_GetEventDescription)
 					} // if(argumentsToDelCount)
 				} // if(parameterName)
 
-				// load the dll
-				if(!(hModule = LoadLibraryEx(eventName, NULL, LOAD_LIBRARY_AS_DATAFILE)))
-					RaiseFalse();
+				// dll names may be separated by colons; try each dll name
+				for(PSTR eventNamePtr = eventName, nextEventNamePtr = NULL; ; )
+				{
+					// separate dll name
+					if(nextEventNamePtr = eventNamePtr ? strchr(eventNamePtr, ';') : NULL)
+						*nextEventNamePtr++ = 0;
 
-				// get description
-				if(!FormatMessage(FORMAT_MSG_FLAG, hModule, id, 0, (PSTR)&desc, -1, arguments))
-					RaiseFalse();
+					// load the dll
+					if(!(hModule = LoadLibraryEx(eventNamePtr, NULL, LOAD_LIBRARY_AS_DATAFILE)))
+						RaiseFalse();
+
+					// get description
+					if(FormatMessage(FORMAT_MSG_FLAG, hModule, id, 0, (PSTR)&desc, -1, arguments))
+						break;
+
+					// if FormatMessage failed and there're no more dll's, raise an exception
+					if(!nextEventNamePtr)
+						RaiseFalse();
+
+					// close library handle
+					CleanLibrary(hModule);
+
+					// go to the next dll
+					eventNamePtr = nextEventNamePtr;
+				}
 
 				H_STORE_STR(event, "eventdescription", desc);
 			} // if(GetEventlogSourceFileName(...)
@@ -1084,7 +1105,6 @@ XS(XS_NT__Lanman_ReportEvent)
 	
 	RETURNRESULT(LastError() == 0);
 }
-
 
 ///////////////////////////////////////////////////////////////////////////////
 //

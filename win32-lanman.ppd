@@ -1,4 +1,4 @@
-<SOFTPKG NAME="Win32-Lanman" VERSION="1,0,9,0">
+<SOFTPKG NAME="Win32-Lanman" VERSION="1,0,9,1">
 	<TITLE>Win32-Lanman</TITLE>
 	<ABSTRACT>Contains the most important calls from the MS-Lanmanager API.</ABSTRACT>
 	<AUTHOR>Jens Helberg (jens.helberg@de.bosch.com)</AUTHOR>

@@ -4,12 +4,12 @@ you should read these notes.
 
 Installation:
 
-Unzip the lanman.1.0.9.zip file to a folder. Make this folder your current directory.
+Unzip the lanman.1.0.9.1.zip file to a folder. Make this folder your current directory.
 In contrast to the installation procedure for the module version 1.08, you don't need to
 distinguish between perl 5.6 and perl 5.005. The Win32-lanman.ppd file does this job for
 you (thanks for the hint to Jenda Krynicky). Type in 
 
-	ppm install win32-lanman --location=.
+	ppm install --location=. win32-lanman
 
 if you use perl 5.6 or perl 5.005 (type in perl -v to verify your perl version). To verify 
 the installation, type in ppm query. The lanman module should appear in the list.
@@ -37,13 +37,13 @@ folder. Make this folder to your current directory and load the Makefile in your
 
 Change the following settings to your directory names:
 
-	perldir6xx=c:\programme\perl.6xx	- directory where perl 5.6 resides
-	perldir5xx=c:\programme\perl.5xx	- directory where perl 5.005_3 resides
-	perldir3xx=c:\programme\perl.3xx	- directory where perl 5.003 resides
+	perldir6xx="c:\program files\perl.6xx"	- directory where perl 5.6 resides
+	perldir5xx="c:\program files\perl.5xx"	- directory where perl 5.005_3 resides
+	perldir3xx="c:\program files\perl.3xx"	- directory where perl 5.003 resides
 
 If you only want to build for perl 5.6, you can leave perldir5xx and perldir3xx as they are.
 
-	platformsdk=c:\programme\microsoft platform sdk
+	platformsdk=c:\program files\microsoft sdk
 
 must reflect you platform sdk directory. Now you can start the build process. Type in
 

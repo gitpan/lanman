@@ -25,14 +25,11 @@
 //
 ///////////////////////////////////////////////////////////////////////////////
 
-// critical section object to protect the access to the lastError
+// critical section object to protect the access to the last error variable
 CRITICAL_SECTION LastErrorCritSection;
 
-// last error variable
-//DWORD lastError = 0;
-
-// index to access tls space
-DWORD TlsIndex = -1;
+// index to access the last error variable via tls space
+DWORD LastErrorTlsIndex = TLS_OUT_OF_INDEXES;
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -657,7 +654,7 @@ DWORD LastError(DWORD error)
 {
 	//EnterCriticalSection(&LastErrorCritSection);
 
-	TlsSetValue(TlsIndex, (PVOID)error);
+	TlsSetValue(LastErrorTlsIndex, (PVOID)error);
 
 	//LeaveCriticalSection(&LastErrorCritSection);
 
@@ -679,13 +676,9 @@ DWORD LastError()
 {
 	//EnterCriticalSection(&LastErrorCritSection);
 
-	//DWORD error = lastError;
+	return (DWORD)TlsGetValue(LastErrorTlsIndex); 
 
 	//LeaveCriticalSection(&LastErrorCritSection);
-
-	//return error;
-
-	return (DWORD)TlsGetValue(TlsIndex); 
 }
 
 

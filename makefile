@@ -15,9 +15,9 @@ outdir3xx=.\perl.3xx.release
 # in $(outdir)\lib\core); for perl 5.003_07 build 3xx this is also the 
 # directory where the project is installed in if you call nmake install
 #
-perldir6xx=c:\programme\perl.6xx
-perldir5xx=c:\programme\perl.5xx
-perldir3xx=c:\programme\perl.3xx
+perldir6xx="c:\program files\perl.6xx"
+perldir5xx="c:\program files\perl.5xx"
+perldir3xx="c:\program files\perl.3xx"
 
 #
 # set the misc directory
@@ -37,8 +37,8 @@ zipdir=.\zip_dir
 #
 # where is the platform sdk installed?
 #
-platformsdk=c:\programme\microsoft platform sdk
-#platformsdk=c:\platform sdk
+platformsdk=c:\program files\microsoft sdk
+#platformsdk=c:\microsoft sdk
 
 #
 # compiler, linker, resource compiler, zipper
@@ -183,7 +183,6 @@ objfiles=$(outdir)\access.obj	\
 	$(outdir)\get.obj	\
 	$(outdir)\group.obj	\
 	$(outdir)\handle.obj	\
-	$(outdir)\iphelp.obj	\
 	$(outdir)\lanman.obj	\
 	$(outdir)\message.obj	\
 	$(outdir)\misc.obj	\
@@ -204,26 +203,6 @@ objfiles=$(outdir)\access.obj	\
 	$(outdir)\user.obj	\
 	$(outdir)\wnetwork.obj	\
 	$(outdir)\workst.obj	\
-	$(outdir)\wstring.obj
-
-dns_objfiles=$(outdir)\dns.obj	\
-	$(outdir)\misc.obj	\
-	$(outdir)\plmisc.obj	\
-	$(outdir)\strhlp.obj	\
-	$(outdir)\wstring.obj
-
-ads_objfiles=$(outdir)\ads.obj	\
-	$(outdir)\lanman.ads.obj	\
-	$(outdir)\misc.obj	\
-	$(outdir)\plmisc.obj	\
-	$(outdir)\strhlp.obj	\
-	$(outdir)\wstring.obj
-
-iphlp_objfiles=$(outdir)\iphlp.obj	\
-	$(outdir)\lanman.iphlp.obj	\
-	$(outdir)\misc.obj	\
-	$(outdir)\plmisc.obj	\
-	$(outdir)\strhlp.obj	\
 	$(outdir)\wstring.obj
 
 #
@@ -282,9 +261,6 @@ $(outdir)\browse.obj : .\browse.cpp
 $(outdir)\dfs.obj : .\dfs.cpp
 	$(cpp) $(cpp_flags) $?
 
-$(outdir)\dns.obj : .\dns.cpp
-	$(cpp) $(cpp_flags) $?
-
 $(outdir)\domain.obj : .\domain.cpp
 	$(cpp) $(cpp_flags) $?
 
@@ -304,9 +280,6 @@ $(outdir)\group.obj : .\group.cpp
 	$(cpp) $(cpp_flags) $?
 
 $(outdir)\handle.obj : .\handle.cpp
-	$(cpp) $(cpp_flags) $?
-
-$(outdir)\iphelp.obj : .\iphelp.cpp
 	$(cpp) $(cpp_flags) $?
 
 $(outdir)\lanman.obj : .\lanman.cpp
@@ -462,7 +435,7 @@ $(instdir)\$(cfg)\win32-$(prj).ppd :
 !if "$(cfg)" != "perl.3xx"
 
 install : $(instdir)\$(cfg)\$(targz_dir)\win32-$(prj).$(targz_prefix)tar.gz $(instdir)\$(cfg)\win32-$(prj).ppd
-	ppm install -location=$(instdir)\$(cfg) win32-$(prj)
+	ppm install --location=$(instdir)\$(cfg) win32-$(prj)
 
 !else
 

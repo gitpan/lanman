@@ -574,12 +574,16 @@ XS(XS_NT__Lanman_NetLocalGroupEnum)
 			// to do it in more than one steps
 			for( ; ; )
 			{
+				// clean buffer if already allocated
+				CleanNetBuf(info);
+
 				// get all local groups; if buflen is too small, increment it
 				while((error = NetLocalGroupEnum(server, 1, (PBYTE*)&info, buflen, &entries, &total, 
 																				 &handle)) == NERR_BufTooSmall &&	
 							(!entries || entries != total))
 				{
 					buflen += 0x4000;
+
 					continue;
 				}
 				
@@ -600,7 +604,7 @@ XS(XS_NT__Lanman_NetLocalGroupEnum)
 					}
 
 					// did we got all?
-					if(entries == total)
+					if(!error || entries == total)
 						break;
 				}
 				else
@@ -739,6 +743,9 @@ XS(XS_NT__Lanman_NetLocalGroupGetMembers)
 			// to do it in more than one step
 			for( ; ; )
 			{
+				// clean buffer if already allocated
+				CleanNetBuf(members);
+
 				// get all group members; if buflen is too small, increment it
 				while((error = NetLocalGroupGetMembers(server, group, level, (PBYTE*)&members, 
 																							 buflen, &entries, &total, 
@@ -785,7 +792,7 @@ XS(XS_NT__Lanman_NetLocalGroupGetMembers)
 					}
 
 					// did we got all?
-					if(entries == total)
+					if(!error || entries == total)
 						break;
 				}
 				else
@@ -1274,6 +1281,9 @@ XS(XS_NT__Lanman_NetGroupEnum)
 			// to do it in more than one steps
 			for( ; ; )
 			{
+				// clean buffer if already allocated
+				CleanNetBuf(info);
+
 				// get all global groups; if buflen is too small, increment it
 				while((error = NetGroupEnum(server, 2, (PBYTE*)&info, buflen, &entries, &total, 
 																		&handle)) == NERR_BufTooSmall &&	
@@ -1302,7 +1312,7 @@ XS(XS_NT__Lanman_NetGroupEnum)
 					}
 
 					// did we got all
-					if(entries == total)
+					if(!error || entries == total)
 						break;
 				}
 				else
@@ -1441,6 +1451,9 @@ XS(XS_NT__Lanman_NetGroupGetUsers)
 			// to do it in more than one step
 			for( ; ; )
 			{
+				// clean buffer if already allocated
+				CleanNetBuf(members);
+
 				// get all group members; if buflen is too small, increment it
 				while((error = NetGroupGetUsers(server, group, 1, (PBYTE*)&members, buflen, 
 																				&entries, &total, &handle)) == NERR_BufTooSmall &&
@@ -1467,7 +1480,7 @@ XS(XS_NT__Lanman_NetGroupGetUsers)
 					}
 
 					// did we got all
-					if(entries == total)
+					if(!error || entries == total)
 						break;
 				}
 				else

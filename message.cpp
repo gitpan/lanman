@@ -239,14 +239,15 @@ XS(XS_NT__Lanman_NetMessageNameEnum)
 			// to do it in more than one steps
 			for( ; ; )
 			{
+				// clean buffer if already allocated
+				CleanNetBuf(info);
+
 				// get all messages; if buflen is too small, increment it
 				while((error = NetMessageNameEnum(server, 0, (PBYTE*)&info, buflen, &entries, 
 																					&total, &handle)) == NERR_BufTooSmall &&
 																				  (!entries || entries != total))
 				{
 					buflen += 0x1000;
-					entries = total = handle = 0;
-					CleanNetBuf(info);
 
 					continue;
 				}
@@ -257,7 +258,7 @@ XS(XS_NT__Lanman_NetMessageNameEnum)
 						A_STORE_WSTR(messageInfo, info[count].msgi0_name);
 
 					// did we got all?
-					if(entries == total)
+					if(!error || entries == total)
 						break;
 				}
 				else

@@ -416,7 +416,7 @@ int SaveExceptionInformation(PEXCEPTION_POINTERS exception,
 ///////////////////////////////////////////////////////////////////////////////
 
 #define CleanPtr(ptr) \
-	( ( ( ptr ) ? ( FreeMem(ptr), ptr = NULL, 1 ) : 1 ) )
+	( ( ( ptr ) ? ( FreeMem((PVOID)ptr), ptr = NULL, 1 ) : 1 ) )
 
 #define CleanPtrOnErr(ptr) \
 	( ( ( error ) ? ( CleanPtr(ptr) ) : 1 ) )
@@ -432,7 +432,8 @@ int SaveExceptionInformation(PEXCEPTION_POINTERS exception,
 ///////////////////////////////////////////////////////////////////////////////
 
 #define ZeroAndCleanPtr(ptr, size) \
-	( ( ( ptr ) ? ( ZeroMemory(ptr, size), FreeMem(ptr), ptr = NULL, 1 ) : 1 ) )
+	( ( ( ptr ) ? ( ZeroMemory((PVOID)ptr, size),	\
+									FreeMem((PVOID)ptr), ptr = NULL, 1 ) : 1 ) )
 
 #define ZeroAndCleanPtrOnErr(ptr, size) \
 	( ( ( error ) ? ( ZeroAndCleanPtr(ptr, size) ) : 1 ) )
@@ -447,7 +448,8 @@ int SaveExceptionInformation(PEXCEPTION_POINTERS exception,
 ///////////////////////////////////////////////////////////////////////////////
 
 #define CleanPtrs(ptr, size) \
-	( ( ( ptr ) ? ( FreeArray((PVOID*)ptr, size), FreeMem(ptr), ptr = NULL, 1 ) : 1 ) )
+	( ( ( ptr ) ? ( FreeArray((PVOID*)ptr, size), FreeMem((PVOID)ptr), \
+									ptr = NULL, 1 ) : 1 ) )
 
 #define CleanPtrsOnErr(ptr, size) \
 	( ( ( error ) ? ( CleanPtrs(ptr, size) ) : 1 ) )
@@ -637,6 +639,16 @@ int SaveExceptionInformation(PEXCEPTION_POINTERS exception,
 		string ? MultiByteToWideChar(CP_ACP, 0, string, -1, ptr->Buffer, ptr->Length) : 0,	\
 		ptr																																									\
 	)
+
+
+///////////////////////////////////////////////////////////////////////////////
+//
+//	zero's or fills data structures
+//
+///////////////////////////////////////////////////////////////////////////////
+
+//#define Zero(ptr) ( ( ptr ? ZeroMemory(var, sizeof(*var)) : NULL ), ptr )
+//#define ZeroSize(ptr, size) ( ( ptr ? ZeroMemory(var, size) : NULL ), ptr )
 
 
 #endif // #ifndef __MISC_H

@@ -1,7 +1,7 @@
 package Win32::Lanman;
 
 #
-# Lanman.pm by Jens Helberg, jens.helberg@bosch.com
+# Lanman.pm by Jens Helberg, jens.helberg@de.bosch.com
 #
 # some parts of this file are written by Gavin McNay, thanks to him
 #
@@ -10,7 +10,7 @@ package Win32::Lanman;
 # you can use this module under the GNU public licence
 #
 #
-# version 1.09 from 05/24/2001
+# version 1.09.1 from 01/10/2002
 #
 # not all functions are completely tested - use this at your own risk
 #
@@ -21,7 +21,7 @@ package Win32::Lanman;
 require Exporter;
 require DynaLoader;
 
-$Version = 1.090;
+$Version = 1.091;
 $Package = "Win32::Lanman";
 
 die "The $Package module works only on Windows NT/Windows 2000" 
@@ -4655,7 +4655,7 @@ Queries the audit log policies on server \\testserver.
 
 Queries the audit event policies on server \\testserver.
 
- if(!Win32::Lanman::LsaQueryAuditLogPolicy("\\\\testserver", \%info))
+ if(!Win32::Lanman::LsaQueryAuditEventsPolicy("\\\\testserver", \%info))
  {
 	print "Sorry, something went wrong; error: ";
 	# get the error code

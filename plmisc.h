@@ -333,11 +333,11 @@ SV *NewReference(PERL_CALL SV *refObj);
 //
 ///////////////////////////////////////////////////////////////////////////////
 
-// critical section object to protect the access to the lastError
+// critical section object to protect the access to the last error variable
 extern CRITICAL_SECTION LastErrorCritSection;
 
-// index to access tls space
-extern DWORD TlsIndex;
+// index to access the last error variable via tls space
+extern DWORD LastErrorTlsIndex;
 
 
 #endif // #ifndef __PLMISC_H

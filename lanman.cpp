@@ -1377,15 +1377,18 @@ BOOL WINAPI DllMain(HINSTANCE  hinstDLL, DWORD reason, LPVOID  reserved)
 	switch(reason)
 	{
 		case DLL_PROCESS_ATTACH:
-			if((TlsIndex = TlsAlloc()) == -1)
+			if((LastErrorTlsIndex = TlsAlloc()) == TLS_OUT_OF_INDEXES)
 				return 0;
+			
 			CARE_INIT_CRIT_SECT(&LastErrorCritSection);
+			
 			InitAddDlls();
 			InitWTSDll();
+
+			LastErrorTlsIndex = 0;
 			break;
 
 		case DLL_THREAD_ATTACH:
-			LastError(0);
 			break;
 
 		case DLL_THREAD_DETACH:
@@ -1394,8 +1397,10 @@ BOOL WINAPI DllMain(HINSTANCE  hinstDLL, DWORD reason, LPVOID  reserved)
 		case DLL_PROCESS_DETACH:
 			ReleaseAddDlls();
 			ReleaseWTSDll();
+
 			CARE_DEL_CRIT_SECT(&LastErrorCritSection);
-			TlsFree(TlsIndex);
+			
+			TlsFree(LastErrorTlsIndex);
 			break;
 	}
 

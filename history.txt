@@ -206,7 +206,7 @@ has been removed because they are no longer supported in the platform sdk.
 
 #########################################################################################################
 
-Version 1.05a	29/03/2000
+Version 1.05a	03/29/2000
 
 Fixed Bugs:
 
@@ -224,7 +224,7 @@ New:
 
 #########################################################################################################
 
-Version 1.06	22/06/2000
+Version 1.06	06/22/2000
 
 Fixed Bugs:
 
@@ -285,7 +285,7 @@ Support for Perl 5.6
 
 #########################################################################################################
 
-Version 1.08	25/08/2000
+Version 1.08	08/25/2000
 
 Fixed Bugs:
 
@@ -333,7 +333,7 @@ Documentation for the W2K api completed.
 
 #########################################################################################################
 
-Version 1.0.8.1	16/09/2000
+Version 1.0.8.1	09/16/2000
 
 Fixed Bugs:
 
@@ -472,3 +472,20 @@ STANDARD_RIGHTS_REQUIRED
 WRITE_DAC
 WRITE_OWNER
 has been removed because they are not used by the module.
+
+#########################################################################################################
+
+Version 1.0.9.1	01/10/2002
+
+Fixed Bugs:
+
+NetLocalGroupEnum				- does not run in an infinite loop furthermore
+NetLocalGroupGetMembers				- does not run in an infinite loop furthermore
+NetGroupEnum					- does not run in an infinite loop furthermore
+NetGroupGetUsers				- does not run in an infinite loop furthermore
+NetMessageNameEnum				- does not run in an infinite loop furthermore
+ReadEventLog					- out of memory bug fixed
+GetEventDescription				- bug fixed if more than one dll is registered for an event
+
+New:
+
