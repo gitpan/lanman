@@ -155,6 +155,88 @@ PWSTR NewStrAsWide(PSTR str)
 
 ///////////////////////////////////////////////////////////////////////////////
 //
+// allocates memory for an ansi string and copies the contents of str to the 
+// allocated string
+//
+// param:	 str - pointer to string to copy
+//
+// return: ptr to the allocated memory
+//				 
+// note:	 if there is not enougth memory, a STATUS_NO_MEMORY exception will be
+//				 raised
+//
+///////////////////////////////////////////////////////////////////////////////
+
+PSTR NewStrAsAnsi(PWSTR str)
+{
+	int newStrSize = ((str ? wcslen(str) : 0) + 1) * sizeof(WCHAR);
+	PSTR newStr = NewMem(newStrSize);
+
+	if(str)
+		wcstombs(newStr, str, newStrSize);
+
+	return newStr;
+}
+
+
+///////////////////////////////////////////////////////////////////////////////
+//
+// allocates memory for a string list (list ends with a two zero char's) and
+// copies the content of the list
+//
+// param:	 str - pointer to string list to copy
+//
+// return: ptr to the allocated memory
+//				 
+// note:	 if there is not enougth memory, a STATUS_NO_MEMORY exception will be
+//				 raised
+//
+///////////////////////////////////////////////////////////////////////////////
+
+PSTR NewZeroStr(PSTR str)
+{
+	for(DWORD size = 0; (str + size) && *(str + size); )
+		size += lstrlen(str + size) + 1;
+
+	PSTR newStr = NewMem(++size);
+
+	if(str)
+		CopyMemory(newStr, str, size);
+
+	return newStr;
+}
+
+
+///////////////////////////////////////////////////////////////////////////////
+//
+// allocates memory for a string list (list ends with a two zero char's) and
+// copies the content of the list
+//
+// param:	 str - pointer to string list to copy
+//
+// return: ptr to the allocated memory
+//				 
+// note:	 if there is not enougth memory, a STATUS_NO_MEMORY exception will be
+//				 raised
+//
+///////////////////////////////////////////////////////////////////////////////
+
+PWSTR NewZeroStr(PWSTR str)
+{
+	for(DWORD size = 0; (str + size) && *(str + size); )
+		size += wcslen(str + size) + 1;
+
+	PWSTR newStr = (PWSTR)NewMem(++size * sizeof(WCHAR));
+
+	if(str)
+		CopyMemory(newStr, str, size * sizeof(WCHAR));
+
+	return newStr;
+}
+
+
+///////////////////////////////////////////////////////////////////////////////
+//
 // frees memory
 //
 // param:	 ptr - pointer to the memory

@@ -10,18 +10,19 @@ package Win32::Lanman;
 # you can use this module under the GNU public licence
 #
 #
-# version 1.0.9.2 from 02/01/2002
+# version 1.0.10.0 from 01/10/2003
 #
 # not all functions are completely tested - use this at your own risk
 #
-# it's only intended to work on winnt (version 4.0 with sp3 or later) or
-# windows 2000
+# it's intended to work on winnt (version 4.0 with sp3 or later) or windows 2000. 
+# it should work with windows xp, but it's not heavy tested. 
+# it does not work with w95/98/me!
 #
 
 require Exporter;
 require DynaLoader;
 
-$VERSION = 1.092;
+$VERSION = 1.100;
 $Package = "Win32::Lanman";
 
 die "The $Package module works only on Windows NT/Windows 2000" 
@@ -863,7 +864,15 @@ die "The $Package module works only on Windows NT/Windows 2000"
 );
 
 @EXPORT_OK = qw(
+	DACL_SECURITY_INFORMATION
+	GROUP_SECURITY_INFORMATION
+	OWNER_SECURITY_INFORMATION
+	SACL_SECURITY_INFORMATION
 );
+
+%EXPORT_TAGS = 
+	( WIN32_MOD => [ @EXPORT_OK ],
+	);
 
 sub AUTOLOAD
 {
@@ -872,10 +881,14 @@ sub AUTOLOAD
 		# to the AUTOLOAD in AutoLoader.
 
 		local($constname);
+		
 		($constname = $AUTOLOAD) =~ s/.*:://;
+		
 		#reset $! to zero to reset any current errors.
 		$!=0;
+		
 		$val = constant($constname, @_ ? $_[0] : 0);
+		
 		if ($! != 0)
 		{
 				if ($! =~ /Invalid/)
@@ -889,10 +902,11 @@ sub AUTOLOAD
 						die "Your vendor has not defined $Package macro $constname, used in $file at line $line.";
 				}
 		}
+		
 		eval "sub $AUTOLOAD { $val }";
+		
 		goto &$AUTOLOAD;
 }
-
 
 sub LogonControlQuery {Win32::Lanman::I_NetLogonControl2($_[0], &NETLOGON_CONTROL_QUERY, '', $_[1]);}
 sub LogonControlReplicate {Win32::Lanman::I_NetLogonControl2($_[0], &NETLOGON_CONTROL_REPLICATE, '', $_[1]);}

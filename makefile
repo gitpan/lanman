@@ -6,18 +6,17 @@ prj=lanman
 #
 # output directory for the appropriate build
 #
+outdir8xx=.\perl.8xx.release
 outdir6xx=.\perl.6xx.release
 outdir5xx=.\perl.5xx.release
-outdir3xx=.\perl.3xx.release
 
 #
 # where is the perl appropriate directory (the include header files must reside 
-# in $(outdir)\lib\core); for perl 5.003_07 build 3xx this is also the 
-# directory where the project is installed in if you call nmake install
+# in $(outdir)\lib\core)
 #
-perldir6xx="c:\program files\perl.6xx"
-perldir5xx="c:\program files\perl.5xx"
-perldir3xx="c:\program files\perl.3xx"
+perldir8xx=c:\perl.8xx
+perldir6xx=c:\perl.6xx
+perldir5xx=c:\perl.5xx
 
 #
 # set the misc directory
@@ -52,30 +51,59 @@ zip=pkzip.exe
 # check configuration
 #
 !if "$(cfg)" == ""
-cfg=perl.6xx
+cfg=perl.8xx
 !message
-!message No configuration specified; use configuration for perl 5.6 build 6xx
+!message No configuration specified; use configuration for perl 5.8.0 build 8xx
 !message
 !endif
 
-!if "$(cfg)" != "perl.6xx" && "$(cfg)" != "perl.5xx" && "$(cfg)" != "perl.3xx"
+!if "$(cfg)" != "perl.8xx" && "$(cfg)" != "perl.6xx" && "$(cfg)" != "perl.5xx"
 !message
 !message Invalid configuration "$(cfg)" specified. Valid configurations are:
 !message
+!message perl.8xx (for perl 5.8.0 build 8xx)
 !message perl.6xx (for perl 5.6 build 6xx)
 !message perl.5xx (for perl 5.005_03 build 5xx)
-!message perl.3xx (for perl 5.003_07 build 3xx)
 !message
 !message If you run nmake, specify the configuration at the command line, e.g.
 !message
-!message nmake cfg=perl.6xx
+!message nmake cfg=perl.8xx
 !message
 !message If you omit the cfg parameter, perl.6xx configuration is used.
 !message
 !error Invalid configuration specified.
 !endif 
 
-!if "$(cfg)" == "perl.6xx"
+!if "$(cfg)" == "perl.8xx"
+
+#
+# set parameters to build for (for perl 5.8.0 build 8xx)
+#
+
+# set the output directory
+outdir=$(outdir8xx)
+# where is perl installed? 
+perldir="$(perldir8xx)"
+# add per bin path to the path environment
+PATH=$(perldir8xx)\bin;$(PATH)
+# where is pod2html? 
+pod2html="$(perldir8xx)\bin\pod2html"
+# where is ppm? 
+ppm="$(perldir8xx)\bin\ppm2"
+# where do I find the perl include files and the perl58.lib?
+perlsrcdir="$(perldir8xx)\lib\core"
+# additional compiler settings
+cpp_add_flags=/D PERL_5_8_0
+# additional linker settings
+link_add_flags=perl58.lib
+# dll name to create
+dllname=$(prj).dll
+# prefix output tar.gz file
+targz_prefix=
+# tar.gz file directory
+targz_dir=mswin32-x86-multi-thread-5.8
+
+!elseif "$(cfg)" == "perl.6xx"
 
 #
 # set parameters to build for (for perl 5.6 build 6xx)
@@ -84,9 +112,15 @@ cfg=perl.6xx
 # set the output directory
 outdir=$(outdir6xx)
 # where is perl installed? 
-perldir=$(perldir6xx)
+perldir="$(perldir6xx)"
+# add per bin path to the path environment
+PATH=$(perldir6xx)\bin;$(PATH)
+# where is pod2html?
+pod2html="$(perldir6xx)\bin\pod2html"
+# where is ppm? 
+ppm="$(perldir6xx)\bin\ppm"
 # where do I find the perl include files and the perl56.lib?
-perlsrcdir=$(perldir)\lib\core
+perlsrcdir="$(perldir6xx)\lib\core"
 # additional compiler settings
 cpp_add_flags=/D PERL_5_6_0
 # additional linker settings
@@ -107,9 +141,15 @@ targz_dir=mswin32-x86-multi-thread
 # set the output directory
 outdir=$(outdir5xx)
 # where is perl installed? 
-perldir=$(perldir5xx)
+perldir="$(perldir5xx)"
+# add per bin path to the path environment
+PATH=$(perldir5xx)\bin;$(PATH)
+# where is pod2html? 
+pod2html="$(perldir5xx)\bin\pod2html"
+# where is ppm? 
+ppm="$(perldir5xx)\bin\ppm"
 # where do I find the perl include files?
-perlsrcdir=$(perldir)\lib\core
+perlsrcdir="$(perldir5xx)\lib\core"
 # additional compiler settings
 cpp_add_flags=/D PERL_5005_03
 # additional linker settings
@@ -120,29 +160,6 @@ dllname=$(prj).dll
 targz_prefix=
 # tar.gz file directory
 targz_dir=x86
-
-!elseif "$(cfg)" == "perl.3xx"
-
-#
-# set parameters to build for (for perl 5.003_07 build 3xx)
-#
-
-# set the output directory
-outdir=$(outdir3xx)
-# where is perl installed? 
-perldir=$(perldir3xx)
-# where do I find the perl include files?
-perlsrcdir=$(perldir)\lib\core
-# additional compiler settings
-cpp_add_flags=/D PERL_5003_07
-# additional linker settings
-link_add_flags=
-# dll name to create
-dllname=$(prj).pll
-# prefix output tar.gz file
-targz_prefix=
-# tar.gz file directory
-targz_dir=
 
 !endif 
 
@@ -208,17 +225,11 @@ objfiles=$(outdir)\access.obj	\
 #
 #default rule
 #
-!if "$(cfg)" != "perl.3xx"
-
-all : $(outdir) $(outdir)\$(dllname) $(instdir)\$(cfg)\$(targz_dir) $(instdir)\$(cfg)\$(targz_dir)\win32-$(prj).$(targz_prefix)tar.gz	\
+all : $(outdir)	\
+	$(outdir)\$(dllname)	\
+	$(instdir)\$(cfg)\$(targz_dir)	\
+	$(instdir)\$(cfg)\$(targz_dir)\win32-$(prj).$(targz_prefix)tar.gz	\
 	$(instdir)\$(cfg)\win32-$(prj).ppd
-
-!else
-
-all : $(outdir) $(outdir)\$(dllname) $(instdir)\$(cfg) $(instdir)\$(cfg)\$(dllname)	\
-	$(instdir)\$(cfg)\$(prj).pm
-
-!endif
 
 #
 # clean up to prepare a complete build
@@ -352,28 +363,10 @@ $(outdir)\$(dllname) : $(outdir) .\$(prj).def $(outdir)\resource.res $(objfiles)
 	$(link) $(link_flags) $(objfiles) $(outdir)\resource.res
 
 #
-# create install directory (6.xx, 5.xx)
+# create install directory
 #
 $(instdir)\$(cfg)\$(targz_dir) :
 	if not exist $(instdir)\$(cfg)\$(targz_dir) mkdir $(instdir)\$(cfg)\$(targz_dir)
-
-#
-# create install directory (3.xx)
-#
-$(instdir)\$(cfg) :
-	if not exist $(instdir)\$(cfg) mkdir $(instdir)\$(cfg)
-
-#
-# copy dll to the install directory for perl 3xx
-#
-$(instdir)\$(cfg)\$(dllname) : $(outdir)\$(dllname)
-	copy $(outdir)\$(dllname) $(instdir)\$(cfg)\$(dllname)
-
-#
-# copy pm file to the install directory for perl 3xx
-#
-$(instdir)\$(cfg)\$(prj).pm : $(miscdir)\$(prj).pm
-	copy $(miscdir)\$(prj).pm $(instdir)\$(cfg)\$(prj).pm
 
 #
 # create tar.gz file
@@ -394,7 +387,7 @@ $(instdir)\$(cfg)\$(targz_dir)\win32-$(prj).$(targz_prefix)tar.gz : $(outdir)\$(
 	if not exist $(instdir)\$(cfg)\mkgz\blib\html\site\lib\.exists copy nul $(instdir)\$(cfg)\mkgz\blib\html\site\lib\.exists
 	if not exist $(instdir)\$(cfg)\mkgz\blib\html\site\lib\win32 mkdir $(instdir)\$(cfg)\mkgz\blib\html\site\lib\win32
 	if not exist $(instdir)\$(cfg)\mkgz\blib\html\site\lib\win32\.exists copy nul $(instdir)\$(cfg)\mkgz\blib\html\site\lib\win32\.exists
-	pod2html --infile=$(instdir)\$(cfg)\mkgz\blib\lib\win32\$(prj).pm --outfile=$(instdir)\$(cfg)\mkgz\blib\html\site\lib\win32\$(prj).html
+	$(pod2html) --infile=$(instdir)\$(cfg)\mkgz\blib\lib\win32\$(prj).pm --outfile=$(instdir)\$(cfg)\mkgz\blib\html\site\lib\win32\$(prj).html
 	if exist .\pod2htmd.x~~ del .\pod2htmd.x~~
 	if exist .\pod2htmi.x~~ del .\pod2htmi.x~~
 	perl	-e "chdir '$(instdir)\$(cfg)\mkgz'; use Archive::Tar; $$tar = Archive::Tar->new();"	\
@@ -424,38 +417,25 @@ $(instdir)\$(cfg)\$(targz_dir)\win32-$(prj).$(targz_prefix)tar.gz : $(outdir)\$(
 	copy $(instdir)\$(cfg)\mkgz\win32-$(prj).tar.gz $(instdir)\$(cfg)\$(targz_dir)\win32-$(prj).$(targz_prefix)tar.gz
          
 #
-# create ppm file
+# create ppd file
 #
-$(instdir)\$(cfg)\win32-$(prj).ppd :
+$(instdir)\$(cfg)\win32-$(prj).ppd : $(miscdir)\win32-$(prj).ppd
 	copy $(miscdir)\win32-$(prj).ppd $(instdir)\$(cfg)\win32-$(prj).ppd
 
 #
 # install the package
 #
-!if "$(cfg)" != "perl.3xx"
-
-install : $(instdir)\$(cfg)\$(targz_dir)\win32-$(prj).$(targz_prefix)tar.gz $(instdir)\$(cfg)\win32-$(prj).ppd
-	ppm install --location=$(instdir)\$(cfg) win32-$(prj)
-
-!else
-
-$(perldir3xx)\lib\auto\win32\$(prj) :
-	if not exist $(perldir3xx)\lib\auto\win32\$(prj) mkdir $(perldir3xx)\lib\auto\win32\$(prj)
-
-$(perldir3xx)\lib\auto\win32\$(prj)\$(dllname) : $(instdir)\$(cfg)\$(dllname)
-	copy $(instdir)\$(cfg)\$(dllname) $(perldir3xx)\lib\auto\win32\$(prj)\$(dllname)
-
-$(perldir3xx)\lib\win32\$(prj).pm : $(instdir)\$(cfg)\$(prj).pm
-	copy $(instdir)\$(cfg)\$(prj).pm $(perldir3xx)\lib\win32\$(prj).pm
-
-install : $(perldir3xx)\lib\auto\win32\$(prj) $(perldir3xx)\lib\auto\win32\$(prj)\$(dllname)	\
-	$(perldir3xx)\lib\win32\$(prj).pm 
-
-!endif
+install : $(instdir)\$(cfg)\$(targz_dir)\win32-$(prj).$(targz_prefix)tar.gz	\
+	$(instdir)\$(cfg)\win32-$(prj).ppd
+	echo $(ppm) install --location=$(instdir)\$(cfg) win32-$(prj)
+	$(ppm) install --location=$(instdir)\$(cfg) win32-$(prj)
 
 #
 # create zip directories
 #
+$(zipdir)\mswin32-x86-multi-thread-5.8 :
+	if not exist $(zipdir)\mswin32-x86-multi-thread-5.8 mkdir $(zipdir)\mswin32-x86-multi-thread-5.8
+
 $(zipdir)\mswin32-x86-multi-thread :
 	if not exist $(zipdir)\mswin32-x86-multi-thread mkdir $(zipdir)\mswin32-x86-multi-thread
 
@@ -465,6 +445,9 @@ $(zipdir)\x86 :
 #
 # create tar.gz files
 #
+$(zipdir)\mswin32-x86-multi-thread-5.8\win32-$(prj).tar.gz : $(instdir)\perl.8xx\mswin32-x86-multi-thread-5.8\win32-$(prj).tar.gz
+	copy $(instdir)\perl.8xx\mswin32-x86-multi-thread-5.8\win32-$(prj).tar.gz $(zipdir)\mswin32-x86-multi-thread-5.8\win32-$(prj).tar.gz
+
 $(zipdir)\mswin32-x86-multi-thread\win32-$(prj).tar.gz : $(instdir)\perl.6xx\mswin32-x86-multi-thread\win32-$(prj).tar.gz
 	copy $(instdir)\perl.6xx\mswin32-x86-multi-thread\win32-$(prj).tar.gz $(zipdir)\mswin32-x86-multi-thread\win32-$(prj).tar.gz
 
@@ -480,8 +463,13 @@ $(zipdir)\win32-$(prj).ppd : $(instdir)\perl.5xx\win32-$(prj).ppd
 #
 # zip the package
 #
-zip : $(zipdir)\x86 $(zipdir)\mswin32-x86-multi-thread $(zipdir)\x86\win32-$(prj).tar.gz \
-	$(zipdir)\mswin32-x86-multi-thread\win32-$(prj).tar.gz $(zipdir)\win32-$(prj).ppd
+zip : $(zipdir)\mswin32-x86-multi-thread-5.8	\
+	$(zipdir)\mswin32-x86-multi-thread-5.8\win32-$(prj).tar.gz	\
+	$(zipdir)\mswin32-x86-multi-thread	\
+	$(zipdir)\mswin32-x86-multi-thread\win32-$(prj).tar.gz	\
+	$(zipdir)\x86	\
+	$(zipdir)\x86\win32-$(prj).tar.gz \
+	$(zipdir)\win32-$(prj).ppd
 	copy .\*.cpp .\$(zipdir)\*
 	copy .\*.h .\$(zipdir)\*
 	copy .\resource.rc .\$(zipdir)\*
@@ -491,8 +479,8 @@ zip : $(zipdir)\x86 $(zipdir)\mswin32-x86-multi-thread $(zipdir)\x86\win32-$(prj
 	copy .\$(miscdir)\restrict.txt .\$(zipdir)\*
 	copy .\$(miscdir)\history.txt .\$(zipdir)\*
 	copy .\$(miscdir)\readme.txt .\$(zipdir)\*
+	copy .\$(outdir8xx)\$(prj).dll .\$(zipdir)\$(prj).8xx.dll
 	copy .\$(outdir6xx)\$(prj).dll .\$(zipdir)\$(prj).6xx.dll
 	copy .\$(outdir5xx)\$(prj).dll .\$(zipdir)\$(prj).5xx.dll
-	copy .\$(outdir3xx)\$(prj).pll .\$(zipdir)\$(prj).3xx.pll
 	copy .\makefile .\$(zipdir)\makefile
 	pkzip -add .\$(zipdir)\$(prj).zip -r -path=relative .\$(zipdir)\*

@@ -50,6 +50,20 @@
 
 #endif
 
+// perl 5.8.0 build 8xx
+#ifdef PERL_5_8_0
+
+	#ifdef PERL_OBJECT
+		#undef PERL_OBJECT
+	#endif
+
+	#define PERL_CALL_SINGLE
+	#define PERL_CALL
+	#define P_PERL
+	#define P_PERL_SINGLE
+
+#endif
+
 #define ssize_t int
 
 // must be defined to avoid duplicate linker symbols

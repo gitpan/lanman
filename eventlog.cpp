@@ -1083,7 +1083,7 @@ XS(XS_NT__Lanman_ReportEvent)
 				data = NULL;
 
 			// report event
-			if(!ReportEvent(hEventLog, type, category, id, sid, numStringPtr, dataSize, 
+			if(!ReportEvent(hEventLog, (USHORT)type, (USHORT)category, id, sid, numStringPtr, dataSize, 
 											(PCSTR*)stringPtr, data))
 				RaiseFalse();
 		}

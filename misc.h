@@ -94,6 +94,54 @@ PWSTR NewStrAsWide(PSTR str);
 
 ///////////////////////////////////////////////////////////////////////////////
 //
+// allocates memory for an ansi string and copies the contents of str to the 
+// allocated string
+//
+// param:	 str - pointer to string to copy
+//
+// return: ptr to the allocated memory
+//				 
+// note:	 if there is not enougth memory, a STATUS_NO_MEMORY exception will be
+//				 raised
+//
+///////////////////////////////////////////////////////////////////////////////
+
+PSTR NewStrAsAnsi(PWSTR str);
+
+///////////////////////////////////////////////////////////////////////////////
+//
+// allocates memory for a string list (list ends with a two zero char's) and
+// copies the content of the list
+//
+// param:	 str - pointer to string list to copy
+//
+// return: ptr to the allocated memory
+//				 
+// note:	 if there is not enougth memory, a STATUS_NO_MEMORY exception will be
+//				 raised
+//
+///////////////////////////////////////////////////////////////////////////////
+
+PSTR NewZeroStr(PSTR str);
+
+///////////////////////////////////////////////////////////////////////////////
+//
+// allocates memory for a string list (list ends with a two zero char's) and
+// copies the content of the list
+//
+// param:	 str - pointer to string list to copy
+//
+// return: ptr to the allocated memory
+//				 
+// note:	 if there is not enougth memory, a STATUS_NO_MEMORY exception will be
+//				 raised
+//
+///////////////////////////////////////////////////////////////////////////////
+
+PWSTR NewZeroStr(PWSTR str);
+
+///////////////////////////////////////////////////////////////////////////////
+//
 // frees memory
 //
 // param:	 ptr - pointer to the memory

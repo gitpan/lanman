@@ -978,7 +978,7 @@ XS(XS_NT__Lanman_LsaSetInformationPolicy)
 
 					if(name)
 					{
-						inf->Name.MaximumLength = nameSize * sizeof(WCHAR);
+						inf->Name.MaximumLength = (USHORT)nameSize * sizeof(WCHAR);
 						inf->Name.Length = inf->Name.MaximumLength - sizeof(WCHAR);
 						inf->Name.Buffer = 
 							(PWSTR)((PSTR)inf + sizeof(LSA_UNICODE_STRING) + sizeof(PSID));
@@ -1020,7 +1020,7 @@ XS(XS_NT__Lanman_LsaSetInformationPolicy)
 
 					if(name)
 					{
-						inf->DomainName.MaximumLength = nameSize * sizeof(WCHAR);
+						inf->DomainName.MaximumLength = (USHORT)nameSize * sizeof(WCHAR);
 						inf->DomainName.Length = inf->DomainName.MaximumLength - sizeof(WCHAR);
 						inf->DomainName.Buffer = 
 							(PWSTR)((PSTR)inf + sizeof(LSA_UNICODE_STRING) + sizeof(PSID));
@@ -1078,7 +1078,7 @@ XS(XS_NT__Lanman_LsaSetInformationPolicy)
 
 					if(source)
 					{
-						inf->ReplicaSource.MaximumLength = sourceSize * sizeof(WCHAR);
+						inf->ReplicaSource.MaximumLength = (USHORT)sourceSize * sizeof(WCHAR);
 						inf->ReplicaSource.Length = inf->ReplicaSource.MaximumLength - sizeof(WCHAR);
 						inf->ReplicaSource.Buffer = 
 							(PWSTR)((PSTR)inf + sizeof(POLICY_REPLICA_SOURCE_INFO));
@@ -1092,7 +1092,7 @@ XS(XS_NT__Lanman_LsaSetInformationPolicy)
 
 					if(account)
 					{
-						inf->ReplicaAccountName.MaximumLength = accountSize * sizeof(WCHAR);
+						inf->ReplicaAccountName.MaximumLength = (USHORT)accountSize * sizeof(WCHAR);
 						inf->ReplicaAccountName.Length = 
 							inf->ReplicaAccountName.MaximumLength - sizeof(WCHAR);
 						
@@ -1191,7 +1191,7 @@ XS(XS_NT__Lanman_LsaSetInformationPolicy)
 
 					if(name)
 					{
-						inf->Name.MaximumLength = nameSize * sizeof(WCHAR);
+						inf->Name.MaximumLength = (USHORT)nameSize * sizeof(WCHAR);
 						inf->Name.Length = inf->Name.MaximumLength - sizeof(WCHAR);
 						inf->Name.Buffer = (PWSTR)copyPtr;
 						copyPtr += inf->Name.MaximumLength;
@@ -1205,7 +1205,7 @@ XS(XS_NT__Lanman_LsaSetInformationPolicy)
 
 					if(dnsDomainName)
 					{
-						inf->DnsDomainName.MaximumLength = dnsDomainNameSize * sizeof(WCHAR);
+						inf->DnsDomainName.MaximumLength = (USHORT)dnsDomainNameSize * sizeof(WCHAR);
 						inf->DnsDomainName.Length = inf->DnsDomainName.MaximumLength - sizeof(WCHAR);
 						inf->DnsDomainName.Buffer = (PWSTR)copyPtr;
 						copyPtr += inf->DnsDomainName.MaximumLength;
@@ -1219,7 +1219,7 @@ XS(XS_NT__Lanman_LsaSetInformationPolicy)
 
 					if(dnsForestName)
 					{
-						inf->DnsForestName.MaximumLength = dnsForestNameSize * sizeof(WCHAR);
+						inf->DnsForestName.MaximumLength = (USHORT)dnsForestNameSize * sizeof(WCHAR);
 						inf->DnsForestName.Length = inf->DnsForestName.MaximumLength - sizeof(WCHAR);
 						inf->DnsForestName.Buffer = (PWSTR)copyPtr;
 						copyPtr += inf->DnsForestName.MaximumLength;
@@ -1441,7 +1441,7 @@ XS(XS_NT__Lanman_LsaLookupNames)
 					{
 						DWORD nameSize = (strlen(name) + 1) * sizeof(WCHAR);
 
-						names[count].MaximumLength = nameSize;
+						names[count].MaximumLength = (USHORT)nameSize;
 						names[count].Length = names[count].MaximumLength - sizeof(WCHAR);
 						MBTWC(name, names[count].Buffer = (PWSTR)copyPtr, nameSize);
 						copyPtr += nameSize;
@@ -1468,7 +1468,7 @@ XS(XS_NT__Lanman_LsaLookupNames)
 						if(transSids[count].Use != SidTypeInvalid &&
 							 transSids[count].Use != SidTypeUnknown &&
 							 transSids[count].DomainIndex >= 0 && 
-							 transSids[count].DomainIndex < refDomains->Entries)
+							 transSids[count].DomainIndex < (int)refDomains->Entries)
 						{
 							PLSA_TRUST_INFORMATION domainInfo = 
 								refDomains->Domains + transSids[count].DomainIndex;
@@ -1596,7 +1596,7 @@ XS(XS_NT__Lanman_LsaLookupNamesEx)
 					{
 						DWORD nameSize = (strlen(name) + 1) * sizeof(WCHAR);
 
-						names[count].MaximumLength = nameSize;
+						names[count].MaximumLength = (USHORT)nameSize;
 						names[count].Length = names[count].MaximumLength - sizeof(WCHAR);
 						MBTWC(name, names[count].Buffer = (PWSTR)copyPtr, nameSize);
 						copyPtr += nameSize;
@@ -1623,7 +1623,7 @@ XS(XS_NT__Lanman_LsaLookupNamesEx)
 						if(transSids[count].Use != SidTypeInvalid &&
 							 transSids[count].Use != SidTypeUnknown &&
 							 transSids[count].DomainIndex >= 0 && 
-							 transSids[count].DomainIndex < refDomains->Entries)
+							 transSids[count].DomainIndex < (int)refDomains->Entries)
 						{
 							PLSA_TRUST_INFORMATION domainInfo = 
 								refDomains->Domains + transSids[count].DomainIndex;
@@ -1775,7 +1775,7 @@ XS(XS_NT__Lanman_LsaLookupSids)
 							 names[count].Use != SidTypeUnknown &&
 							 names[count].Use != SidTypeWellKnownGroup &&
 							 names[count].DomainIndex >= 0 && 
-							 names[count].DomainIndex < refDomains->Entries)
+							 names[count].DomainIndex < (int)refDomains->Entries)
 						{
 
 							PLSA_TRUST_INFORMATION domainInfo = 
@@ -2561,7 +2561,7 @@ XS(XS_NT__Lanman_LsaSetTrustedDomainInformation)
 					// the working structure
 					PTRUSTED_DOMAIN_NAME_INFO inf = (PTRUSTED_DOMAIN_NAME_INFO)
 							NewMem(sizeof(TRUSTED_DOMAIN_NAME_INFO) + nameSize * sizeof(WCHAR));
-					inf->Name.MaximumLength = nameSize * sizeof(WCHAR);
+					inf->Name.MaximumLength = (USHORT)nameSize * sizeof(WCHAR);
 					inf->Name.Length = inf->Name.MaximumLength - sizeof(WCHAR);
 					inf->Name.Buffer = (PWSTR)((PSTR)&inf->Name + sizeof(LSA_UNICODE_STRING));
 
@@ -2602,13 +2602,13 @@ XS(XS_NT__Lanman_LsaSetTrustedDomainInformation)
 					PTRUSTED_PASSWORD_INFO inf = (PTRUSTED_PASSWORD_INFO)
 							NewMem(sizeof(TRUSTED_PASSWORD_INFO) + passwordSize * sizeof(WCHAR) +
 										 oldPasswordSize * sizeof(WCHAR));
-					inf->Password.MaximumLength = passwordSize * sizeof(WCHAR);
+					inf->Password.MaximumLength = (USHORT)passwordSize * sizeof(WCHAR);
 					inf->Password.Length = inf->Password.MaximumLength - sizeof(WCHAR);
 					inf->Password.Buffer = (PWSTR)((PSTR)&inf->Password + sizeof(LSA_UNICODE_STRING));
 
 					MBTWC(password, inf->Password.Buffer, passwordSize * sizeof(WCHAR));
 
-					inf->OldPassword.MaximumLength = oldPasswordSize * sizeof(WCHAR);
+					inf->OldPassword.MaximumLength = (USHORT)oldPasswordSize * sizeof(WCHAR);
 					inf->OldPassword.Length = 
 						__max(inf->OldPassword.MaximumLength, sizeof(WCHAR)) - sizeof(WCHAR);
 					if(oldPassword)
@@ -2779,14 +2779,14 @@ XS(XS_NT__Lanman_LsaStorePrivateData)
 			DWORD keySize = strlen(key) + 1, dataSize = strlen(data) + 1;
 
 			lsaKey = (PLSA_UNICODE_STRING)NewMem(sizeof(LSA_UNICODE_STRING) + keySize * sizeof(WCHAR));
-			lsaKey->MaximumLength = keySize * sizeof(WCHAR);
+			lsaKey->MaximumLength = (USHORT)keySize * sizeof(WCHAR);
 			lsaKey->Length = lsaKey->MaximumLength - sizeof(WCHAR);
 			lsaKey->Buffer = (PWSTR)((PSTR)lsaKey + sizeof(LSA_UNICODE_STRING));
 
 			MBTWC(key, lsaKey->Buffer, keySize * sizeof(WCHAR));
 
 			lsaData = (PLSA_UNICODE_STRING)NewMem(sizeof(LSA_UNICODE_STRING) + dataSize * sizeof(WCHAR));
-			lsaData->MaximumLength = dataSize * sizeof(WCHAR);
+			lsaData->MaximumLength = (USHORT)dataSize * sizeof(WCHAR);
 			lsaData->Length = lsaData->MaximumLength - sizeof(WCHAR);
 			lsaData->Buffer = (PWSTR)((PSTR)lsaData + sizeof(LSA_UNICODE_STRING));
 

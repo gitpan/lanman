@@ -1,40 +1,41 @@
 use File::Path;
 use File::Copy;
 
-#get perl path
-foreach (split(/;/, $ENV{'path'}))
-{
-	$PerlBin = $_,
-	last
-		if $_ =~ /perl\\bin$/i;
-}
+# get perl executable
+@PerlBin = split /\\/, $^X;
 
-$PerlBin =~ s#\\#/#g;
+pop @PerlBin;
+pop @PerlBin;
 
-#get perl version
-$BUILD = $] eq '5.00307' ? '3xx' : ($] eq '5.00502' || $] eq '5.00503') ? '5xx' : $] eq 5.006 ? '6xx' : 'xxx';
+$PerlBin = join "/", @PerlBin;
+
+# get perl version
+$BUILD = 
+	($] eq '5.00502' || $] eq '5.00503') ? '5xx' : 
+	($] eq '5.006'  || $] eq '5.006001') ? '6xx' : 
+	($] eq '5.008') ? '8xx' : 'xxx';
 
 die "Wrong build number ..."
-	if $BUILD ne '6xx' && $BUILD ne '5xx' && $BUILD ne '3xx';
+	if $BUILD ne '8xx' && $BUILD ne '6xx' && $BUILD ne '5xx';
 
-#build lib path
-$INST_LIBDIR = ($BUILD eq '6xx' || $BUILD eq '5xx') ? "$PerlBin/../site/lib/" : "$PerlBin/../lib/";
+# set lib path
+$INST_LIBDIR = "$PerlBin/site/lib/";
 
--d $INST_LIBDIR or die "Cannot find library directory ...";
+-d $INST_LIBDIR or die "Cannot find library directory ...\n";
 
 copy('Lanman.pm', $INST_LIBDIR . 'Win32/Lanman.pm');
 
 mkpath($INST_LIBDIR . 'auto/Win32/Lanman');
 
-if($BUILD eq '6xx')
+if($BUILD eq '8xx')
+{
+	copy('Lanman.8xx.dll', $INST_LIBDIR . 'auto/Win32/Lanman/Lanman.dll');
+}
+elsif($BUILD eq '6xx')
 {
 	copy('Lanman.6xx.dll', $INST_LIBDIR . 'auto/Win32/Lanman/Lanman.dll');
 }
-elsif($BUILD eq '5xx')
-{
-	copy('Lanman.5xx.dll', $INST_LIBDIR . 'auto/Win32/Lanman/Lanman.dll');
-}
 else
 {
-	copy('Lanman.3xx.pll', $INST_LIBDIR . 'auto/Win32/Lanman/Lanman.pll');
+	copy('Lanman.5xx.dll', $INST_LIBDIR . 'auto/Win32/Lanman/Lanman.dll');
 }

@@ -326,6 +326,8 @@ static long constant(PERL_CALL PSTR name)
 			RET_VAL_IF_EQUAL(MSV1_0_CRED_LM_PRESENT, name);
 			RET_VAL_IF_EQUAL(MSV1_0_CRED_NT_PRESENT, name);
 			RET_VAL_IF_EQUAL(MSV1_0_CRED_VERSION, name);
+
+			// oops, not longer supported
 			RET_VAL_IF_EQUAL(MSV1_0_DERIVECRED_TYPE_SHA1, name);
 			RET_VAL_IF_EQUAL(MSV1_0_DONT_TRY_GUEST_ACCOUNT, name);
 			RET_VAL_IF_EQUAL(MSV1_0_LANMAN_SESSION_KEY_LENGTH, name);
@@ -454,6 +456,7 @@ static long constant(PERL_CALL PSTR name)
 			RET_VAL_IF_EQUAL(POLICY_QOS_RAS_SERVER_ALLOWED, name);
 			RET_VAL_IF_EQUAL(POLICY_QOS_SCHANNEL_REQUIRED, name);
 
+			// oops, not longer supported
 			RET_VAL_IF_EQUAL(PolicyDomainQualityOfServiceInformation, name);
 			RET_VAL_IF_EQUAL(PolicyDomainEfsInformation, name);
 			RET_VAL_IF_EQUAL(PolicyDomainKerberosTicketInformation, name);
@@ -688,7 +691,11 @@ static long constant(PERL_CALL PSTR name)
 			RET_VAL_IF_EQUAL(TIMEQ_FOREVER, name);
 
 			RET_VAL_IF_EQUAL(TRUST_ATTRIBUTE_NON_TRANSITIVE, name);
+
+			// oops, not longer supported
 			RET_VAL_IF_EQUAL(TRUST_ATTRIBUTE_TREE_PARENT, name);
+
+			// oops, not longer supported
 			RET_VAL_IF_EQUAL(TRUST_ATTRIBUTE_TREE_ROOT, name);
 			RET_VAL_IF_EQUAL(TRUST_ATTRIBUTE_UPLEVEL_ONLY, name);
 			RET_VAL_IF_EQUAL(TRUST_ATTRIBUTES_USER, name);
