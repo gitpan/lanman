@@ -1,16 +1,19 @@
 #define WIN32_LEAN_AND_MEAN
 
+
 #ifndef __STAT_CPP
 #define __STAT_CPP
 #endif
+
 
 #ifndef LM20_WORKSTATION_STATISTICS
 #define LM20_WORKSTATION_STATISTICS
 #endif
 
+
 #include <windows.h>
-#include <stdio.h>
 #include <lm.h>
+
 
 #include "stat.h"
 #include "wstring.h"

@@ -1,12 +1,14 @@
 #define WIN32_LEAN_AND_MEAN
 
+
 #ifndef __TIMEOFD_CPP
 #define __TIMEOFD_CPP
 #endif
 
+
 #include <windows.h>
-#include <stdio.h>
 #include <lm.h>
+
 
 #include "addloader.h"
 #include "timeofd.h"

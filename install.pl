@@ -28,13 +28,13 @@ mkpath($INST_LIBDIR . 'auto/Win32/Lanman');
 
 if($BUILD eq '6xx')
 {
-	copy('Lanman.615.dll', $INST_LIBDIR . 'auto/Win32/Lanman/Lanman.dll');
+	copy('Lanman.6xx.dll', $INST_LIBDIR . 'auto/Win32/Lanman/Lanman.dll');
 }
 elsif($BUILD eq '5xx')
 {
-	copy('Lanman.522.dll', $INST_LIBDIR . 'auto/Win32/Lanman/Lanman.dll');
+	copy('Lanman.5xx.dll', $INST_LIBDIR . 'auto/Win32/Lanman/Lanman.dll');
 }
 else
 {
-	copy('Lanman.316.pll', $INST_LIBDIR . 'auto/Win32/Lanman/Lanman.pll');
+	copy('Lanman.3xx.pll', $INST_LIBDIR . 'auto/Win32/Lanman/Lanman.pll');
 }

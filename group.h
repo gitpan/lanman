@@ -32,6 +32,24 @@ XS(XS_NT__Lanman_NetLocalGroupAdd);
 
 ///////////////////////////////////////////////////////////////////////////////
 //
+// adds users or global groups to a local group
+//
+// param:  server  - computer to execute the command
+//         group   - local group name
+//         members - user or global groups to add
+//
+// return: success - 1 
+//         failure - 0 
+//
+// note:   call GetLastError() to get the error code on failure
+//
+///////////////////////////////////////////////////////////////////////////////
+
+XS(XS_NT__Lanman_NetLocalGroupAddMembersBySid);
+
+
+///////////////////////////////////////////////////////////////////////////////
+//
 // adds users sid to a local group
 //
 // param:  server  - computer to execute the command
@@ -121,6 +139,24 @@ XS(XS_NT__Lanman_NetLocalGroupDelMembers);
 
 ///////////////////////////////////////////////////////////////////////////////
 //
+// removes users or global groups from a local group
+//
+// param:  server  - computer to execute the command
+//         group   - local group name
+//         members - user or global groups to remove
+//
+// return: success - 1 
+//         failure - 0 
+//
+// note:   call GetLastError() to get the error code on failure
+//
+///////////////////////////////////////////////////////////////////////////////
+
+XS(XS_NT__Lanman_NetLocalGroupDelMembersBySid);
+
+
+///////////////////////////////////////////////////////////////////////////////
+//
 // enums all local groups
 //
 // param:  server - computer to execute the command
@@ -170,6 +206,24 @@ XS(XS_NT__Lanman_NetLocalGroupGetInfo);
 ///////////////////////////////////////////////////////////////////////////////
 
 XS(XS_NT__Lanman_NetLocalGroupGetMembers);
+
+
+///////////////////////////////////////////////////////////////////////////////
+//
+// sets user or global groups to a local group
+//
+// param:  server  - computer to execute the command
+//         group   - group name
+//         members - members to set to the local group
+//
+// return: success - 1 
+//         failure - 0 
+//
+// note:   call GetLastError() to get the error code on failure
+//
+///////////////////////////////////////////////////////////////////////////////
+
+XS(XS_NT__Lanman_NetLocalGroupSetMembersBySid);
 
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -10,7 +10,7 @@ package Win32::Lanman;
 # you can use this module under the GNU public licence
 #
 #
-# version 1.081 from 09/16/2000
+# version 1.09 from 05/24/2001
 #
 # not all functions are completely tested - use this at your own risk
 #
@@ -21,7 +21,7 @@ package Win32::Lanman;
 require Exporter;
 require DynaLoader;
 
-$Version = 1.081;
+$Version = 1.090;
 $Package = "Win32::Lanman";
 
 die "The $Package module works only on Windows NT/Windows 2000" 
@@ -37,12 +37,12 @@ die "The $Package module works only on Windows NT/Windows 2000"
 	NET_INFO_DESCRIPTION
 	NET_STATUS_DESCRIPTION
 	SERVICE_CONTROL_DESCRIPTIONS
-        SERVICE_STATE_DESCRIPTIONS
-        SERVICE_CONTROLS
-        SERVICE_START_TYPES
+	SERVICE_STATE_DESCRIPTIONS
+	SERVICE_CONTROLS
+	SERVICE_START_TYPES
 	SERVICE_ERROR_TYPES
-        SC_FAILURE_ACTIONS
-        SERVICE_ACCEPTED_CONTROLS
+	SC_FAILURE_ACTIONS
+	SERVICE_ACCEPTED_CONTROLS
 	SERVICE_ADAPTER
 	SERVICE_RECOGNIZER_DRIVER
 	SERVICE_TYPE_ALL
@@ -52,14 +52,8 @@ die "The $Package module works only on Windows NT/Windows 2000"
 	WTS_STATES 
 	SidToString
 	StringToSid
-	ACCESS_ALL
-	ACCESS_ATRIB
-	ACCESS_CREATE
-	ACCESS_DELETE
-	ACCESS_EXEC
-	ACCESS_PERM
-	ACCESS_READ
-	ACCESS_WRITE
+	GuidToString
+	StringToGuid
 
 	AF_OP_ACCOUNTS
 	AF_OP_COMM
@@ -91,7 +85,33 @@ die "The $Package module works only on Windows NT/Windows 2000"
 
 	Batch
 
+	CONNECT_CURRENT_MEDIA
+	CONNECT_DEFERRED
+	CONNECT_INTERACTIVE
+	CONNECT_LOCALDRIVE
+	CONNECT_NEED_DRIVE
+	CONNECT_PROMPT
+	CONNECT_REDIRECT
+	CONNECT_REFCOUNT
+	CONNECT_RESERVED
+	CONNECT_TEMPORARY
+	CONNECT_UPDATE_PROFILE
+	CONNECT_UPDATE_RECENT
+
+	CONNDLG_CONN_POINT
+	CONNDLG_HIDE_BOX
+	CONNDLG_NOT_PERSIST
+	CONNDLG_PERSIST
+	CONNDLG_RO_PATH
+	CONNDLG_USE_MRU
+	CONNECT_UPDATE_PROFILE
+
+	DACL_SECURITY_INFORMATION
+
 	DEF_MAX_PWHIST
+
+	DISC_NO_FORCE
+	DISC_UPDATE_PROFILE
 
 	DFS_ADD_VOLUME
 	DFS_RESTORE_VOLUME
@@ -119,6 +139,8 @@ die "The $Package module works only on Windows NT/Windows 2000"
 	FILTER_SERVER_TRUST_ACCOUNT
 	FILTER_TEMP_DUPLICATE_ACCOUNT
 	FILTER_WORKSTATION_TRUST_ACCOUNT
+
+	GROUP_SECURITY_INFORMATION
 
 	IDASYNC
 	IDTIMEOUT
@@ -266,7 +288,6 @@ die "The $Package module works only on Windows NT/Windows 2000"
 
 	MSV1_0_NTLM3_INPUT_LENGTH
 
-
 	MsvAvEOL
 	MsvAvNbComputerName
 	MsvAvNbDomainName
@@ -315,11 +336,15 @@ die "The $Package module works only on Windows NT/Windows 2000"
 	NETSETUP_JOIN_UNSECURE
 	NETSETUP_WIN9X_UPGRADE
 
+	NETPROPERTY_PERSISTENT
+
 	Network
 
 	NO_PERMISSION_REQUIRED
 
 	ONE_DAY
+
+	OWNER_SECURITY_INFORMATION
 
 	PERM_FILE_CREATE
 	PERM_FILE_READ
@@ -391,6 +416,8 @@ die "The $Package module works only on Windows NT/Windows 2000"
 
 	Proxy
 
+	REMOTE_NAME_INFO_LEVEL
+
 	REPL_EXTENT_FILE
 	REPL_EXTENT_TREE
 	REPL_INTEGRITY_TREE
@@ -405,18 +432,37 @@ die "The $Package module works only on Windows NT/Windows 2000"
 	REPL_UNLOCK_FORCE
 	REPL_UNLOCK_NOFORCE
 
+	RESOURCEUSAGE_ALL
 	RESOURCE_CONNECTED
+	RESOURCE_CONTEXT
 	RESOURCE_GLOBALNET
 	RESOURCE_REMEMBERED
+	RESOURCETYPE_RESERVED
+	RESOURCETYPE_UNKNOWN
 	RESOURCETYPE_ANY
 	RESOURCETYPE_DISK
 	RESOURCETYPE_PRINT
+	RESOURCEDISPLAYTYPE_DIRECTORY
 	RESOURCEDISPLAYTYPE_DOMAIN
+	RESOURCEDISPLAYTYPE_FILE
 	RESOURCEDISPLAYTYPE_GENERIC
+	RESOURCEDISPLAYTYPE_GROUP
+	RESOURCEDISPLAYTYPE_NDSCONTAINER
+	RESOURCEDISPLAYTYPE_NETWORK
+	RESOURCEDISPLAYTYPE_ROOT
 	RESOURCEDISPLAYTYPE_SERVER
 	RESOURCEDISPLAYTYPE_SHARE
+	RESOURCEDISPLAYTYPE_SHAREADMIN
+	RESOURCEDISPLAYTYPE_TREE
+	RESOURCEUSAGE_ALL
 	RESOURCEUSAGE_CONNECTABLE
 	RESOURCEUSAGE_CONTAINER
+	RESOURCEUSAGE_ATTACHED
+	RESOURCEUSAGE_NOLOCALDEVICE
+	RESOURCEUSAGE_RESERVED
+	RESOURCEUSAGE_SIBLING
+
+	SACL_SECURITY_INFORMATION
 
 	SE_GROUP_ENABLED_BY_DEFAULT
 	SE_GROUP_MANDATORY
@@ -638,20 +684,32 @@ die "The $Package module works only on Windows NT/Windows 2000"
 	UAS_ROLE_BACKUP
 	UAS_ROLE_PRIMARY
 
+	UF_ACCOUNT_TYPE_MASK
 	UF_ACCOUNTDISABLE
 	UF_DONT_EXPIRE_PASSWD
+	UF_DONT_REQUIRE_PREAUTH
+	UF_ENCRYPTED_TEXT_PASSWORD_ALLOWED
 	UF_HOMEDIR_REQUIRED
 	UF_INTERDOMAIN_TRUST_ACCOUNT
 	UF_LOCKOUT
+	UF_MACHINE_ACCOUNT_MASK
+	UF_MNS_LOGON_ACCOUNT
 	UF_NORMAL_ACCOUNT
+	UF_NOT_DELEGATED
 	UF_PASSWD_CANT_CHANGE
 	UF_PASSWD_NOTREQD
 	UF_SCRIPT
 	UF_SERVER_TRUST_ACCOUNT
+	UF_SETTABLE_BITS
+	UF_SMARTCARD_REQUIRED
 	UF_TEMP_DUPLICATE_ACCOUNT
+	UF_TRUSTED_FOR_DELEGATION
+	UF_USE_DES_KEY_ONLY
 	UF_WORKSTATION_TRUST_ACCOUNT
 
 	UNITS_PER_WEEK
+
+	UNIVERSAL_NAME_INFO_LEVEL
 
 	Unlock
 
@@ -684,6 +742,51 @@ die "The $Package module works only on Windows NT/Windows 2000"
 	WNCON_FORNETCARD
 	WNCON_NOTROUTED
 	WNCON_SLOWLINK
+
+	WNNC_CRED_MANAGER
+	WNNC_NET_10NET
+	WNNC_NET_3IN1
+	WNNC_NET_9TILES
+	WNNC_NET_APPLETALK
+	WNNC_NET_AS400
+	WNNC_NET_AVID
+	WNNC_NET_BMC
+	WNNC_NET_BWNFS
+	WNNC_NET_CLEARCASE
+	WNNC_NET_COGENT
+	WNNC_NET_CSC
+	WNNC_NET_DCE
+	WNNC_NET_DECORB
+	WNNC_NET_DISTINCT
+	WNNC_NET_DOCUSPACE
+	WNNC_NET_EXTENDNET
+	WNNC_NET_FARALLON
+	WNNC_NET_FJ_REDIR
+	WNNC_NET_FTP_NFS
+	WNNC_NET_FRONTIER
+	WNNC_NET_HOB_NFS
+	WNNC_NET_IBMAL
+	WNNC_NET_INTERGRAPH
+	WNNC_NET_LANMAN
+	WNNC_NET_LANTASTIC
+	WNNC_NET_LANSTEP
+	WNNC_NET_LIFENET
+	WNNC_NET_LOCUS
+	WNNC_NET_MANGOSOFT
+	WNNC_NET_MASFAX
+	WNNC_NET_MSNET
+	WNNC_NET_NETWARE
+	WNNC_NET_OBJECT_DIRE
+	WNNC_NET_PATHWORKS
+	WNNC_NET_POWERLAN
+	WNNC_NET_PROTSTOR
+	WNNC_NET_RDR2SAMPLE
+	WNNC_NET_SERNET
+	WNNC_NET_SHIVA
+	WNNC_NET_SUN_PC_NFS
+	WNNC_NET_SYMFONET
+	WNNC_NET_TWINS
+	WNNC_NET_VINES
 
 	WTS_CURRENT_SERVER
 	WTS_CURRENT_SERVER_HANDLE
@@ -757,21 +860,6 @@ die "The $Package module works only on Windows NT/Windows 2000"
 	WTSUserConfigTerminalServerHomeDirDrive
 	WTSUserConfigfTerminalServerRemoteHomeDir
 
-ACCESS_SYSTEM_SECURITY
-DELETE
-GENERIC_ALL
-GENERIC_EXECUTE
-GENERIC_READ
-GENERIC_WRITE
-MAXIMUM_ALLOWED
-READ_CONTROL
-SYNCHRONIZE
-SPECIFIC_RIGHTS_ALL
-STANDARD_RIGHTS_REQUIRED
-STANDARD_RIGHTS_ALL
-WRITE_DAC
-WRITE_OWNER
-
 );
 
 @EXPORT_OK = qw(
@@ -837,6 +925,11 @@ sub LsaSetDnsDomainPolicy {Win32::Lanman::LsaSetInformationPolicy($_[0], &Policy
 sub LsaQueryTrustedDomainNameInfo {Win32::Lanman::LsaQueryTrustedDomainInfo($_[0], $_[1], &TrustedDomainNameInformation, $_[2]);}
 sub LsaQueryTrustedPosixOffsetInfo {Win32::Lanman::LsaQueryTrustedDomainInfo($_[0], $_[1], &TrustedPosixOffsetInformation, $_[2]);}
 sub LsaQueryTrustedPasswordInfo {Win32::Lanman::LsaQueryTrustedDomainInfo($_[0], $_[1], &TrustedPasswordInformation, $_[2]);}
+
+sub LsaSetTrustedDomainInfo {Win32::Lanman::LsaSetTrustedDomainInformation(@_);}
+sub LsaSetTrustedDomainNameInfo {Win32::Lanman::LsaSetTrustedDomainInformation($_[0], $_[1], &TrustedDomainNameInformation, $_[2]);}
+sub LsaSetTrustedPosixOffsetInfo {Win32::Lanman::LsaSetTrustedDomainInformation($_[0], $_[1], &TrustedPosixOffsetInformation, $_[2]);}
+sub LsaSetTrustedPasswordInfo {Win32::Lanman::LsaSetTrustedDomainInformation($_[0], $_[1], &TrustedPasswordInformation, $_[2]);}
 
 sub SE_CREATE_TOKEN_NAME {"SeCreateTokenPrivilege";}
 sub SE_ASSIGNPRIMARYTOKEN_NAME {"SeAssignPrimaryTokenPrivilege";}
@@ -968,47 +1061,41 @@ sub WTS_STATES
 		none		=>	&Win32::Lanman::WTS_EVENT_NONE,
 		rename		=>	&Win32::Lanman::WTS_EVENT_RENAME,
 		state_change	=>	&Win32::Lanman::WTS_EVENT_STATECHANGE);
-
 }
+
 sub SERVICE_FAILURE_ACTIONS
 {
-	return (
-		none		=>	&Win32::Lanman::SC_ACTION_NONE,
+	return (none		=>	&Win32::Lanman::SC_ACTION_NONE,
 		reboot	        => 	&Win32::Lanman::SC_ACTION_REBOOT,
 		restart	        =>	&Win32::Lanman::SC_ACTION_RESTART,
-		ren_command	=>      &Win32::Lanman::SC_ACTION_RUN_COMMAND
-		);
+		ren_command	=>      &Win32::Lanman::SC_ACTION_RUN_COMMAND);
 }
+
 sub SERVICE_STATE_DESCRIPTIONS 
 { 
-  return (
-
-	  &Win32::Lanman::SERVICE_STOPPED      => 'The service is not running.', 
-	&Win32::Lanman::SERVICE_START_PENDING  => 'The service is starting.',
-	&Win32::Lanman::SERVICE_STOP_PENDING   => 'The service is stopping.',
-	&Win32::Lanman::SERVICE_RUNNING        => 'The service is running.',
-      &Win32::Lanman::SERVICE_CONTINUE_PENDING => 'The service continue is pending.',
-	&Win32::Lanman::SERVICE_PAUSE_PENDING  => 'The service pause is pending.',
-	&Win32::Lanman::SERVICE_PAUSED         => 'The service is paused.'
-	 );
+  return (&Win32::Lanman::SERVICE_STOPPED      => 'The service is not running.', 
+	  &Win32::Lanman::SERVICE_START_PENDING  => 'The service is starting.',
+	  &Win32::Lanman::SERVICE_STOP_PENDING   => 'The service is stopping.',
+	  &Win32::Lanman::SERVICE_RUNNING        => 'The service is running.',
+	  &Win32::Lanman::SERVICE_CONTINUE_PENDING => 'The service continue is pending.',
+	  &Win32::Lanman::SERVICE_PAUSE_PENDING  => 'The service pause is pending.',
+	  &Win32::Lanman::SERVICE_PAUSED         => 'The service is paused.');
 }
+
 sub NET_STATUS_DESCRIPTION 
-  {
-    return (     	  
-      &Win32::Lanman::USE_OK       => 'The connection is successful.', 
-      &Win32::Lanman::USE_PAUSED   => 'Paused by a local workstation.', 
-      &Win32::Lanman::USE_SESSLOST => 'Disconnected.',
-      &Win32::Lanman::USE_DISCONN  => 'An error occurred.', 
-      &Win32::Lanman::USE_NETERR   => 'A network error occurred.', 
-      &Win32::Lanman::USE_CONN     => 'The connection is being made.', 
-      &Win32::Lanman::USE_RECONN   => 'Reconnecting.'
-	   );
+{
+    return (&Win32::Lanman::USE_OK       => 'The connection is successful.', 
+	    &Win32::Lanman::USE_PAUSED   => 'Paused by a local workstation.', 
+	    &Win32::Lanman::USE_SESSLOST => 'Disconnected.',
+	    &Win32::Lanman::USE_DISCONN  => 'An error occurred.', 
+	    &Win32::Lanman::USE_NETERR   => 'A network error occurred.', 
+	    &Win32::Lanman::USE_CONN     => 'The connection is being made.', 
+	    &Win32::Lanman::USE_RECONN   => 'Reconnecting.');
 }
 
 sub NET_INFO_DESCRIPTION
-  {
-    return (
-	    &Win32::Lanman::USE_NOFORCE => 'Fail the disconnection if open files exist on the connection.', 
+{
+    return (&Win32::Lanman::USE_NOFORCE => 'Fail the disconnection if open files exist on the connection.', 
 	    &Win32::Lanman::USE_FORCE   => 'Fail the disconnection if open files exist on the connection.', 
 	    &Win32::Lanman::USE_LOTS_OF_FORCE => 'Close any open files and delete the connection.',
 	    # These first 3 are for use with NetUseDel and NetWkStaTransportDel
@@ -1017,190 +1104,120 @@ sub NET_INFO_DESCRIPTION
 	                                    "Wildcards can be used only with the NetUseAdd function, see MSDN for details",
 	    &Win32::Lanman::USE_DISKDEV =>  'Disk device.',
 	    &Win32::Lanman::USE_SPOOLDEV => 'Spooled printer.', 
-	    &Win32::Lanman::USE_IPC => 'Interprocess communication (IPC).'
-	   );
-  }
-
+	    &Win32::Lanman::USE_IPC => 'Interprocess communication (IPC).');
+}
 
 sub SERVICE_CONTROL_DESCRIPTIONS 
 { 
-  return (
-	  &Win32::Lanman::SERVICE_ACCEPT_STOP                 => 'The service can be stopped. This flag allows the service to receive the SERVICE_CONTROL_STOP value.', 
+  return (&Win32::Lanman::SERVICE_ACCEPT_STOP                 => 'The service can be stopped. This flag allows the service to receive the SERVICE_CONTROL_STOP value.', 
 	  &Win32::Lanman::SERVICE_ACCEPT_PAUSE_CONTINUE       => "The service can be paused and continued. This flag allows the service to receive the SERVICE_CONTROL_PAUSE and SERVICE_CONTROL_CONTINUE values.",
 	  &Win32::Lanman::SERVICE_ACCEPT_SHUTDOWN             => "The service is notified when system shutdown occurs. This flag allows the service to receive the SERVICE_CONTROL_SHUTDOWN value. Note that ControlService cannot send this control code; only the system can send SERVICE_CONTROL_SHUTDOWN.",
 	  &Win32::Lanman::SERVICE_ACCEPT_PARAMCHANGE          => "Windows 2000: The service can reread its startup parameters without being stopped and restarted. This flag allows the service to receive the SERVICE_CONTROL_PARAMCHANGE value.",
 	  &Win32::Lanman::SERVICE_ACCEPT_NETBINDCHANGE        => "Windows 2000: The service is a network component that can accept changes in its binding without being stopped and restarted. This flag allows the service to receive the SERVICE_CONTROL_NETBINDADD, SERVICE_CONTROL_NETBINDREMOVE, SERVICE_CONTROL_NETBINDENABLE, and SERVICE_CONTROL_NETBINDDISABLE values.",
 	  &Win32::Lanman::SERVICE_ACCEPT_HARDWAREPROFILECHANGE => "Windows 2000: The service is notified when the computer's hardware profile has changed. This enables the system to send a SERVICE_CONTROL_HARDWAREPROFILECHANGE value to the service. The service receives this value only if it has called the RegisterServiceCtrlHandlerEx function. The ControlService function cannot send this control code.",
-	  &Win32::Lanman::SERVICE_ACCEPT_POWEREVENT            => "Windows 2000: The service is notified when the computer's power status has changed. This enables the system to send a SERVICE_CONTROL_POWEREVENT value to the service. The service receives this value only if it has called the RegisterServiceCtrlHandlerEx function. The ControlService function cannot send this control code."
-);
+	  &Win32::Lanman::SERVICE_ACCEPT_POWEREVENT            => "Windows 2000: The service is notified when the computer's power status has changed. This enables the system to send a SERVICE_CONTROL_POWEREVENT value to the service. The service receives this value only if it has called the RegisterServiceCtrlHandlerEx function. The ControlService function cannot send this control code.");
 }
+
 sub SC_FAILURE_ACTIONS
 {
-	return (
-		none	   	=>     &Win32::Lanman::SC_ACTION_NONE,
+	return (none	   	=>     &Win32::Lanman::SC_ACTION_NONE,
 		reboot		=>     &Win32::Lanman::SC_ACTION_REBOOT,
 		restart	        =>     &Win32::Lanman::SC_ACTION_RESTART,
-		run_command	=>     &Win32::Lanman::SC_ACTION_RUN_COMMAND
-		);
+		run_command	=>     &Win32::Lanman::SC_ACTION_RUN_COMMAND);
 }
 
 sub SERVICE_ACCEPTED_CONTROLS
 {
-	return (stop						=>
-&Win32::Lanman::SERVICE_ACCEPT_STOP,
-			pause_continue			=>
-&Win32::Lanman::SERVICE_ACCEPT_PAUSE_CONTINUE,
-			shutdown				=>
-&Win32::Lanman::SERVICE_ACCEPT_SHUTDOWN,
-			paramchange			=>
-&Win32::Lanman::SERVICE_ACCEPT_PARAMCHANGE,
-			netbindchange			=>
-&Win32::Lanman::SERVICE_ACCEPT_NETBINDCHANGE,
-			hardwareprofilechange	=>
-&Win32::Lanman::SERVICE_ACCEPT_HARDWAREPROFILECHANGE,
-			powerevent				=>
-&Win32::Lanman::SERVICE_ACCEPT_POWEREVENT
-		);
+	return (stop			=>	&Win32::Lanman::SERVICE_ACCEPT_STOP,
+		pause_continue		=>	&Win32::Lanman::SERVICE_ACCEPT_PAUSE_CONTINUE,
+		shutdown		=>	&Win32::Lanman::SERVICE_ACCEPT_SHUTDOWN,
+		paramchange		=>	&Win32::Lanman::SERVICE_ACCEPT_PARAMCHANGE,
+		netbindchange		=>	&Win32::Lanman::SERVICE_ACCEPT_NETBINDCHANGE,
+		hardwareprofilechange	=>	&Win32::Lanman::SERVICE_ACCEPT_HARDWAREPROFILECHANGE,
+		powerevent		=>	&Win32::Lanman::SERVICE_ACCEPT_POWEREVENT);
 }
 
 sub SERVICE_START_TYPES
 {
-	return (auto			=>
-&Win32::Lanman::SERVICE_AUTO_START,  
-			boot		=>
-&Win32::Lanman::SERVICE_BOOT_START,
-			demand		=>
-&Win32::Lanman::SERVICE_DEMAND_START,
-			disabled	=>
-&Win32::Lanman::SERVICE_DISABLED,
-			system		=>
-&Win32::Lanman::SERVICE_SYSTEM_START
-			);
+	return (auto		=>	&Win32::Lanman::SERVICE_AUTO_START,  
+		boot		=>	&Win32::Lanman::SERVICE_BOOT_START,
+		demand		=>	&Win32::Lanman::SERVICE_DEMAND_START,
+		disabled	=>	&Win32::Lanman::SERVICE_DISABLED,
+		system		=>	&Win32::Lanman::SERVICE_SYSTEM_START);
 }
 
 sub SERVICE_ERROR_TYPES
 {
-	return (critical		=>
-&Win32::Lanman::SERVICE_ERROR_CRITICAL,  
-			ignore		=>
-&Win32::Lanman::SERVICE_ERROR_IGNORE,
-			normal		=>
-&Win32::Lanman::SERVICE_ERROR_NORMAL,
-			severe		=>
-&Win32::Lanman::SERVICE_ERROR_SEVERE
-			);
+	return (critical		=>	&Win32::Lanman::SERVICE_ERROR_CRITICAL,  
+		ignore		=>	&Win32::Lanman::SERVICE_ERROR_IGNORE,
+		normal		=>	&Win32::Lanman::SERVICE_ERROR_NORMAL,
+		severe		=>	&Win32::Lanman::SERVICE_ERROR_SEVERE);
 }
 
 sub SERVICE_CONTROLS
 {
-	return (continue						=>
-&Win32::Lanman::SERVICE_CONTROL_CONTINUE,
-			deviceevent				=>
-&Win32::Lanman::SERVICE_CONTROL_DEVICEEVENT,
-			hardwareprofilechange	=>
-&Win32::Lanman::SERVICE_CONTROL_HARDWAREPROFILECHANGE,
-			interrogate				=>
-&Win32::Lanman::SERVICE_CONTROL_INTERROGATE,
-			netbindadd				=>
-&Win32::Lanman::SERVICE_CONTROL_NETBINDADD,
-			netbinddisable			=>
-&Win32::Lanman::SERVICE_CONTROL_NETBINDDISABLE,
-			netbindenable			=>
-&Win32::Lanman::SERVICE_CONTROL_NETBINDENABLE,
-			netbindremove			=>
-&Win32::Lanman::SERVICE_CONTROL_NETBINDREMOVE,
-			pause					=>
-&Win32::Lanman::SERVICE_CONTROL_PAUSE,
-			paramchange			=>
-&Win32::Lanman::SERVICE_CONTROL_PARAMCHANGE,
-			powerevent				=>
-&Win32::Lanman::SERVICE_CONTROL_POWEREVENT,
-			shutdown				=>
-&Win32::Lanman::SERVICE_CONTROL_SHUTDOWN,
-			stop					=>
-&Win32::Lanman::SERVICE_CONTROL_STOP
-		);
+	return (continue		=>	&Win32::Lanman::SERVICE_CONTROL_CONTINUE,
+		deviceevent		=>	&Win32::Lanman::SERVICE_CONTROL_DEVICEEVENT,
+		hardwareprofilechange	=>	&Win32::Lanman::SERVICE_CONTROL_HARDWAREPROFILECHANGE,
+		interrogate		=>	&Win32::Lanman::SERVICE_CONTROL_INTERROGATE,
+		netbindadd		=>	&Win32::Lanman::SERVICE_CONTROL_NETBINDADD,
+		netbinddisable		=>	&Win32::Lanman::SERVICE_CONTROL_NETBINDDISABLE,
+		netbindenable		=>	&Win32::Lanman::SERVICE_CONTROL_NETBINDENABLE,
+		netbindremove		=>	&Win32::Lanman::SERVICE_CONTROL_NETBINDREMOVE,
+		pause			=>	&Win32::Lanman::SERVICE_CONTROL_PAUSE,
+		paramchange		=>	&Win32::Lanman::SERVICE_CONTROL_PARAMCHANGE,
+		powerevent		=>	&Win32::Lanman::SERVICE_CONTROL_POWEREVENT,
+		shutdown		=>	&Win32::Lanman::SERVICE_CONTROL_SHUTDOWN,
+		stop			=>	&Win32::Lanman::SERVICE_CONTROL_STOP);
 }
 
 sub SERVICE_TYPES
 {
-	return (win32			=>
-&Win32::Lanman::SERVICE_WIN32,  
-			driver			=>
-&Win32::Lanman::SERVICE_DRIVER,
-			adapter			=>
-&Win32::Lanman::SERVICE_ADAPTER,
-			recognizerdriver	=>
-&Win32::Lanman::SERVICE_RECOGNIZER_DRIVER,
-			filesystemdriver	=>
-&Win32::Lanman::SERVICE_FILE_SYSTEM_DRIVER,
-			interactive		=>
-&Win32::Lanman::SERVICE_INTERACTIVE_PROCESS,
-			kernel			=>
-&Win32::Lanman::SERVICE_KERNEL_DRIVER,
-			ownprocess		=>
-&Win32::Lanman::SERVICE_WIN32_OWN_PROCESS,
-			shareprocess	=>
-&Win32::Lanman::SERVICE_WIN32_SHARE_PROCESS,
-			all				=>
-&Win32::Lanman::SERVICE_TYPE_ALL
-		);
+	return (win32			=>	&Win32::Lanman::SERVICE_WIN32,  
+		driver			=>	&Win32::Lanman::SERVICE_DRIVER,
+		adapter			=>	&Win32::Lanman::SERVICE_ADAPTER,
+		recognizerdriver	=>	&Win32::Lanman::SERVICE_RECOGNIZER_DRIVER,
+		filesystemdriver	=>	&Win32::Lanman::SERVICE_FILE_SYSTEM_DRIVER,
+		interactive		=>	&Win32::Lanman::SERVICE_INTERACTIVE_PROCESS,
+		kernel			=>	&Win32::Lanman::SERVICE_KERNEL_DRIVER,
+		ownprocess		=>	&Win32::Lanman::SERVICE_WIN32_OWN_PROCESS,
+		shareprocess		=>	&Win32::Lanman::SERVICE_WIN32_SHARE_PROCESS,
+		all			=>	&Win32::Lanman::SERVICE_TYPE_ALL);
 }
 
 sub PRIVILEGE_NAMES {
-        return (
-        create_token        => &Win32::Lanman::SE_CREATE_TOKEN_NAME,
-	assignprimarytoken  => &Win32::Lanman::SE_ASSIGNPRIMARYTOKEN_NAME,
-        lock_memory         => &Win32::Lanman::SE_LOCK_MEMORY_NAME,
-        increase_quota      => &Win32::Lanman::SE_INCREASE_QUOTA_NAME,
-        unsolicited_input   => &Win32::Lanman::SE_UNSOLICITED_INPUT_NAME,
-        machine_account     => &Win32::Lanman::SE_MACHINE_ACCOUNT_NAME,
-        tcb                 => &Win32::Lanman::SE_TCB_NAME,
-        security            => &Win32::Lanman::SE_SECURITY_NAME,
-        take_ownership      => &Win32::Lanman::SE_TAKE_OWNERSHIP_NAME,
-        load_driver         => &Win32::Lanman::SE_LOAD_DRIVER_NAME,
-        system_profile      => &Win32::Lanman::SE_SYSTEM_PROFILE_NAME,
-        systemtime          => &Win32::Lanman::SE_SYSTEMTIME_NAME,
-        prof_single_process => &Win32::Lanman::SE_PROF_SINGLE_PROCESS_NAME,
-        inc_base_priority   => &Win32::Lanman::SE_INC_BASE_PRIORITY_NAME,
-        create_pagefile     => &Win32::Lanman::SE_CREATE_PAGEFILE_NAME,
-        create_permanent    => &Win32::Lanman::SE_CREATE_PERMANENT_NAME,
-        backup              => &Win32::Lanman::SE_BACKUP_NAME,
-        restore             => &Win32::Lanman::SE_RESTORE_NAME,
-        shutdown            => &Win32::Lanman::SE_SHUTDOWN_NAME,
-        debug               => &Win32::Lanman::SE_DEBUG_NAME,
-        audit               => &Win32::Lanman::SE_AUDIT_NAME,
-        system_environment  => &Win32::Lanman::SE_SYSTEM_ENVIRONMENT_NAME,
-        change_notify       => &Win32::Lanman::SE_CHANGE_NOTIFY_NAME,
-        remote_shutdown     => &Win32::Lanman::SE_REMOTE_SHUTDOWN_NAME,
-        interactive_logon   => &Win32::Lanman::SE_INTERACTIVE_LOGON_NAME,
-        deny_interactive_logon  => &Win32::Lanman::SE_DENY_INTERACTIVE_LOGON_NAME,
-        network_logon       => &Win32::Lanman::SE_NETWORK_LOGON_NAME,
-        deny_network_logon  => &Win32::Lanman::SE_DENY_NETWORK_LOGON_NAME,
-        batch_logon         => &Win32::Lanman::SE_BATCH_LOGON_NAME,
-        deny_batch_logon    => &Win32::Lanman::SE_DENY_BATCH_LOGON_NAME,
-        service_logon       => &Win32::Lanman::SE_SERVICE_LOGON_NAME,
-        deny_service_logon  => &Win32::Lanman::SE_DENY_SERVICE_LOGON_NAME,
-   );
-}
-sub StringToSid
-{
-	return undef
-		unless uc(substr($_[0], 0, 4)) eq "S-1-";
-
-	my ($auth_id, @sub_auth_id) = split(/-/, substr($_[0], 4));
-
-	my $sid = pack("C4", 1, $#sub_auth_id + 1, 0, 0);
-	
-	$sid .= pack("C4", ($auth_id & 0xff000000) >> 24, ($auth_id &0x00ff0000) >> 16, 
-			($auth_id & 0x0000ff00) >> 8, $auth_id &0x000000ff);
-
-	for $loop (0 .. $#sub_auth_id)
-	{
-		$sid .= pack("I", $sub_auth_id[$loop]);
-	}
-
-	return $sid;
+        return (create_token	        =>	&Win32::Lanman::SE_CREATE_TOKEN_NAME,
+		assignprimarytoken	=>	&Win32::Lanman::SE_ASSIGNPRIMARYTOKEN_NAME,
+	        lock_memory      	=>	&Win32::Lanman::SE_LOCK_MEMORY_NAME,
+	        increase_quota      	=>	&Win32::Lanman::SE_INCREASE_QUOTA_NAME,
+	        unsolicited_input	=>	&Win32::Lanman::SE_UNSOLICITED_INPUT_NAME,
+	        machine_account		=>	&Win32::Lanman::SE_MACHINE_ACCOUNT_NAME,
+	        tcb			=>	&Win32::Lanman::SE_TCB_NAME,
+	        security		=>	&Win32::Lanman::SE_SECURITY_NAME,
+	        take_ownership		=>	&Win32::Lanman::SE_TAKE_OWNERSHIP_NAME,
+	        load_driver		=>	&Win32::Lanman::SE_LOAD_DRIVER_NAME,
+	        system_profile		=>	&Win32::Lanman::SE_SYSTEM_PROFILE_NAME,
+	        systemtime		=>	&Win32::Lanman::SE_SYSTEMTIME_NAME,
+	        prof_single_process	=>	&Win32::Lanman::SE_PROF_SINGLE_PROCESS_NAME,
+	        inc_base_priority	=>	&Win32::Lanman::SE_INC_BASE_PRIORITY_NAME,
+	        create_pagefile		=>	&Win32::Lanman::SE_CREATE_PAGEFILE_NAME,
+	        create_permanent	=>	&Win32::Lanman::SE_CREATE_PERMANENT_NAME,
+	        backup			=>	&Win32::Lanman::SE_BACKUP_NAME,
+	        restore			=>	&Win32::Lanman::SE_RESTORE_NAME,
+	        shutdown		=>	&Win32::Lanman::SE_SHUTDOWN_NAME,
+	        debug			=>	&Win32::Lanman::SE_DEBUG_NAME,
+	        audit			=>	&Win32::Lanman::SE_AUDIT_NAME,
+	        system_environment	=>	&Win32::Lanman::SE_SYSTEM_ENVIRONMENT_NAME,
+	        change_notify		=>	&Win32::Lanman::SE_CHANGE_NOTIFY_NAME,
+	        remote_shutdown		=>	&Win32::Lanman::SE_REMOTE_SHUTDOWN_NAME,
+	        interactive_logon	=>	&Win32::Lanman::SE_INTERACTIVE_LOGON_NAME,
+	        deny_interactive_logon	=>	&Win32::Lanman::SE_DENY_INTERACTIVE_LOGON_NAME,
+	        network_logon		=>	&Win32::Lanman::SE_NETWORK_LOGON_NAME,
+	        deny_network_logon	=>	&Win32::Lanman::SE_DENY_NETWORK_LOGON_NAME,
+	        batch_logon		=>	&Win32::Lanman::SE_BATCH_LOGON_NAME,
+	        deny_batch_logon	=>	&Win32::Lanman::SE_DENY_BATCH_LOGON_NAME,
+	        service_logon		=>	&Win32::Lanman::SE_SERVICE_LOGON_NAME,
+        	deny_service_logon	=>	&Win32::Lanman::SE_DENY_SERVICE_LOGON_NAME);
 }
 
 sub SidToString
@@ -1224,6 +1241,52 @@ sub SidToString
 	return $sid_str;
 }
 
+sub StringToSid
+{
+	return undef
+		unless uc(substr($_[0], 0, 4)) eq "S-1-";
+
+	my ($auth_id, @sub_auth_id) = split(/-/, substr($_[0], 4));
+
+	my $sid = pack("C4", 1, $#sub_auth_id + 1, 0, 0);
+	
+	$sid .= pack("C4", ($auth_id & 0xff000000) >> 24, ($auth_id &0x00ff0000) >> 16, 
+			($auth_id & 0x0000ff00) >> 8, $auth_id &0x000000ff);
+
+	for $loop (0 .. $#sub_auth_id)
+	{
+		$sid .= pack("I", $sub_auth_id[$loop]);
+	}
+
+	return $sid;
+}
+
+sub GuidToString
+{
+	return sprintf "%08X-%04X-%04X-%02X%02X-%02X%02X%02X%02X%02X%02X", 
+		unpack("I", $_[0]), 
+		unpack("S", substr($_[0], 4, 2)), 
+		unpack("S", substr($_[0], 6, 2)),
+		unpack("C", substr($_[0], 8, 1)),
+		unpack("C", substr($_[0], 9, 1)),
+		unpack("C", substr($_[0], 10, 1)),
+		unpack("C", substr($_[0], 11, 1)),
+		unpack("C", substr($_[0], 12, 1)),
+		unpack("C", substr($_[0], 13, 1)),
+		unpack("C", substr($_[0], 14, 1)),
+		unpack("C", substr($_[0], 15, 1)); 
+}
+
+sub StringToGuid
+{
+	return undef
+		unless $_[0] =~ /([0-9,a-z]{8})-([0-9,a-z]{4})-([0-9,a-z]{4})-([0-9,a-z]{2})([0-9,a-z]{2})-([0-9,a-z]{2})([0-9,a-z]{2})([0-9,a-z]{2})([0-9,a-z]{2})([0-9,a-z]{2})([0-9,a-z]{2})/i;
+
+	return pack("I", hex $1) . pack("S", hex $2) . pack("S", hex $3) . pack("C", hex $4) . pack("C", hex $5) .
+	       pack("C", hex $6) . pack("C", hex $7) . pack("C", hex $8) . pack("C", hex $9) . pack("C", hex $10) . pack("C", hex $11);
+
+	print "$1\n$2\n$3\n$4\n$5\n$6\n$7\n$8\n$9\n$10\n$11\n";
+}
 
 bootstrap $Package;
 
@@ -1239,52 +1302,30 @@ __END__
 
 Win32::Lanman - implements MS Lanmanager functions
 
-
 =head1 SYNOPSIS
 
 	use Win32::Lanman;
-
 
 =head1 DESCRIPTION
 
 This module implements the MS Lanmanager functions
 
-
 =head1 CONSTANTS
-
 
 Documentation for use and meaning of the Constants can be found at
 L<"http://search.microsoft.com/us/dev/default.asp">
 
-C<LG_INCLUDE_INDIRECT>
-
-
-	NET_INFO_DESCRIPTION
-	NET_STATUS_DESCRIPTION
 	SERVICE_CONTROL_DESCRIPTIONS
-        SERVICE_STATE_DESCRIPTIONS
-        SERVICE_CONTROLS
-        SERVICE_START_TYPES
+	SERVICE_STATE_DESCRIPTIONS
+	SERVICE_CONTROLS
+	SERVICE_START_TYPES
 	SERVICE_ERROR_TYPES
-        SC_FAILURE_ACTIONS
-        SERVICE_ACCEPTED_CONTROLS
+	SERVICE_ACCEPTED_CONTROLS
 	SERVICE_ADAPTER
 	SERVICE_RECOGNIZER_DRIVER
 	SERVICE_TYPE_ALL
-	SV_TYPES 
 	SERVICE_STATES 
 	SERVICE_TYPES 
-	WTS_STATES 
-	SidToString
-	StringToSid
-	ACCESS_ALL
-	ACCESS_ATRIB
-	ACCESS_CREATE
-	ACCESS_DELETE
-	ACCESS_EXEC
-	ACCESS_PERM
-	ACCESS_READ
-	ACCESS_WRITE
 
 	AF_OP_ACCOUNTS
 	AF_OP_COMM
@@ -1316,7 +1357,33 @@ C<LG_INCLUDE_INDIRECT>
 
 	Batch
 
+	CONNECT_CURRENT_MEDIA
+	CONNECT_DEFERRED
+	CONNECT_INTERACTIVE
+	CONNECT_LOCALDRIVE
+	CONNECT_NEED_DRIVE
+	CONNECT_PROMPT
+	CONNECT_REDIRECT
+	CONNECT_REFCOUNT
+	CONNECT_RESERVED
+	CONNECT_TEMPORARY
+	CONNECT_UPDATE_PROFILE
+	CONNECT_UPDATE_RECENT
+
+	CONNDLG_CONN_POINT
+	CONNDLG_HIDE_BOX
+	CONNDLG_NOT_PERSIST
+	CONNDLG_PERSIST
+	CONNDLG_RO_PATH
+	CONNDLG_USE_MRU
+	CONNECT_UPDATE_PROFILE
+
 	DEF_MAX_PWHIST
+
+	DACL_SECURITY_INFORMATION
+
+	DISC_NO_FORCE
+	DISC_UPDATE_PROFILE
 
 	DFS_ADD_VOLUME
 	DFS_RESTORE_VOLUME
@@ -1344,6 +1411,8 @@ C<LG_INCLUDE_INDIRECT>
 	FILTER_SERVER_TRUST_ACCOUNT
 	FILTER_TEMP_DUPLICATE_ACCOUNT
 	FILTER_WORKSTATION_TRUST_ACCOUNT
+
+	GROUP_SECURITY_INFORMATION
 
 	IDASYNC
 	IDTIMEOUT
@@ -1491,7 +1560,6 @@ C<LG_INCLUDE_INDIRECT>
 
 	MSV1_0_NTLM3_INPUT_LENGTH
 
-
 	MsvAvEOL
 	MsvAvNbComputerName
 	MsvAvNbDomainName
@@ -1540,11 +1608,15 @@ C<LG_INCLUDE_INDIRECT>
 	NETSETUP_JOIN_UNSECURE
 	NETSETUP_WIN9X_UPGRADE
 
+	NETPROPERTY_PERSISTENT
+
 	Network
 
 	NO_PERMISSION_REQUIRED
 
 	ONE_DAY
+
+	OWNER_SECURITY_INFORMATION
 
 	PERM_FILE_CREATE
 	PERM_FILE_READ
@@ -1616,6 +1688,8 @@ C<LG_INCLUDE_INDIRECT>
 
 	Proxy
 
+	REMOTE_NAME_INFO_LEVEL
+
 	REPL_EXTENT_FILE
 	REPL_EXTENT_TREE
 	REPL_INTEGRITY_TREE
@@ -1630,18 +1704,37 @@ C<LG_INCLUDE_INDIRECT>
 	REPL_UNLOCK_FORCE
 	REPL_UNLOCK_NOFORCE
 
+	RESOURCEUSAGE_ALL
 	RESOURCE_CONNECTED
+	RESOURCE_CONTEXT
 	RESOURCE_GLOBALNET
 	RESOURCE_REMEMBERED
+	RESOURCETYPE_RESERVED
+	RESOURCETYPE_UNKNOWN
 	RESOURCETYPE_ANY
 	RESOURCETYPE_DISK
 	RESOURCETYPE_PRINT
+	RESOURCEDISPLAYTYPE_DIRECTORY
 	RESOURCEDISPLAYTYPE_DOMAIN
+	RESOURCEDISPLAYTYPE_FILE
 	RESOURCEDISPLAYTYPE_GENERIC
+	RESOURCEDISPLAYTYPE_GROUP
+	RESOURCEDISPLAYTYPE_NDSCONTAINER
+	RESOURCEDISPLAYTYPE_NETWORK
+	RESOURCEDISPLAYTYPE_ROOT
 	RESOURCEDISPLAYTYPE_SERVER
 	RESOURCEDISPLAYTYPE_SHARE
+	RESOURCEDISPLAYTYPE_SHAREADMIN
+	RESOURCEDISPLAYTYPE_TREE
+	RESOURCEUSAGE_ALL
 	RESOURCEUSAGE_CONNECTABLE
 	RESOURCEUSAGE_CONTAINER
+	RESOURCEUSAGE_ATTACHED
+	RESOURCEUSAGE_NOLOCALDEVICE
+	RESOURCEUSAGE_RESERVED
+	RESOURCEUSAGE_SIBLING
+
+	SACL_SECURITY_INFORMATION
 
 	SE_GROUP_ENABLED_BY_DEFAULT
 	SE_GROUP_MANDATORY
@@ -1863,20 +1956,32 @@ C<LG_INCLUDE_INDIRECT>
 	UAS_ROLE_BACKUP
 	UAS_ROLE_PRIMARY
 
+	UF_ACCOUNT_TYPE_MASK
 	UF_ACCOUNTDISABLE
 	UF_DONT_EXPIRE_PASSWD
+	UF_DONT_REQUIRE_PREAUTH
+	UF_ENCRYPTED_TEXT_PASSWORD_ALLOWED
 	UF_HOMEDIR_REQUIRED
 	UF_INTERDOMAIN_TRUST_ACCOUNT
 	UF_LOCKOUT
+	UF_MACHINE_ACCOUNT_MASK
+	UF_MNS_LOGON_ACCOUNT
 	UF_NORMAL_ACCOUNT
+	UF_NOT_DELEGATED
 	UF_PASSWD_CANT_CHANGE
 	UF_PASSWD_NOTREQD
 	UF_SCRIPT
 	UF_SERVER_TRUST_ACCOUNT
+	UF_SETTABLE_BITS
+	UF_SMARTCARD_REQUIRED
 	UF_TEMP_DUPLICATE_ACCOUNT
+	UF_TRUSTED_FOR_DELEGATION
+	UF_USE_DES_KEY_ONLY
 	UF_WORKSTATION_TRUST_ACCOUNT
 
 	UNITS_PER_WEEK
+
+	UNIVERSAL_NAME_INFO_LEVEL
 
 	Unlock
 
@@ -1909,6 +2014,51 @@ C<LG_INCLUDE_INDIRECT>
 	WNCON_FORNETCARD
 	WNCON_NOTROUTED
 	WNCON_SLOWLINK
+
+	WNNC_CRED_MANAGER
+	WNNC_NET_10NET
+	WNNC_NET_3IN1
+	WNNC_NET_9TILES
+	WNNC_NET_APPLETALK
+	WNNC_NET_AS400
+	WNNC_NET_AVID
+	WNNC_NET_BMC
+	WNNC_NET_BWNFS
+	WNNC_NET_CLEARCASE
+	WNNC_NET_COGENT
+	WNNC_NET_CSC
+	WNNC_NET_DCE
+	WNNC_NET_DECORB
+	WNNC_NET_DISTINCT
+	WNNC_NET_DOCUSPACE
+	WNNC_NET_EXTENDNET
+	WNNC_NET_FARALLON
+	WNNC_NET_FJ_REDIR
+	WNNC_NET_FTP_NFS
+	WNNC_NET_FRONTIER
+	WNNC_NET_HOB_NFS
+	WNNC_NET_IBMAL
+	WNNC_NET_INTERGRAPH
+	WNNC_NET_LANMAN
+	WNNC_NET_LANTASTIC
+	WNNC_NET_LANSTEP
+	WNNC_NET_LIFENET
+	WNNC_NET_LOCUS
+	WNNC_NET_MANGOSOFT
+	WNNC_NET_MASFAX
+	WNNC_NET_MSNET
+	WNNC_NET_NETWARE
+	WNNC_NET_OBJECT_DIRE
+	WNNC_NET_PATHWORKS
+	WNNC_NET_POWERLAN
+	WNNC_NET_PROTSTOR
+	WNNC_NET_RDR2SAMPLE
+	WNNC_NET_SERNET
+	WNNC_NET_SHIVA
+	WNNC_NET_SUN_PC_NFS
+	WNNC_NET_SYMFONET
+	WNNC_NET_TWINS
+	WNNC_NET_VINES
 
 	WTS_CURRENT_SERVER
 	WTS_CURRENT_SERVER_HANDLE
@@ -1982,24 +2132,6 @@ C<LG_INCLUDE_INDIRECT>
 	WTSUserConfigTerminalServerHomeDirDrive
 	WTSUserConfigfTerminalServerRemoteHomeDir
 
-	ACCESS_SYSTEM_SECURITY
-	DELETE
-	GENERIC_ALL
-	GENERIC_EXECUTE
-	GENERIC_READ
-	GENERIC_WRITE
-	MAXIMUM_ALLOWED
-	READ_CONTROL
-	SYNCHRONIZE
-	SPECIFIC_RIGHTS_ALL
-	STANDARD_RIGHTS_REQUIRED
-	STANDARD_RIGHTS_ALL
-	WRITE_DAC
-	WRITE_OWNER
-
-
-
-
 =head2 Useful Hashes
 
 The following hashes are useful, since they group several associated codes form the platform sdk together, 
@@ -2034,7 +2166,6 @@ English descriptions of the service_control constants. Could be used with ....
 
 =item %SERVICE_STATE_DESCRIPTIONS
 
-
 =item %SERVICE_CONTROLS
 
 =item %SERVICE_START_TYPES
@@ -2058,11 +2189,10 @@ English descriptions of the status flag of a NetUseEnum or NetUseGetInfo call
 
 =item %PRIVILEGE_NAMES
 
-A list of privileges which can be set or used when querying. These apply to the functions in the L<privileges> section.
+A list of privileges which can be set or used when querying. These apply to the functions in the 
+L<Policy and Privileges (LSA)> section.
 
 =back
-
-
 
 =head1 FUNCTIONS
 
@@ -2100,10 +2230,16 @@ C<LsaSetAuditFullPolicy> ---
 C<LsaQueryDnsDomainPolicy> ---
 C<LsaSetDnsDomainPolicy> ---
 C<LsaQueryTrustedDomainInfo> ---
+C<LsaSetTrustedDomainInformation> ---
+C<LsaSetTrustedDomainInfo> ---
 C<LsaQueryTrustedDomainNameInfo> ---
+C<LsaSetTrustedDomainNameInfo> ---
 C<LsaQueryTrustedPosixOffsetInfo> ---
+C<LsaSetTrustedPosixOffsetInfo> ---
 C<LsaQueryTrustedPasswordInfo> ---
-
+C<LsaSetTrustedPasswordInfo> ---
+C<LsaRetrievePrivateData> ---
+C<LsaStorePrivateData> ---
 C<LsaEnumerateTrustedDomains> ---
 C<LsaLookupNames> ---
 C<LsaLookupSids> ---
@@ -2123,25 +2259,25 @@ C<NetDfsGetInfo> ---
 C<NetDfsRemove> ---
 C<NetDfsSetInfo> ---
 C<NetDfsMove> ---
-C<NetDfsRename>
-C<NetDfsAddFtRoot>
-C<NetDfsRemoveFtRoot>
-C<NetDfsRemoveFtRootForced>
-C<NetDfsAddStdRoot>
-C<NetDfsAddStdRootForced>
-C<NetDfsRemoveStdRoot>
-C<NetDfsManagerInitialize>
-C<NetDfsGetClientInfo>
-C<NetDfsSetClientInfo>
+C<NetDfsRename> ---
+C<NetDfsAddFtRoot> ---
+C<NetDfsRemoveFtRoot> ---
+C<NetDfsRemoveFtRootForced> ---
+C<NetDfsAddStdRoot> ---
+C<NetDfsAddStdRootForced> ---
+C<NetDfsRemoveStdRoot> ---
+C<NetDfsManagerInitialize> ---
+C<NetDfsGetClientInfo> ---
+C<NetDfsSetClientInfo> ---
 C<NetDfsGetDcAddress>
 
-C<NetGetJoinableOUs>
-C<NetGetJoinInformation>
-C<NetJoinDomain>
-C<NetRenameMachineInDomain>
-C<NetUnjoinDomain>
-C<NetValidateName>
-C<NetRegisterDomainNameChangeNotification>
+C<NetGetJoinableOUs> ---
+C<NetGetJoinInformation> ---
+C<NetJoinDomain> ---
+C<NetRenameMachineInDomain> ---
+C<NetUnjoinDomain> ---
+C<NetValidateName> ---
+C<NetRegisterDomainNameChangeNotification> ---
 C<NetUnregisterDomainNameChangeNotification>
 
 C<NetFileClose> ---
@@ -2167,14 +2303,17 @@ C<NetGroupSetUsers>
 C<NetLocalGroupAdd> ---
 C<NetLocalGroupAddMember> ---
 C<NetLocalGroupAddMembers> ---
+C<NetLocalGroupAddMembersBySid> ---
 C<NetLocalGroupDel> ---
 C<NetLocalGroupDelMember> ---
 C<NetLocalGroupDelMembers> ---
+C<NetLocalGroupDelMembersBySid> ---
 C<NetLocalGroupEnum> ---
 C<NetLocalGroupGetInfo> ---
 C<NetLocalGroupGetMembers> ---
 C<NetLocalGroupSetInfo> ---
-C<NetLocalGroupSetMembers>
+C<NetLocalGroupSetMembers> ---
+C<NetLocalGroupSetMembersBySid>
 
 C<NetMessageBufferSend> ---
 C<NetMessageNameAdd> ---
@@ -2182,7 +2321,7 @@ C<NetMessageNameDel> ---
 C<NetMessageNameEnum> ---
 C<NetMessageNameGetInfo>
 
-C<NetRemoteTOD>
+C<NetRemoteTOD> ---
 C<NetRemoteComputerSupports>
 
 C<NetReplExportDirAdd> ---
@@ -2225,11 +2364,12 @@ C<NetShareCheck> ---
 C<NetShareDel> ---
 C<NetShareEnum> ---
 C<NetShareGetInfo> ---
-C<NetShareSetInfo>
+C<NetShareSetInfo> ---
 C<NetConnectionEnum>
 
 C<NetUserAdd> ---
 C<NetUserChangePassword> ---
+C<NetUserCheckPassword> ---
 C<NetUserDel> ---
 C<NetUserEnum> ---
 C<NetUserGetGroups> ---
@@ -2237,6 +2377,7 @@ C<NetUserGetInfo> ---
 C<NetUserGetLocalGroups> ---
 C<NetUserSetGroups> ---
 C<NetUserSetInfo> ---
+C<NetUserSetProp> ---
 C<NetUserModalsGet> ---
 C<NetUserModalsSet>
 
@@ -2248,6 +2389,20 @@ C<NetWkstaTransportEnum> ---
 C<NetWkstaUserGetInfo> ---
 C<NetWkstaUserSetInfo> ---
 C<NetWkstaUserEnum>
+
+C<WNetAddConnection> ---
+C<WNetCancelConnection> ---
+C<WNetEnumResource> ---
+C<WNetConnectionDialog> ---
+C<WNetDisconnectDialog> ---
+C<WNetGetConnection> ---
+C<WNetGetNetworkInformation> ---
+C<WNetGetProviderName> ---
+C<WNetGetResourceInformation> ---
+C<WNetGetResourceParent> ---
+C<WNetGetUniversalName> ---
+C<WNetGetUser> ---
+C<WNetUseConnection>
 
 C<StartService> ---
 C<StopService> ---
@@ -2268,10 +2423,10 @@ C<QueryServiceLockStatus> ---
 C<QueryServiceConfig> ---
 C<QueryServiceStatus> ---
 C<QueryServiceObjectSecurity> ---
-C<SetServiceObjectSecurity>
-C<QueryServiceConfig2>
-C<ChangeServiceConfig2>
-C<QueryServiceStatusEx>
+C<SetServiceObjectSecurity> ---
+C<QueryServiceConfig2> ---
+C<ChangeServiceConfig2> ---
+C<QueryServiceStatusEx> ---
 C<EnumServicesStatusEx>
 
 C<ReadEventLog> ---
@@ -2282,26 +2437,30 @@ C<ReportEvent> ---
 C<GetNumberOfEventLogRecords> ---
 C<GetOldestEventLogRecord>
 
-C<WTSEnumerateServers>
-C<WTSOpenServer>
-C<WTSCloseServer>
-C<WTSEnumerateSessions>
-C<WTSEnumerateProcesses>
-C<WTSTerminateProcess>
-C<WTSQuerySessionInformation>
-C<WTSQueryUserConfig>
-C<WTSSetUserConfig>
-C<WTSSendMessage>
-C<WTSDisconnectSession>
-C<WTSLogoffSession>
-C<WTSShutdownSystem>
+C<WTSEnumerateServers> ---
+C<WTSOpenServer> ---
+C<WTSCloseServer> ---
+C<WTSEnumerateSessions> ---
+C<WTSEnumerateProcesses> ---
+C<WTSTerminateProcess> ---
+C<WTSQuerySessionInformation> ---
+C<WTSQueryUserConfig> ---
+C<WTSSetUserConfig> ---
+C<WTSSendMessage> ---
+C<WTSDisconnectSession> ---
+C<WTSLogoffSession> ---
+C<WTSShutdownSystem> ---
 C<WTSWaitSystemEvent>
+
+C<SidToString> ---
+C<StringToSid> ---
+C<GuidToString> ---
+C<StringToGuid>
 
 =head2 Windows 2000
 
 This version of Win32::Lanman now supports/implements specific calls which are only available in Windows 2000. If you call one of these 
 routines from NT4, the call will fail and GetLastError() returns the code 127 (procedure not found).
-
 
 =head2 NOTE
 
@@ -2318,9 +2477,6 @@ all server names will be automatically prefaced by two backslashes if they are m
 Note: Win32::Lanman defines some private error codes, which are not currently exported. 
 You cannot call "net helpmsg" for a description of these. Instead you can find the 
 meaning in the usererror.h file included as part of the distribution.
-
-
-
 
 =head2 DFS
 
@@ -2339,7 +2495,6 @@ existing dfs volume.
 
 Enumerates all DFS-Entries on a DFS-Server.
 
-
 =item NetDfsGetInfo($entrypath, $server, $share, \%dfs)
 
 Gets information about a dfs volume. 
@@ -2348,12 +2503,10 @@ of the volume and the specified storage.
 If $server and $share are empty, retrieves information for all 
 storages in the volume.
 
-
 =item NetDfsRemove($entrypath, $server, $share)
 
 Removes a volume or storage space from the dfs directory; when applied
 to the latest storage in a volume, removes the volume from the dfs.
-
 
 =item NetDfsSetInfo($entrypath, $server, $share, \%dfs)
 
@@ -2363,18 +2516,15 @@ Sets dfs volume information. Currently, you can only set the volume comment.
 
 Renames a dfs volume. Not supported in NT4.
 
-
 =item NetDfsMove($oldEntrypath, $newEntrypath)
 
 Moves a dfs volume. Not supported in NT4.
-
 
 =item NetDfsAddFtRoot($server, $rootshare, $ftdfs [, $comment])
 
 Creates the root of a new domain-based Distributed File System implementation. If the root 
 already exists, the function adds the specified server and share to the root. This function 
 requires Windows 2000.
-
 
 =item NetDfsRemoveFtRoot($server, $rootshare, $ftdfs)
 
@@ -2423,10 +2573,9 @@ requires Windows 2000.
 Retrieves information about a Distributed File System domain controller. This function requires 
 Windows 2000.
 
-
 =back
 
-=head2 DFS: EXAMPLES:
+=head2 DFS EXAMPLES:
 
 =over 4
 
@@ -2452,7 +2601,6 @@ add an additional storage space to an existing dfs volume
 	print Win32::Lanman::GetLastError();
 	exit 1;
  }
-
 
 =item NetDfsEnum($server, \@dfs)
 
@@ -2482,7 +2630,6 @@ Enumerates all directories in a dfs structure. @dfs contains all directories in 
 		}
 	}
  }
-
 
 =item NetDfsGetInfo($entrypath, $server, $share, \%dfs)
 
@@ -2522,7 +2669,6 @@ storages in \\testdfsserver\dfsrootdir\dfsdir
 	exit 1;
  }
 
-
  print "$dfs{'entrypath'}\t$dfs{'comment'}\t$dfs{'state'}\n";
  if(exists($dfs{'storage'}))
  {
@@ -2535,7 +2681,6 @@ storages in \\testdfsserver\dfsrootdir\dfsdir
 		print "\t${$$store[$count]}{'state'}\n";
 	}
  }
-
 
 =item NetDfsRemove($entrypath, $server, $share)
 
@@ -2551,7 +2696,6 @@ volume will be removed too.
 	exit 1;
  }
 
-
 =item NetDfsSetInfo($entrypath, $server, $share, \%dfs)
 
 Sets dfs volume comment to "this is a volume name". There is no
@@ -2564,7 +2708,6 @@ difference, if you specify a storage or not.
 	print Win32::Lanman::GetLastError();
 	exit 1;
  }
-
 
 =item NetDfsAddFtRoot($server, $rootshare, $ftdfs [, $comment])
 
@@ -2579,7 +2722,6 @@ sets the comment test comment.
 	exit 1;
  }
 
-
 =item NetDfsRemoveFtRoot($server, $rootshare, $ftdfs)
 
 Removes the dfs share testdfs from the dfs root testdfs on the server \\testserver. If testdfs
@@ -2592,7 +2734,6 @@ is the last share in the dfs root, the function deletes the root testroot.
 	print Win32::Lanman::GetLastError();
 	exit 1;
  }
-
 
 =item NetDfsRemoveFtRootForced($domain, $server, $rootshare, $ftdfs)
 
@@ -2609,7 +2750,6 @@ dfs server which hosts the share testdfs is offline. The function will be execut
 	exit 1;
  }
 
-
 =item NetDfsAddStdRoot($server, $rootshare [, $comment])
 
 Creates the root testroot for a new stand-alone Distributed File System implementation on the
@@ -2622,7 +2762,6 @@ server \\testserver and sets the comment to test comment.
 	print Win32::Lanman::GetLastError();
 	exit 1;
  }
-
 
 =item NetDfsAddStdRootForced($server, $rootshare, $store [, $comment])
 
@@ -2651,7 +2790,6 @@ implementation.
 	exit 1;
  }
 
-
 =item NetDfsManagerInitialize($server)
 
 Reinitializes the Dfs service on the server \\testserver. 
@@ -2663,7 +2801,6 @@ Reinitializes the Dfs service on the server \\testserver.
 	print Win32::Lanman::GetLastError();
 	exit 1;
  }
-
 
 =item NetDfsGetClientInfo($entrypath, $server, $share, \%info)
 
@@ -2708,7 +2845,6 @@ Retrieves information about the testdfs link in the \\testserver\testroot dfs ro
 	exit 1;
  }
 
-
 =item NetDfsSetClientInfo($entrypath, $server, $share, \%info)
 
 Set the timeout to 200 seconds for the testdfs link in the \\testserver\testroot dfs root.
@@ -2721,7 +2857,6 @@ Set the timeout to 200 seconds for the testdfs link in the \\testserver\testroot
 	print Win32::Lanman::GetLastError();
 	exit 1;
  }
-
 
 =item NetDfsGetDcAddress($server, \%info)
 
@@ -2740,7 +2875,6 @@ Retrieves information about a Distributed File System domain controller \\testse
 	print "$key=$info{$key}\n";
  }
 
-
 =back
 
 =head2 Directory Services
@@ -2758,26 +2892,21 @@ requires Windows 2000.
 
 Retrieves the join status information for the specified server. This function requires Windows 2000.
 
-
 =item NetJoinDomain($server, $domain, $account_ou, $account, $password, $options)
 
 Joins a computer to a workgroup or domain. This function requires Windows 2000.
-
 
 =item NetRenameMachineInDomain($server, $new_machine_name, $account, $password, $options)
 
 Changes the name of a computer in a domain. This function requires Windows 2000.
 
-
 =item NetUnjoinDomain($server, $account, $password, $options)
 
 Unjoins a computer from a workgroup or a domain. This function requires Windows 2000.
 
-
 =item NetValidateName($server, $name, $account, $password, $name_type)
 
 Verifies the validity of a computer, workgroup or domain name. This function requires Windows 2000.
-
 
 =item NetRegisterDomainNameChangeNotification($notification_handle)
 
@@ -2785,16 +2914,14 @@ Enables an application to receive a notification when the name of the current do
 When the domain name changes, the specified event object is set to the signaled state. This function 
 requires Windows 2000.
 
-
 =item NetUnregisterDomainNameChangeNotification($notification_handle)
 
 Ends a domain name change notification started by the NetRegisterDomainNameChangeNotification 
 function. This function requires Windows 2000.
 
-
 =back
 
-=head2 Directory Services: EXAMPLES:
+=head2 Directory Services EXAMPLES:
 
 =over 4
 
@@ -2816,7 +2943,6 @@ be created. The command is executed on the server \\testserver.
 	print "$ou\n";
  }
 
-
 =item NetGetJoinInformation($server, \%info)
 
 Retrieves the join status information for the server \\testserver.
@@ -2834,7 +2960,6 @@ Retrieves the join status information for the server \\testserver.
 	print "$key=$info{$key}\n";
  }
 
-
 =item NetJoinDomain($server, $domain, $account_ou, $account, $password, $options)
 
 Joins the computer \\testserver to the domain testdomain.com. The computer will be rejoined if it is 
@@ -2849,7 +2974,6 @@ already joined.
 	exit 1;
  }
 
-
 =item NetRenameMachineInDomain($server, $new_machine_name, $account, $password, $options)
 
 Changes the name of a the computer testserver to testcomputer in the domain.
@@ -2863,7 +2987,6 @@ Changes the name of a the computer testserver to testcomputer in the domain.
 	exit 1;
  }
 
-
 =item NetUnjoinDomain($server, $account, $password, $options)
 
 Unjoins the computer \\testserver from the domain.
@@ -2875,7 +2998,6 @@ Unjoins the computer \\testserver from the domain.
 	print Win32::Lanman::GetLastError();
 	exit 1;
  }
-
 
 =item NetValidateName($server, $name, $account, $password, $name_type)
 
@@ -2889,7 +3011,6 @@ Verifies the validity of domain name testdomain.
 	print Win32::Lanman::GetLastError();
 	exit 1;
  }
-
 
 =item NetRegisterDomainNameChangeNotification($notification_handle)
 
@@ -2909,7 +3030,6 @@ Enables an application to receive a notification when the name of the current do
  # wait til the handle is signaled
  # WaitForSingleObject($handle)
 
-
 =item NetUnregisterDomainNameChangeNotification($notification_handle)
 
 Ends a domain name change notification started by the NetRegisterDomainNameChangeNotification 
@@ -2926,7 +3046,6 @@ function.
 	exit 1;
  }
 
-
 =back
 
 =head2 File
@@ -2937,16 +3056,19 @@ function.
 
 Supplies information about some or all open files on a server.
 
-
 =item NetFileGetInfo($server, $fileid, \%info)
 
 Retrieves information about a particular open file (specified by $fileid) resource on $server.
-
 
 =item NetFileClose($server, $fileid)
 
 Closes a file on a server.
 
+=back
+
+=head2 File EXAMPLES:
+
+=over 4
 
 =item NetFileEnum($server, $basepath, $user, \@info)
 
@@ -2996,7 +3118,6 @@ testuser on server \\testserver.
 	print "\n";
  }
 
-
 =item NetFileGetInfo($server, $fileid, \%info)
 
 Retrieves information about a particular file being opened on $server,
@@ -3018,7 +3139,6 @@ fileid must be valid and obtained by NetFileEnum.
 	print "$key: $info{$key}\n";
  }
 
-
 =item NetFileClose($server, $fileid)
 
 As with NetFileGetInfo, fileid must be valid and obtained by NetFileEnum.
@@ -3035,7 +3155,7 @@ The following code closes the file with fileid 125 on server \\testserver.
 
 =back
 
-=head2 get
+=head2 Get
 
 =over 4
 
@@ -3043,7 +3163,6 @@ The following code closes the file with fileid 125 on server \\testserver.
 
 Returns information about the expected performance of a connection used to access a
 network resource.
-
 
 =item NetGetAnyDCName($server, $domain, \$dcname)
 
@@ -3066,12 +3185,10 @@ In this case proceed as follows: get your pdc or a bdc and execute the NetGetAny
 
 Returns the name of the primary domain controller for domain $domain.
 
-
 =item NetGetDisplayInformationIndex($server, $level, $prefix, \$index)
 
 Gets the index of the first display information entry whose name begins with a specified
 string or alphabetically follows the string.
-
 
 =item NetQueryDisplayInformation($server, $level, $index, $entries, \@info)
 
@@ -3080,7 +3197,7 @@ The number of entries to retrieve ($entries) must be supplied and must be a deci
 
 =back
 
-=head2 EXAMPLES:
+=head2 Get EXAMPLES:
 
 =over 4
 
@@ -3121,7 +3238,6 @@ device name)
 	print "$key: $info{$key}\n";
  }
 
-
 =item NetGetAnyDCName($server, $domain, \$dcname)
 
 Returns the name of a domain controller in domain testdomain. The
@@ -3136,7 +3252,6 @@ command will be executed on server \\testserver.
  }
  print $dcname;
 
-
 =item NetGetDCName($server, $domain, \$pdcname)
 
 Returns the name of the primary domain controller in domain testdomain.
@@ -3150,7 +3265,6 @@ The command will be executed on server \\testserver.
 	exit 1;
  }
  print $pdcname;
-
 
 =item NetGetDisplayInformationIndex($server, $level, $prefix, \$index)
 
@@ -3167,7 +3281,6 @@ on server \\testserver. You can get an index for users accounts (pass
 	exit 1;
  }
  print $index;
-
 
 =item NetQueryDisplayInformation($server, $level, $index, $entries, \@info)
 
@@ -3247,7 +3360,7 @@ accounts on each call.
 
 =back
 
-=head2 groups
+=head2 Groups
 
 =over 4
 
@@ -3256,21 +3369,17 @@ accounts on each call.
 Creates a new global group $group on $server.
 An optional $comment may be specified.
 
-
 =item NetGroupAddUser($server, $group, $user)
 
 Adds a user to a global group $group on $server.
-
 
 =item NetGroupDel($server, $group)
 
 Deletes the global group $group on $server.
 
-
 =item NetGroupDelUser($server, $group, $user)
 
 Deletes a user from a global group $group on server $server.
-
 
 =item NetGroupEnum($server, \@groups)
 
@@ -3278,17 +3387,14 @@ Enumerates all global groups defined on server $server. If successfull, each
 array element contains a hash with group name ('name'), comment
 ('comment'), group id ('group_id') and attributes ('attributes').
 
-
 =item NetGroupGetInfo($server, $group, \%info)
 
 Gets the name, comment, group id and attributes of a global group, storing the result in %info
 ($group should be equal to $info{'name'}).
 
-
 =item NetGroupGetUsers($server, $group, \@users)
 
 Gets the users in a global group.
-
 
 =item NetGroupSetInfo($server, $group, \%info)
 
@@ -3296,12 +3402,16 @@ Sets the name and the comment of a global group.
 Note if $group is set and not equal to $info{'name'}, the group will be renamed. 
 If $info{name} is not set, only the comment will be set.
 
-
 =item NetGroupSetUsers($server, $group, \@users)
 
 Sets the members of a global group.
 Note: This operation is destructive; previous users will be removed.
 
+=back
+
+=head2 Group EXAMPLES:
+
+=over 4
 
 =item NetGroupAdd($server, $group[, $comment])
 
@@ -3316,19 +3426,17 @@ Creates a new global group testgroup on server \\testserver.
 	exit 1;
  }
 
-
 =item NetGroupAddUser($server, $group, $user)
 
 Adds a user testuser to the global group testgroup on \\testserver.
 
- if(!Win32::Lanman::NetLocalGroupAddMembers("\\\\testserver", "testgroup", "testuser"))
+ if(!Win32::Lanman::NetGroupAddUser("\\\\testserver", "testgroup", "testuser"))
  {
 	print "Sorry, something went wrong; error: ";
 	# get the error code
 	print Win32::Lanman::GetLastError();
 	exit 1;
  }
-
 
 =item NetGroupDel($server, $group)
 
@@ -3342,7 +3450,6 @@ Deletes the global group testgroup on server \\testserver.
 	exit 1;
  }
 
-
 =item NetGroupDelUser($server, $group, $user)
 
 Removes a user testuser from global group testgroup on server \\testserver
@@ -3354,7 +3461,6 @@ Removes a user testuser from global group testgroup on server \\testserver
 	print Win32::Lanman::GetLastError();
 	exit 1;
  }
-
 
 =item NetGroupEnum($server, \@groups)
 
@@ -3373,7 +3479,6 @@ Retrieves all global groups on server \\testserver
 	print "${$group}{'name'}\t${$group}{'comment'}\t${$group}{'group_id'}\t${$group}{'attributes'}\n";
  }
 
-
 =item NetGroupGetInfo($server, $group, \%info)
 
 Retrieves information about the global group testgroup on server \\testserver
@@ -3387,7 +3492,6 @@ Retrieves information about the global group testgroup on server \\testserver
  }
 
  print "$info{'name'}\t$info{'comment'}\t$info{'group_id'}\t$info{'attributes'}\n";
-
 
 =item NetGroupGetUsers($server, $group, \@users)
 
@@ -3408,7 +3512,6 @@ Retrieves all user in global group testgroup on server \\testserver
 	print "${$user}{'name'}\t${$user}{'attributes'}\n";
  }
 
-
 =item NetGroupSetInfo($server, $group, \%info)
 
 Sets information for the global group testgroup on server \\testserver.
@@ -3422,7 +3525,6 @@ renames the group.
 	print Win32::Lanman::GetLastError();
 	exit 1;
  }
-
 
 =item NetGroupSetUsers($server, $group, \@users)
 
@@ -3440,7 +3542,7 @@ removed.
 
 =back
 
-=head2 local groups
+=head2 Local Groups
 
 =over 4
 
@@ -3449,11 +3551,9 @@ removed.
 Creates a new local group $group on server $server. You can specify an
 optional comment $comment.
 
-
 =item NetLocalGroupAddMember($server, $group, $sid)
 
 Adds users $sid to a local group on server $server.
-
 
 =item NetLocalGroupAddMembers($server, $group, \@members)
 
@@ -3461,16 +3561,18 @@ Adds members (global groups or users) to a local group $group on
 $server. You can specficy the users or global groups with or without
 domain name.
 
+=item NetLocalGroupAddMembersBySid($server, $group, \@members)
+
+Adds members (global groups or users) to a local group $group on
+$server. You must specficy the users or global groups by sid's.
 
 =item NetLocalGroupDel($server, $group)
 
 Deletes the local group $group on server $server.
 
-
-=item NetLocalGroupAddMember($server, $group, $sid)
+=item NetLocalGroupDelMember($server, $group, $sid)
 
 Removes users $sid from a local group $group on server $server.
-
 
 =item NetLocalGroupDelMembers($server, $group, \@members)
 
@@ -3478,6 +3580,10 @@ Deletes members (global groups or users) of a local group $group on
 server $server. You can specficy the users or global groups with or
 without domain name.
 
+=item NetLocalGroupDelMembersBySid($server, $group, \@members)
+
+Deletes members (global groups or users) of a local group $group on
+server $server. You must specficy the users or global groups by sid's.
 
 =item NetLocalGroupEnum($server, \@groups)
 
@@ -3485,29 +3591,35 @@ Enumerates all local groups defined on server $server. If successfull, each
 array element contains a hash with group name ('name') and comment
 ('comment').
 
-
 =item NetLocalGroupGetInfo($server, $group, \%info)
 
 Gets the name and the comment of a local group ($group should be returned equal to 
 $info{'name'}).
 
-
 =item NetLocalGroupGetMembers($server, $group, \@members)
 
 Gets the members of a local group (users and global groups).
-
 
 =item NetLocalGroupSetInfo($server, $group, \%info)
 
 Sets the name and the comment of a local group ( if $group is not equal
 to $info{'name'}, the group will be renamed).
 
-
 =item NetLocalGroupSetMembers($server, $group, \@members)
 
 Sets the members of a local group (previous members will be removed).
 Members can be users and/or global groups.
 
+=item NetLocalGroupSetMembersBySid($server, $group, \@members)
+
+Sets the members of a local group (previous members will be removed).
+You must specficy the users or global groups by sid's.
+
+=back
+
+=head2 Local Group EXAMPLES:
+
+=over 4
 
 =item NetLocalGroupAdd($server, $group[, $comment])
 
@@ -3535,7 +3647,6 @@ Win32::LookupAccountName. $sid = ...
 	exit 1;
  }
 
-
 =item NetLocalGroupAddMembers($server, $group, \@members)
 
 Adds global groups (glb_grp, domain\glb_grp) and/or users (user,
@@ -3543,9 +3654,8 @@ domain\user) to the local group testgroup on \\testserver.
 
 
  unless(Win32::Lanman::NetLocalGroupAddMembers("testserver", 
-                                            "testgroup", 
-                                           ['glb_grp', 'domain\glb_grp', 'user', 'domain\user'])
-   )
+                                               "testgroup", 
+                                               ['glb_grp', 'domain\glb_grp', 'user', 'domain\user'])
  {
 	print "Sorry, something went wrong; error: ";
 	# get the error code
@@ -3553,6 +3663,30 @@ domain\user) to the local group testgroup on \\testserver.
 	exit 1;
  }
 
+=item NetLocalGroupAddMembersBySid($server, $group, \@members)
+
+Adds global groups (glb_grp, domain\glb_grp) and/or users (user,
+domain\user) to the local group testgroup on \\testserver.
+
+ unless(Win32::Lanman::LsaLookupNames("testserver", 
+                                      ['glb_grp', 'domain\glb_grp', 'user', 'domain\user'], 
+                                      \@sids))
+ {
+	print "Sorry, something went wrong; error: ";
+	# get the error code
+	print Win32::Lanman::GetLastError();
+	exit 1;
+ }
+
+ @members = map { ${$_}{sid} } @sids;
+
+ unless(Win32::Lanman::NetLocalGroupAddMembersBySid("testserver", "testgroup", \@members))
+ {
+	print "Sorry, something went wrong; error: ";
+	# get the error code
+	print Win32::Lanman::GetLastError();
+	exit 1;
+ }
 
 =item NetLocalGroupDel($server, $group)
 
@@ -3565,7 +3699,6 @@ Deletes the local group testgroup on server \\testserver.
 	print Win32::Lanman::GetLastError();
 	exit 1;
  }
-
 
 =item NetLocalGroupDelMember($server, $group, $sid)
 
@@ -3580,7 +3713,6 @@ Win32::LookupAccountName. $sid = ...
 	print Win32::Lanman::GetLastError();
 	exit 1;
  }
-
 
 =item NetLocalGroupDelMembers($server, $group, \@members)
 
@@ -3597,6 +3729,30 @@ domain\user) from the members of the local group testgroup on \\testserver.
 	exit 1;
  }
 
+=item NetLocalGroupDelMembersBySid($server, $group, \@members)
+
+Removes groups (glb_grp, domain\glb_grp) and/or users (user,
+domain\user) from the members of the local group testgroup on \\testserver.
+
+ unless(Win32::Lanman::LsaLookupNames("testserver", 
+                                      ['glb_grp', 'domain\glb_grp', 'user', 'domain\user'], 
+                                      \@sids))
+ {
+	print "Sorry, something went wrong; error: ";
+	# get the error code
+	print Win32::Lanman::GetLastError();
+	exit 1;
+ }
+
+ @members = map { ${$_}{sid} } @sids;
+
+ unless(Win32::Lanman::NetLocalGroupDelMembersBySid("testserver", "testgroup", \@members))
+ {
+	print "Sorry, something went wrong; error: ";
+	# get the error code
+	print Win32::Lanman::GetLastError();
+	exit 1;
+ }
 
 =item NetLocalGroupEnum($server, \@groups)
 
@@ -3615,7 +3771,6 @@ Retrieves all local groups on server \\testserver
 	print "${$group}{'name'}\t${$group}{'comment'}\n";
  }
 
-
 =item NetLocalGroupGetInfo($server, $group, \%info)
 
 Retrieves information about the local group testgroup on server \\testserver
@@ -3629,7 +3784,6 @@ Retrieves information about the local group testgroup on server \\testserver
  }
 
  print "$info{'name'}\t$info{'comment'}\n";
-
 
 =item NetLocalGroupGetMembers($server, $group, \@members)
 
@@ -3650,7 +3804,6 @@ Retrieves all global groups and /or user in local group testgroup on server \\te
 	print "${$member}{'domainandname'}\t${$member}{'sidusage'}\n";
  }
 
-
 =item NetLocalGroupSetInfo($server, $group, \%info)
 
 Sets information for the local group testgroup on server \\testserver.
@@ -3669,7 +3822,6 @@ the group is renamed.
 	print Win32::Lanman::GetLastError();
 	exit 1;
  }
-
 
 =item NetLocalGroupSetMembers($server, $group, \@members)
 
@@ -3691,6 +3843,32 @@ Sets users (user1 and testdomain\user1) and global groups
 	exit 1;
  }
 
+=item NetLocalGroupSetMembersBySid($server, $group, \@members)
+
+Sets users (user1 and testdomain\user1) and global groups
+(testdomain\group1) as members of the local group testgroup on server
+\\testserver. All previous group members will be removed.
+
+ unless(Win32::Lanman::LsaLookupNames("testserver", 
+                                      ['user1', 'testdomain\user1', 'testdomain\group1'], 
+                                      \@sids))
+ {
+	print "Sorry, something went wrong; error: ";
+	# get the error code
+	print Win32::Lanman::GetLastError();
+	exit 1;
+ }
+
+ @members = map { ${$_}{sid} } @sids;
+
+ unless(Win32::Lanman::NetLocalGroupSetMembersBySid("testserver", "testgroup", \@members))
+ {
+	print "Sorry, something went wrong; error: ";
+	# get the error code
+	print Win32::Lanman::GetLastError();
+	exit 1;
+ }
+
 =back
 
 =head2 Netlogon
@@ -3702,7 +3880,6 @@ Sets users (user1 and testdomain\user1) and global groups
 Queries, synchonizes or replicates the sam database between PDC and
 $server. Avoid direct calls. Use the wrapper functions below.
 
-
 =item I_NetLogonControl2($server, $function, $data, \%info)
 
 Queries, synchonizes or replicates the sam database between PDC and
@@ -3710,51 +3887,41 @@ $server. Queries and resets secure channels. Notifies a new transport is
 coming up. Finds user names. Avoid direct calls. Use the wrapper
 functions below.
 
-
 =item LogonControlQuery($server, \%info)
 
 Queries the status of the sam database on $server.
-
 
 =item LogonControlReplicate($server, \%info)
 
 Replicates the changes of the sam database on $server.
 
-
 =item LogonControlSynchronize($server, \%info)
 
 Synchronizes the sam database between $server and a PDC.
-
 
 =item LogonControlPdcReplicate($server, \%info)
 
 Forces all BDC's to synchronize the sam database with the PDC $server.
 
-
 =item LogonControlRediscover($server, $domain, \%info)
 
 Resets the secure channel for a domain $domain on a server $server.
-
 
 =item LogonControlTCQuery($server, $domain, \%info)
 
 Queries the status of the secure channel for domain $domain on a server $server.
 
-
 =item LogonControlTransportNotify($server, \%info)
 
 Informs the server $server about the coming up of a new transport.
-
 
 =item LogonControlFindUser($server, $user, \%info)
 
 Finds a user $user in a trusted domain. The command will be executed on server $server.
 
-
 =item NetEnumerateTrustedDomains($server, \@domains)
 
 Enumerates all trusted domain names. The command will be executed on server $server.
-
 
 =item I_NetGetDCList($server, $domain, \@controllers)
 
@@ -3762,7 +3929,7 @@ Enumerates all domain controllers in a domain. The command will be executed on s
 
 =back
 
-=head2 EXAMPLES:
+=head2 Netlogon EXAMPLES:
 
 =over 4
 
@@ -3836,7 +4003,6 @@ Forces to send a synchronize request to all BDC's. \\testserver must be a PDC.
 	print "$key=$info{$key}\n";
  }
 
-
 =item I_NetLogonControl2($server, $function, \%info)
 
 Rediscovers a secure channel for domain testdomain on server \\testserver.
@@ -3908,7 +4074,6 @@ will be excuted on server \\testserver.
 	print "$key=$info{$key}\n";
  }
 
-
 =item LogonControlQuery($server, \%info)
 
 Queries the status of \\testserver. \\testserver must be a PDC or BDC.
@@ -3927,7 +4092,6 @@ Queries the status of \\testserver. \\testserver must be a PDC or BDC.
  {
 	print "$key=$info{$key}\n";
  }
-
 
 =item LogonControlReplicate($server, \%info)
 
@@ -3948,7 +4112,6 @@ Replicates the sam changes of \\testserver with the PDC. \\testserver must be a 
 	print "$key=$info{$key}\n";
  }
 
-
 =item LogonControlSynchronize($server, \%info)
 
 Synchronizes the sam of \\testserver with the PDC. \\testserver must be a PDC or BDC.
@@ -3967,7 +4130,6 @@ Synchronizes the sam of \\testserver with the PDC. \\testserver must be a PDC or
  {
 	print "$key=$info{$key}\n";
  }
-
 
 =item LogonControlPdcReplicate($server, \%info)
 
@@ -3988,7 +4150,6 @@ Forces a synchronize request to be sent to all BDC's. \\testserver must be a PDC
 	print "$key=$info{$key}\n";
  }
 
-
 =item LogonControlRediscover($server, $domain, \%info)
 
 Rediscovers a secure channel for domain testdomain on server \\testserver.
@@ -4007,7 +4168,6 @@ Rediscovers a secure channel for domain testdomain on server \\testserver.
  {
 	print "$key=$info{$key}\n";
  }
-
 
 =item LogonControlTCQuery($server, $domain, \%info)
 
@@ -4028,7 +4188,6 @@ Queries the status of the secure channel for domain testdomain on server \\tests
 	print "$key=$info{$key}\n";
  }
 
-
 =item LogonControlTransportNotify($server, \%info)
 
 Informs the server \\testserver about the coming up of a new transport.
@@ -4047,7 +4206,6 @@ Informs the server \\testserver about the coming up of a new transport.
  {
 	print "$key=$info{$key}\n";
  }
-
 
 =item LogonControlFindUser($server, $user, \%info)
 
@@ -4069,7 +4227,6 @@ on server \\testserver.
 	print "$key=$info{$key}\n";
  }
 
-
 =item NetEnumerateTrustedDomains($server, \@domains)
 
 Enumerates all trusted domain names. The command will be executed on server \\testserver.
@@ -4086,7 +4243,6 @@ Enumerates all trusted domain names. The command will be executed on server \\te
  {
 	print "$domain\n";
  }
-
 
 =item I_NetGetDCList($server, $domain, \@controllers)
 
@@ -4116,26 +4272,27 @@ on server \\testserver.
 
 Sends a message.
 
-
 =item NetMessageNameAdd($server, $messagename)
 
 Registers a message alias in the message name table.
-
 
 =item NetMessageNameAdd($server, $messagename)
 
 Deletes a message alias from the table of message aliases.
 
-
 =item NetMessageNameEnum($server, \@info)
 
 Lists the message aliases that will receive messages.
-
 
 =item NetMessageNameGetInfo($server, $messagename, \$info)
 
 Retrieves information about a message alias in the message name table.
 
+=back
+
+=head2 Message Related Functions EXAMPLES:
+
+=over 4
 
 =item NetMessageBufferSend($server, $to, $from, $message)
 
@@ -4150,7 +4307,6 @@ Sends the message "this is a message" from computer1 to user1. The command will 
 	exit 1;
  }
 
-
 =item NetMessageNameAdd($server, $messagename)
 
 Registers the message alias user1 in the message on server \\testserver.
@@ -4163,7 +4319,6 @@ Registers the message alias user1 in the message on server \\testserver.
 	exit 1;
  }
 
-
 =item NetMessageNameDel($server, $messagename)
 
 Deletes the message alias user1 in the message on server \\testserver.
@@ -4175,7 +4330,6 @@ Deletes the message alias user1 in the message on server \\testserver.
 	print Win32::Lanman::GetLastError();
 	exit 1;
  }
-
 
 =item NetMessageNameEnum($server, $messagename)
 
@@ -4194,7 +4348,6 @@ Lists the message aliases that will receive messages on server \\testserver.
 	print "$_\n";
  }
 
-
 =item NetMessageNameGetInfo($server, $messagename, \$info)
 
 Retrieves information about the message alias user1 in the message name
@@ -4212,7 +4365,7 @@ table on server \\testserver.
 
 =back
 
-=head2  policy
+=head2 Policy and Privileges (LSA)
 
 =over 4
 
@@ -4233,109 +4386,89 @@ Please use the second form , it is less prone to error.
 Sets policy information. Don't call LsaSetInformationPolicy directly. Use the 
 LsaSetXXXPolicy wrappers instead (see below).
 
-
 =item LsaQueryAuditLogPolicy($server, \%info)
 
 Queries audit log policy information.
-
 
 =item LsaQueryAuditEventsPolicy($server, \%info)
 
 Queries audit event policy information (if auditing is enabled and which events will be
 logged).
 
-
 =item LsaSetAuditEventsPolicy($server, \%info)
 
 Sets audit event policy information.
-
 
 =item LsaQueryPrimaryDomainPolicy($server, \%info)
 
 Queries primary domain policy information (domain name and domain sid).
 
-
 =item LsaSetPrimaryDomainPolicy($server, \%info)
 
 Sets primary domain policy information (domain name and domain sid).
-
 
 =item LsaQueryPdAccountPolicy($server, \%info)
 
 Queries the primary domain account used for authentication and lookup requests. It returns
 always an empty string. This should be a bug in the call.
 
-
 =item LsaQueryAccountDomainPolicy($server, \%info)
 
 Queries account domain policy information (workstation name and sid).
-
 
 =item LsaSetAccountDomainPolicy($server, \%info)
 
 Sets account domain policy information (workstation name and sid).
 
-
 =item LsaQueryServerRolePolicy($server, \%info)
 
 Queries server role policy information (type of server: pdc, bdc).
-
 
 =item LsaSetServerRolePolicy($server, \%info)
 
 Sets server role policy information (type of server: pdc, bdc).
 
-
 =item LsaQueryReplicaSourcePolicy($server, \%info)
 
 Queries the replication source server (pdc) policy information.
-
 
 =item LsaSetReplicaSourcePolicy($server, \%info)
 
 Sets the replication source server (pdc) policy information.
 
-
 =item LsaQueryDefaultQuotaPolicy($server, \%info)
 
 Queries the default quota policy information.
 
-
 =item LsaSetDefaultQuotaPolicy($server, \%info)
 
 Sets the default quota policy information.
-
 
 =item LsaQueryAuditFullPolicy($server, \%info)
 
 Queries the audit full policy information (if a shutdown is raised, when the audit log
 is full and if the log is full).
 
-
 =item LsaQueryAuditFullPolicy($server, \%info)
 
 Sets the audit full policy information (if a shutdown is raised, when the audit log
 is full).
-
 
 =item LsaQueryDnsDomainPolicy($server, \%info)
 
 Queries the dns domain policy information. This call is only supported in nt 5 and it's
 not tested!
 
-
 =item LsaSetDnsDomainPolicy($server, \%info)
 
 Sets the dns domain policy information. This call is only supported in nt 5 and it's
 not tested!
-
 
 =item LsaEnumerateTrustedDomains($server, \@domains)
 
 Enumerates all trusted domains. If you execute this on a workstation or a member server,
 you'll get your domain and the domain sid. If you execute this on a PDC or BDC, you'll
 get a list of all trusted domains and their sid's.
-
 
 =item LsaLookupNames($server, \@accounts, \@info)
 
@@ -4344,7 +4477,6 @@ sid's. Unlike to the LsaLookupNames api call, it returns success if at least one
 could be resolved. If an account couldn't be resolved, the use flag has the value 8
 (SidTypeUnknown).
 
-
 =item LsaLookupSids($server, \@sids, \@info)
 
 Looks up for sid's and returns the appropriate names, domains, sid's and domain
@@ -4352,13 +4484,11 @@ sid's. Unlike to the LsaLookupsids api call, it returns success if at least one 
 could be resolved. If a sid couldn't be resolved, the use flag has the value 7
 (SidTypeInvalid) or 8 (SidTypeUnknown).
 
-
 =item LsaEnumerateAccountsWithUserRight($server, $privilege, \@sids)
 
 Enumerates all sids granted a privilege. To convert sid's to account names use LsaLookupSids.
 If the privilege is not granted to anybody, the error code is 259. This is not an error,
 it's by design.
-
 
 =item LsaEnumerateAccountRights($server, $sid, \@privileges)
 
@@ -4366,13 +4496,11 @@ Enumerates all privileges granted to a sid. To convert account names to sid's us
 LsaLookupNames. If the sid has not granted any privileges, the error code is 2.
 This is not an error, it's by design.
 
-
 =item LsaAddAccountRights($server, $sid, \@privileges)
 
 Grants privileges to a sid. To convert account names to sid's use LsaLookupNames. Be
 really carefully with the sid. If the sid does not belong to a user, LsaAddAccountRights
 creates a new user without a user name.
-
 
 =item LsaRemoveAccountRights($server, $sid, \@privileges, [$all])
 
@@ -4382,52 +4510,69 @@ this case, @privileges has no meaning. Note: there is a mistake in the documenta
 from Microsoft (see the platform sdk). If you remove all privileges with the $all
 parameter the account won't be deleted.
 
-
 =item LsaQueryTrustedDomainInfo($server, $domainsid, $infotype, \%info)
 
 Queries information about trusted domains. Don't call LsaQueryTrustedDomainInfo directly.
 Use the wrappers LsaQueryTrustedXXXInfo instead.
 
+=item LsaSetTrustedDomainInformation($server, $domainsid, $infotype, \%info)
+
+Sets information about trusted domains. Don't call LsaSetTrustedDomainInformation
+directly. Use the wrappers LsaSetTrustedXXXInfo instead.
+
+=item LsaSetTrustedDomainInfo($server, $domainsid, $infotype, \%info)
+
+Sets information about trusted domains. Don't call LsaSetTrustedDomainInfo directly. Use 
+the wrappers LsaSetTrustedXXXInfo instead.
 
 =item LsaQueryTrustedDomainNameInfo($server, $domainsid, \%info)
 
 Queries the domain name info for a trusted domain.
 
+=item LsaSetTrustedDomainNameInfo($server, $domainsid, \%info)
+
+Sets the domain name info for a trusted domain. If the specified domain is not in the list 
+of trusted domains, the function adds it.
 
 =item LsaQueryTrustedPosixOffsetInfo($server, $domainsid, \%info)
 
 Queries the posix rid used to create posix users or groups for a trusted domain.
 
+=item LsaSetTrustedPosixOffsetInfo($server, $domainsid, \%info)
+
+Sets the posix rid used to create posix users or groups for a trusted domain.
 
 =item LsaQueryTrustedPasswordInfo($server, $domainsid, \%info)
 
 Queries the passwords used by trust connections for a trusted domain.
 
+=item LsaSetTrustedPasswordInfo($server, $domainsid, \%info)
 
-=back
+Sets the passwords used by trust connections for a trusted domain.
 
-=head2 privileges
+=item LsaRetrievePrivateData($server, $key, \$data)
 
-=over 4
+Retrieves private data that was stored by the LsaStorePrivateData.
+
+=item LsaStorePrivateData($server, $key, \$data)
+
+Stores or deletes private data under a specified registry key.
 
 =item GrantPrivilegeToAccount($server, $privilege, \@accounts)
 
 Grants a privilege to users and/or groups. Avoid using GrantPrivilegeToAccount. Use
 LsaAddAccountRights instead.
 
-
 =item RevokePrivilegeFromAccount($server, $privilege, \@accounts)
 
 Revokes a privilege from users and/or groups. Avoid using RevokePrivilegeFromAccount. Use
 LsaRemoveAccountRights instead.
-
 
 =item EnumAccountPrivileges($server, $account, \@privileges)
 
 Enumerates privileges held by an user or group. If the user has not granted any privileges,
 the error code is 2. This is not an error, it's by design. Avoid using
 EnumAccountPrivileges. Use LsaEnumerateAccountRights instead.
-
 
 =item EnumPrivilegeAccounts($server, $privilege, \@accounts)
 
@@ -4438,7 +4583,7 @@ Avoid using EnumPrivilegeAccounts. Use LsaEnumerateAccountsWithUserRight instead
 
 =back
 
-=head2 LSA EXAMPLES:
+=head2 Policy and Privileges (LSA) EXAMPLES:
 
 =over 4
 
@@ -4459,7 +4604,6 @@ directly. Use the wrappers LsaQueryXXXPolicy instead (see examples below).
  {
 	print "$key=$info{$key}\n";
  }
-
 
 =item LsaSetInformationPolicy($server, $infotype, \%info)
 
@@ -4490,7 +4634,6 @@ directly. Use the wrappers LsaSetXXXPolicy instead (see examples below).
 	exit 1;
  }
 
-
 =item LsaQueryAuditLogPolicy($server, \%info)
 
 Queries the audit log policies on server \\testserver.
@@ -4507,7 +4650,6 @@ Queries the audit log policies on server \\testserver.
  {
 	print "$key=$info{$key}\n";
  }
-
 
 =item LsaQueryAuditEventsPolicy($server, \%info)
 
@@ -4534,7 +4676,6 @@ Queries the audit event policies on server \\testserver.
 		print "\t$option\n";
 	}
  }
-
 
 =item LsaSetAuditEventsPolicy($server, \%info)
 
@@ -4564,7 +4705,6 @@ Sets audit event policy information on server \\testserver.
 	exit 1;
  }
 
-
 =item LsaQueryPrimaryDomainPolicy($server, \%info)
 
 Queries primary domain policy information on server \\testserver.
@@ -4579,7 +4719,6 @@ Queries primary domain policy information on server \\testserver.
 
  print "name=$info{name}\n";
  print "sid=", unpack("H" . 2 * length($info{sid}), $info{sid}), "\n";
-
 
 =item LsaSetPrimaryDomainPolicy($server, \%info)
 
@@ -4605,7 +4744,6 @@ server \\testserver1.
 	exit 1;
  }
 
-
 =item LsaQueryPdAccountPolicy($server, \%info)
 
 Queries the primary domain account used for authentication and lookup requests on
@@ -4624,7 +4762,6 @@ server \\testserver. It returns always an empty string. This should be a bug in 
 	print "$key=$info{$key}\n";
  }
 
-
 =item LsaQueryAccountDomainPolicy($server, \%info)
 
 Queries account domain policy information on server \\testserver.
@@ -4639,7 +4776,6 @@ Queries account domain policy information on server \\testserver.
 
  print "domainname=$info{domainname}\n";
  print "domainsid=", unpack("H" . 2 * length($info{domainsid}), $info{domainsid}), "\n";
-
 
 =item LsaSetAccountDomainPolicy($server, \%info)
 
@@ -4666,7 +4802,6 @@ $info{domainname} = 'testserver2';
 	exit 1;
  }
 
-
 =item LsaQueryServerRolePolicy($server, \%info)
 
 Queries server role policy information on server \\testserver.
@@ -4684,7 +4819,6 @@ Queries server role policy information on server \\testserver.
 	print "$key=$info{$key}\n";
  }
 
-
 =item LsaSetServerRolePolicy($server, \%info)
 
 Sets server role policy information to PolicyServerRoleBackup on server \\testserver.
@@ -4697,7 +4831,6 @@ Sets server role policy information to PolicyServerRoleBackup on server \\testse
 	print Win32::Lanman::GetLastError();
 	exit 1;
  }
-
 
 =item LsaQueryReplicaSourcePolicy($server, \%info)
 
@@ -4716,7 +4849,6 @@ Queries replication source server on server \\testserver.
 	print "$key=$info{$key}\n";
  }
 
-
 =item LsaSetReplicaSourcePolicy($server, \%info)
 
 Sets replication source server to \\testserver2 on server \\testserver.
@@ -4729,7 +4861,6 @@ Sets replication source server to \\testserver2 on server \\testserver.
 	print Win32::Lanman::GetLastError();
 	exit 1;
  }
-
 
 =item LsaQueryDefaultQuotaPolicy($server, \%info)
 
@@ -4747,7 +4878,6 @@ Queries the default quota policy information on server \\testserver.
  {
 	print "$key=$info{$key}\n";
  }
-
 
 =item LsaQueryDefaultQuotaPolicy($server, \%info)
 
@@ -4772,7 +4902,6 @@ minimum working set size).
 	exit 1;
  }
 
-
 =item LsaQueryAuditFullPolicy($server, \%info)
 
 Queries the audit full policy information on server \\testserver.
@@ -4790,7 +4919,6 @@ Queries the audit full policy information on server \\testserver.
 	print "$key=$info{$key}\n";
  }
 
-
 =item LsaSetAuditFullPolicy($server, \%info)
 
 Sets the audit full policy information on server \\testserver. The server
@@ -4803,7 +4931,6 @@ will shut down, if the audit log is full.
 	print Win32::Lanman::GetLastError();
 	exit 1;
  }
-
 
 =item LsaQueryDnsDomainPolicy($server, \%info)
 
@@ -4823,7 +4950,6 @@ supported in nt 5 and is currently untested!
  print "dnsforestname=$info{dnsforestname}\n";
  print "guid=", unpack("H" . 2 * length($info{guid}), $info{guid}), "\n";
  print "sid=", unpack("H" . 2 * length($info{sid}), $info{sid}), "\n";
-
 
 =item LsaQueryDnsDomainPolicy($server, \%info)
 
@@ -4848,7 +4974,6 @@ supported in nt 5 and is currently untested!
 	print Win32::Lanman::GetLastError();
 	exit 1;
  }
-
 
 =item LsaEnumerateTrustedDomains($server, \@domains)
 
@@ -4907,10 +5032,732 @@ Enumerate all Trusted domains for your workstation
 
  foreach my $domain (@domains)
  {
-;
+	next
+		unless Win32::Lanman::NetGetAnyDCName("", ${$domain}{name},\$prim_dom_dcname);
+
+	print "name=${$domain}{name}, anydc=$prim_dom_dcname\n";
+
+	next
+		unless Win32::Lanman::LsaEnumerateTrustedDomains($prim_dom_dcname, \@trusts);
+
+	foreach $trust(@trusts)
+	{
+		next
+			unless Win32::Lanman::NetGetAnyDCName($prim_dom_dcname, ${$trust}{name}, \$dcname);
+
+		print "$prim_dom_dcname Trusts name=${$trust}{name}, anydc=$dcname\n";
+	}
+ }
+
+=item LsaLookupNames($server, \@accounts, \@info)
+
+Looks up for account names in @account on server \\testserver and returns the appropriate
+rid, domains, sid's and domain sid's.
+
+ @accounts = ('user1', 'user2', 'group1', 'testdomain\\group2');
+
+ if(!Win32::Lanman::LsaLookupNames("\\\\testserver", @accounts, \@infos))
+ {
+	print "Sorry, something went wrong; error: ";
+	# get the error code
+	print Win32::Lanman::GetLastError();
 	exit 1;
  }
 
+ foreach $info (@infos)
+ {
+	print "name=", $accounts[$count++], "\n";
+
+	@keys = sort keys %$info;
+
+	foreach $key(@keys)
+	{
+		if($key eq "domainsid" || $key eq "sid")
+		{
+			print "$key=" . unpack("H" . 2 * length(${$info}{$key}), ${$info}{$key}) . "\n";
+		}
+		else
+		{
+			print "$key=${$info}{$key}\n";
+		}
+	}
+ }
+
+=item LsaLookupSids($server, \@sids, \@info)
+
+Looks up for sid's in @sids on server \\testserver and returns the appropriate
+account names, domains, sid's and domain sid's.
+
+ @sids = (
+	pack("C12", 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0),		#everyone
+	pack("C12", 1, 1, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0),		#local
+	pack("C12", 1, 1, 0, 0, 0, 0, 0, 5, 2, 0, 0, 0),		#network
+	pack("C12", 1, 1, 0, 0, 0, 0, 0, 5, 3, 0, 0, 0),		#batch
+	pack("C12", 1, 1, 0, 0, 0, 0, 0, 5, 6, 0, 0, 0),		#service
+	pack("C12", 1, 1, 0, 0, 0, 0, 0, 5, 3, 0, 0, 0),		#batch
+	pack("C16", 1, 2, 0, 0, 0, 0, 0, 5, 32, 0, 0, 0, 32, 2, 0 ,0),	#administrators
+	pack("C16", 1, 2, 0, 0, 0, 0, 0, 5, 32, 0, 0, 0, 33, 2, 0 ,0),	#users
+	pack("C16", 1, 2, 0, 0, 0, 0, 0, 5, 32, 0, 0, 0, 34, 2, 0 ,0)	#guests
+ );
+
+ if(!Win32::Lanman::LsaLookupSids("\\\\testserver", \@sids, \@infos))
+ {
+	print "Sorry, something went wrong; error: ";
+	# get the error code
+	print Win32::Lanman::GetLastError();
+	exit 1;
+ }
+
+
+ foreach $info (@infos)
+ {
+	print "sid=" . unpack("H" . 2 * length($sids[$count]), $sids[$count++]) . "\n";
+
+	@keys = sort keys %$info;
+
+	foreach $key(@keys)
+	{
+		if($key eq "domainsid")
+		{
+			print "$key=" . unpack("H" . 2 * length(${$info}{$key}), ${$info}{$key}) . "\n";
+		}
+		else
+		{
+			print "$key=${$info}{$key}\n";
+		}
+	}
+
+ }
+
+=item LsaEnumerateAccountsWithUserRight($server, $privilege, \@sids)
+
+Enums all accounts granted the SeNetworkLogonRight privilege on server \\testserver.
+
+ if(!Win32::Lanman::LsaEnumerateAccountsWithUserRight("\\\\testserver", &SE_NETWORK_LOGON_NAME, \@sids))
+ {
+	print "Sorry, something went wrong; error: ";
+	# get the error code
+	print Win32::Lanman::GetLastError();
+	exit 1;
+ }
+
+ if(!Win32::Lanman::LsaLookupSids("\\\\testserver", \@sids, \@infos))
+ {
+	print "Sorry, something went wrong; error: ";
+	# get the error code
+	print Win32::Lanman::GetLastError();
+	exit 1;
+ }
+
+ foreach $info (@infos)
+ {
+	@keys = sort keys %$info;
+
+	foreach $key(@keys)
+	{
+		if($key eq "domainsid" || $key eq "sid")
+		{
+			print "$key=" . unpack("H" . 2 * length(${$info}{$key}), ${$info}{$key}) . "\n";
+		}
+		else
+		{
+			print "$key=${$info}{$key}\n";
+		}
+	}
+ }
+
+=item LsaEnumerateAccountRights($server, $sid, \@privileges)
+
+Enumerates all privileges granted to the account testuser on server \\testserver.
+
+ if(!Win32::Lanman::LsaLookupNames("\\\\testserver", ['testuser'], \@infos))
+ {
+	print "Sorry, something went wrong; error: ";
+	# get the error code
+	#print
+	print Win32::Lanman::GetLastError();
+	exit 1;
+ }
+
+ if(!Win32::Lanman::LsaEnumerateAccountRights("\\\\testserver", ${$infos[0]}{sid}, \@privileges))
+ {
+	print "Sorry, something went wrong; error: ";
+	# get the error code
+	#print
+	print Win32::Lanman::GetLastError();
+	exit 1;
+ }
+
+ foreach $priv(@privileges)
+ {
+	print "$priv\n";
+ }
+
+=item LsaAddAccountRights($server, $sid, \@privileges)
+
+Grants privileges SeBackupPrivilege, SeRestorePrivilege, SeShutdownPrivilege and
+SeDebugPrivilege to user testuser on server \\testserver.
+
+ if(!Win32::Lanman::LsaLookupNames("\\\\testserver", ['testuser'], \@infos))
+ {
+	print "Sorry, something went wrong; error: ";
+	# get the error code
+	#print
+	print Win32::Lanman::GetLastError();
+	exit 1;
+ }
+
+ if(!Win32::Lanman::LsaAddAccountRights("\\\\testserver", ${$infos[0]}{sid},
+				[&SE_BACKUP_NAME, &SE_RESTORE_NAME, &SE_SHUTDOWN_NAME, &SE_DEBUG_NAME]))
+ {
+	print "Sorry, something went wrong; error: ";
+	# get the error code
+	#print
+	print Win32::Lanman::GetLastError();
+	exit 1;
+ }
+
+=item LsaRemoveAccountRights($server, $sid, \@privileges, [$all])
+
+Removes the privileges SeBackupPrivilege, SeRestorePrivilege, SeShutdownPrivilege
+and SeDebugPrivilege from the user testuser on server \\testserver.
+
+ if(!Win32::Lanman::LsaLookupNames("\\\\testserver", ['testuser'], \@infos))
+ {
+	print "Sorry, something went wrong; error: ";
+	# get the error code
+	#print
+	print Win32::Lanman::GetLastError();
+	exit 1;
+ }
+
+ if(!Win32::Lanman::LsaRemoveAccountRights("\\\\testserver", ${$infos[0]}{sid},
+				[&SE_BACKUP_NAME, &SE_RESTORE_NAME, &SE_SHUTDOWN_NAME, &SE_DEBUG_NAME]))
+ {
+	print "Sorry, something went wrong; error: ";
+	# get the error code
+	#print
+	print Win32::Lanman::GetLastError();
+	exit 1;
+ }
+
+Removes all privileges from the user testuser on server \\testserver.
+
+ if(!Win32::Lanman::LsaLookupNames("\\\\testserver", ['testuser'], \@infos))
+ {
+	print "Sorry, something went wrong; error: ";
+	# get the error code
+	#print
+	print Win32::Lanman::GetLastError();
+	exit 1;
+ }
+
+ if(!Win32::Lanman::LsaRemoveAccountRights("\\\\testserver", ${$infos[0]}{sid}, [], 1))
+ {
+	print "Sorry, something went wrong; error: ";
+	# get the error code
+	#print
+	print Win32::Lanman::GetLastError();
+	exit 1;
+ }
+
+=item LsaQueryTrustedDomainInfo($server, $domainsid, $infotype, \%info)
+
+Queries the trusted domain passwords for domain testdomain on server \\testserver. Don't call
+LsaQueryTrustedDomainInfo directly. Use the wrappers LsaQueryTrustedXXXInfo instead (see
+examples below).
+
+ if(!Win32::Lanman::LsaLookupNames("\\\\testserver", ['testdomain'], \@domain))
+ {
+	print "Sorry, something went wrong; error: ";
+	# get the error code
+	print Win32::Lanman::GetLastError();
+	exit 1;
+ }
+
+ if(!Win32::Lanman::LsaQueryTrustedDomainInfo("\\\\testserver", ${$domain[0]}{domainsid}, &TrustedPasswordInformation, \%info))
+ {
+	print "Sorry, something went wrong; error: ";
+	# get the error code
+	print Win32::Lanman::GetLastError();
+	exit 1;
+ }
+
+ print "password=" . unpack("H" . 2 * length($info{password}), $info{password}) . "\n";
+ print "oldpassword=" . unpack("H" . 2 * length($info{oldpassword}), $info{oldpassword}) . "\n";
+
+=item LsaSetTrustedDomainInformation($server, $domainsid, $infotype, \%info)
+
+Sets the trusted domain passwords for domain testdomain on server \\testserver to newpassword.
+Don't call LsaSetTrustedDomainInformation directly. Use the wrappers LsaQueryTrustedXXXInfo 
+instead (see examples below).
+
+ if(!Win32::Lanman::LsaLookupNames("\\\\testserver", ['testdomain'], \@domain))
+ {
+	print "Sorry, something went wrong; error: ";
+	# get the error code
+	print Win32::Lanman::GetLastError();
+	exit 1;
+ }
+
+ if(!Win32::Lanman::LsaSetTrustedDomainInformation("\\\\testserver", ${$domain[0]}{domainsid}, 
+                                                   &TrustedPasswordInformation, 
+                                                   { password => 'newpassword'}))
+ {
+	print "Sorry, something went wrong; error: ";
+	# get the error code
+	print Win32::Lanman::GetLastError();
+	exit 1;
+ }
+
+=item LsaSetTrustedDomainInfo($server, $domainsid, $infotype, \%info)
+
+Sets the trusted domain passwords for domain testdomain on server \\testserver to newpassword.
+Don't call LsaSetTrustedDomainInfo directly. Use the wrappers LsaQueryTrustedXXXInfo instead 
+(see examples below).
+
+ if(!Win32::Lanman::LsaLookupNames("\\\\testserver", ['testdomain'], \@domain))
+ {
+	print "Sorry, something went wrong; error: ";
+	# get the error code
+	print Win32::Lanman::GetLastError();
+	exit 1;
+ }
+
+ if(!Win32::Lanman::LsaSetTrustedDomainInfo("\\\\testserver", ${$domain[0]}{domainsid}, 
+                                            &TrustedPasswordInformation, 
+                                            { password => 'newpassword'}))
+ {
+	print "Sorry, something went wrong; error: ";
+	# get the error code
+	print Win32::Lanman::GetLastError();
+	exit 1;
+ }
+
+=item LsaQueryTrustedDomainNameInfo($server, $domainsid, \%info)
+
+Queries the domain name info for domain testdomain on server \\testserver.
+
+ if(!Win32::Lanman::LsaLookupNames("\\\\testserver", ['testdomain'], \@domain))
+ {
+	print "Sorry, something went wrong; error: ";
+	# get the error code
+	print Win32::Lanman::GetLastError();
+	exit 1;
+ }
+
+ if(!Win32::Lanman::LsaQueryTrustedDomainNameInfo("\\\\testserver", ${$domain[0]}{domainsid}, \%info))
+ {
+	print "Sorry, something went wrong; error: ";
+	# get the error code
+	print Win32::Lanman::GetLastError();
+	exit 1;
+ }
+
+ foreach $key(sort keys %info)
+ {
+	print "$key=$info{$key}\n";
+ }
+
+=item LsaSetTrustedDomainNameInfo($server, $domainsid, \%info)
+
+Sets the trusted domain name for testdomain on the domain \\testserver belongs to. If testdomain isn't 
+already a member of the trusted domain list, the function adds it. Keep in mind, this function is not
+tested completely.
+
+ if(!Win32::Lanman::LsaLookupNames("\\\\testserver", ['testdomain'], \@domain))
+ {
+	print "Sorry, something went wrong; error: ";
+	# get the error code
+	print Win32::Lanman::GetLastError();
+	exit 1;
+ }
+
+ if(!Win32::Lanman::LsaSetTrustedDomainNameInfo("\\\\testserver", ${$domain[0]}{domainsid}, {name => 'testdomain'}))
+ {
+	print "Sorry, something went wrong; error: ";
+	# get the error code
+	print Win32::Lanman::GetLastError();
+	exit 1;
+ }
+
+=item LsaQueryTrustedPosixOffsetInfo($server, $domainsid, \%info)
+
+Queries the posix rid used to create posix users or groups for domain testdomain
+on server \\testserver.
+
+ if(!Win32::Lanman::LsaLookupNames("\\\\testserver", ['testdomain'], \@domain))
+ {
+	print "Sorry, something went wrong; error: ";
+	# get the error code
+	print Win32::Lanman::GetLastError();
+	exit 1;
+ }
+
+ if(!Win32::Lanman::LsaQueryTrustedPosixOffsetInfo("\\\\testserver", ${$domain[0]}{domainsid}, \%info))
+ {
+	print "Sorry, something went wrong; error: ";
+	# get the error code
+	print Win32::Lanman::GetLastError();
+	exit 1;
+ }
+
+ foreach $key(sort keys %info)
+ {
+	print "$key=$info{$key}\n";
+ }
+
+=item LsaSetTrustedPosixOffsetInfo($server, $domainsid, \%info)
+
+Sets the posix rid used to create posix users or groups for domain testdomain
+on server \\testserver to the value 123456. You should use this function only, 
+if you really know what you're doing! Keep in mind, this function is not tested 
+completely.
+
+ if(!Win32::Lanman::LsaLookupNames("\\\\testserver", ['testdomain'], \@domain))
+ {
+	print "Sorry, something went wrong; error: ";
+	# get the error code
+	print Win32::Lanman::GetLastError();
+	exit 1;
+ }
+
+ if(!Win32::Lanman::LsaSetTrustedPosixOffsetInfo("\\\\testserver", ${$domain[0]}{domainsid}, 
+                                                 {offset => 123456}))
+ {
+	print "Sorry, something went wrong; error: ";
+	# get the error code
+	print Win32::Lanman::GetLastError();
+	exit 1;
+ }
+
+=item LsaQueryTrustedPasswordInfo($server, $domainsid, \%info)
+
+Queries the trusted domain passwords for domain testdomain on server \\testserver.
+
+ if(!Win32::Lanman::LsaLookupNames("\\\\testserver", ['testdomain'], \@domain))
+ {
+	print "Sorry, something went wrong; error: ";
+	# get the error code
+	print Win32::Lanman::GetLastError();
+	exit 1;
+ }
+
+ if(!Win32::Lanman::LsaQueryTrustedPasswordInfo("\\\\testserver", ${$domain[0]}{domainsid}, \%info))
+ {
+	print "Sorry, something went wrong; error: ";
+	# get the error code
+	print Win32::Lanman::GetLastError();
+	exit 1;
+ }
+
+ print "password=" . unpack("H" . 2 * length($info{password}), $info{password}) . "\n";
+ print "oldpassword=" . unpack("H" . 2 * length($info{oldpassword}), $info{oldpassword}) . "\n";
+
+=item LsaSetTrustedPasswordInfo($server, $domainsid, \%info)
+
+Sets the trusted domain passwords for domain testdomain on server \\testserver to newpassword.
+You should use this function only, if you really know what you're doing! Keep in mind, this 
+function is not tested completely.
+
+ if(!Win32::Lanman::LsaLookupNames("\\\\testserver", ['testdomain'], \@domain))
+ {
+	print "Sorry, something went wrong; error: ";
+	# get the error code
+	print Win32::Lanman::GetLastError();
+	exit 1;
+ }
+
+ if(!Win32::Lanman::LsaSetTrustedPasswordInfo("\\\\testserver", ${$domain[0]}{domainsid}, 
+                                              { password => 'newpassword'}))
+ {
+	print "Sorry, something went wrong; error: ";
+	# get the error code
+	print Win32::Lanman::GetLastError();
+	exit 1;
+ }
+
+=item LsaRetrievePrivateData($server, $key, \$data)
+
+Retrieves private data (here the encrypted machine password - $MACHINE.ACC) that was stored by the 
+LsaStorePrivateData function on server \\testserver. For further information about global, local and
+machine objects, see also the LsaRetrievePrivateData function in the MSDN (topic private data object).
+
+ if(!Win32::Lanman::LsaRetrievePrivateData("\\\\testserver", "\$MACHINE.ACC", \$data))
+ {
+	print "Sorry, something went wrong; error: ";
+	# get the error code
+	print Win32::Lanman::GetLastError();
+	exit 1;
+ }
+
+ print $data;
+
+=item LsaStorePrivateData($server, $key, \$data)
+
+Stores private data (here the encrypted machine password - $MACHINE.ACC) on server \\testserver.
+For further information about global, local and machine objects, see also the LsaStorePrivateData
+function in the MSDN (topic private data object). You should use this function only, if you really 
+know what you're doing! Keep in mind, this function is not tested completely.
+
+ if(!Win32::Lanman::LsaStorePrivateData("\\\\testserver", "\$MACHINE.ACC", 'new_machine_pwd'))
+ {
+	print "Sorry, something went wrong; error: ";
+	# get the error code
+	print Win32::Lanman::GetLastError();
+	exit 1;
+ }
+
+=item GrantPrivilegeToAccount($server, $privilege, \@accounts)
+
+Grants the SeShutdownPrivilege to users testuser1, testuser1 and group testgroup on
+server \\testserver.
+
+ if(!Win32::Lanman::GrantPrivilegeToAccount("\\\\testserver", &SE_SHUTDOWN_NAME,
+					   ["testuser1", "testuser2", "testgroup"]))
+ {
+	print "Sorry, something went wrong; error: ";
+	# get the error code
+	print Win32::Lanman::GetLastError();
+	exit 1;
+ }
+
+=item RevokePrivilegeFromAccount($server, $privilege, \@accounts)
+
+Revokes the SeServiceLogonRight from users testuser1, testuser1 and group testgroup on
+server \\testserver.
+
+ if(!Win32::Lanman::RevokePrivilegeToAccount("\\\\testserver", &SE_SERVICE_LOGON_NAME,
+					    ["testuser1", "testuser2", "testgroup"]))
+ {
+	print "Sorry, something went wrong; error: ";
+	# get the error code
+	print Win32::Lanman::GetLastError();
+	exit 1;
+ }
+
+=item EnumAccountPrivileges($server, $account, \@privileges)
+
+Enums all privileges held by an user testuser on server \\testserver.
+
+ if(!Win32::Lanman::EnumAccountPrivileges("\\\\testserver", "testuser", \@privileges))
+ {
+	print "Sorry, something went wrong; error: ";
+	# get the error code
+	print Win32::Lanman::GetLastError();
+	exit 1;
+ }
+
+ foreach (@privileges)
+ {
+	print "$_\n";
+ }
+
+=item EnumPrivilegeAccounts($server, $privilege, \@accounts)
+
+Enums all accounts granted the privilege SE_INTERACTIVE_LOGON_NAME on server \\testserver.
+
+ if(!Win32::Lanman::EnumAccountPrivileges("\\\\testserver", &SE_INTERACTIVE_LOGON_NAME, \@accounts))
+ {
+	print "Sorry, something went wrong; error: ";
+	# get the error code
+	print Win32::Lanman::GetLastError();
+	exit 1;
+ }
+
+ foreach (@accounts)
+ {
+	print "$_\n";
+ }
+
+=back
+
+=head2 File System Replicator
+
+=over 4
+
+=item NetReplExportDirAdd($server, \%info)
+
+Registers an existing directory in the export path to be replicated.
+
+=item NetReplExportDirDel($server, $directory)
+
+Removes registration of a replicated directory.
+
+=item NetReplExportDirEnum($server, \@directories)
+
+Lists the replicated directories in the export path.
+
+=item NetReplExportDirGetInfo($server, $directory, \%info)
+
+Retrieves the control information of a replicated directory.
+
+=item NetReplExportDirLock($server, $directory)
+
+Locks a replicated directory.
+
+=item NetReplExportDirSetInfo($server, $directory, \%info)
+
+Modifies the control information of a replicated directory.
+
+=item NetReplExportDirUnlock($server, $directory, [$forceUnlock])
+
+Unlocks a replicated directory.
+
+=item NetReplGetInfo($server, \%info)
+
+Retrieves configuration information for the Replicator service.
+
+=item NetReplImportDirAdd($server, $directory)
+
+Registers an existing directory in the import path to be replicated.
+
+=item NetReplImportDirDel($server, $directory)
+
+Removes registration of a replicated directory.
+
+=item NetReplImportDirEnum($server, \@directories)
+
+Lists the replicated directories in the import path.
+
+=item NetReplImportDirGetInfo($server, $directory, \%info)
+
+Retrieves the control information of a replicated directory.
+
+=item NetReplImportDirLock($server, $directory)
+
+Locks a replicated directory.
+
+=item NetReplImportDirUnlock($server, $directory, [$forceUnlock])
+
+Unlocks a replicated directory.
+
+=item NetReplSetInfo($server, \%info)
+
+Modifies the Replicator service configuration information.
+
+=back
+
+=head2 File System Replicator EXAMPLES:
+
+=over 4
+
+=item NetReplExportDirAdd($server, \%info)
+
+Registers an existing directory testexportdir in the export path of server \\testserver to be replicated.
+
+ if(!Win32::Lanman::NetReplExportDirAdd("\\\\testserver",
+				       {'dirname' => "testexportdir",
+					'integrity' => &REPL_INTEGRITY_FILE,
+					'extent' => &REPL_EXTENT_TREE}))
+ {
+	print "Sorry, something went wrong; error: ";
+	# get the error code
+	print Win32::Lanman::GetLastError();
+	exit 1;
+ }
+
+=item NetReplExportDirDel($server, $directory)
+
+Removes registration of replicated directory testexportdir on server \\testserver.
+
+ if(!Win32::Lanman::NetReplExportDirDel("\\\\testserver", "testexportdir"))
+ {
+	print "Sorry, something went wrong; error: ";
+	# get the error code
+	print Win32::Lanman::GetLastError();
+	exit 1;
+ }
+
+=item NetReplExportDirEnum($server, \@directories)
+
+Lists the replicated directories in the export path on server \\testserver.
+
+ if(!Win32::Lanman::NetReplExportDirEnum("\\\\testserver", \@directories))
+ {
+	print "Sorry, something went wrong; error: ";
+	# get the error code
+	print Win32::Lanman::GetLastError();
+	exit 1;
+ }
+
+ foreach $directory (@directories)
+ {
+	@keys = sort keys %$directory;
+
+	foreach $key (@keys)
+	{
+		print "$key=${$directory}{$key}\n";
+	}
+ }
+
+=item NetReplExportDirGetInfo($server, $directory, \%info)
+
+Retrieves the control information of the replicated directory testexportdir on server \\testserver.
+
+ if(!Win32::Lanman::NetReplExportDirGetInfo("\\\\testserver", "testexportdir", \%info))
+ {
+	print "Sorry, something went wrong; error: ";
+	# get the error code
+	print Win32::Lanman::GetLastError();
+	exit 1;
+ }
+
+ @keys = keys %info;
+
+ foreach $key (@keys)
+ {
+	print "$key=$info{$key}\n";
+ }
+
+=item NetReplExportDirLock($server, $directory)
+
+Adds a lock to the replicated directory testexportdir on server \\testserver.
+
+ if(!Win32::Lanman::NetReplExportDirLock("\\\\testserver", "testexportdir"))
+ {
+	print "Sorry, something went wrong; error: ";
+	# get the error code
+	print Win32::Lanman::GetLastError();
+	exit 1;
+ }
+
+=item NetReplExportDirSetInfo($server, $directory, \%info)
+
+Modifies the control information of the replicated directory testexportdir on server \\testserver.
+
+ if(!Win32::Lanman::NetReplExportDirSetInfo("\\\\testserver", "testexportdir",
+					   {'dirname' => "testexportdir",
+					    'integrity' => &REPL_INTEGRITY_FILE,
+					    'extent' => &REPL_EXTENT_FILE}))
+ {
+	print "Sorry, something went wrong; error: ";
+	# get the error code
+	print Win32::Lanman::GetLastError();
+	exit 1;
+ }
+
+=item NetReplExportDirUnlock($server, $directory, [$forceUnlock])
+
+Decrements the lock counter by one for the replicated directory testexportdir on server \\testserver.
+
+ if(!Win32::Lanman::NetReplExportDirUnlock("\\\\testserver", "testexportdir"))
+ {
+	print "Sorry, something went wrong; error: ";
+	# get the error code
+	print Win32::Lanman::GetLastError();
+	exit 1;
+ }
+
+Sets the lock counter to zero for the replicated directory testexportdir on server \\testserver.
+
+ if(!Win32::Lanman::NetReplExportDirUnlock("\\\\testserver", "testexportdir", REPL_UNLOCK_FORCE))
+ {
+	print "Sorry, something went wrong; error: ";
+	# get the error code
+	print Win32::Lanman::GetLastError();
+	exit 1;
+ }
 
 =item NetReplGetInfo($server, \%info)
 
@@ -4931,7 +5778,6 @@ Retrieves configuration information for the Replicator service on server \\tests
 	print "$key=$info{$key}\n";
  }
 
-
 =item NetReplImportDirAdd($server, $directory)
 
 Registers an existing directory testimportdir in the import path of server \\testserver to be replicated.
@@ -4943,7 +5789,6 @@ Registers an existing directory testimportdir in the import path of server \\tes
 	print Win32::Lanman::GetLastError();
 	exit 1;
  }
-
 
 =item NetReplImportDirDel($server, $directory)
 
@@ -4957,7 +5802,6 @@ Removes registration of replicated directory testimportdir on server \\testserve
 	exit 1;
  }
 
-
 =item NetReplImportDirEnum($server, \@directories)
 
 Lists the replicated directories in the import path on server \\testserver.
@@ -4969,9 +5813,648 @@ Lists the replicated directories in the import path on server \\testserver.
 	print Win32::Lanman::GetLastError();
 	exit 1;
  }
-data
- #print "$info{'security_descriptor'}\n";
 
+ foreach $directory (@directories)
+ {
+	@keys = keys %$directory;
+
+	foreach $key (@keys)
+	{
+		print "$key=${$directory}{$key}\n";
+	}
+ }
+
+=item NetReplImportDirGetInfo($server, $directory, \%info)
+
+Retrieves the control information of the replicated directory testimportdir on server \\testserver.
+
+ if(!Win32::Lanman::NetReplImportDirGetInfo("\\\\testserver", "testimportdir", \%info))
+ {
+	print "Sorry, something went wrong; error: ";
+	# get the error code
+	print Win32::Lanman::GetLastError();
+	exit 1;
+ }
+
+ @keys = keys %info;
+
+ foreach $key (@keys)
+ {
+	print "$key=$info{$key}\n";
+ }
+
+=item NetReplImportDirLock($server, $directory)
+
+Adds a lock to the replicated directory testimportdir on server \\testserver.
+
+ if(!Win32::Lanman::NetReplImportDirLock("\\\\testserver", "testimportdir"))
+ {
+	print "Sorry, something went wrong; error: ";
+	# get the error code
+	print Win32::Lanman::GetLastError();
+	exit 1;
+ }
+
+=item NetReplImportDirUnlock($server, $directory, [$forceUnlock])
+
+Decrements the lock counter by one for the replicated directory testimportdir on server \\testserver.
+
+ if(!Win32::Lanman::NetReplImportDirUnlock("\\\\testserver", "testimportdir"))
+ {
+	print "Sorry, something went wrong; error: ";
+	# get the error code
+	print Win32::Lanman::GetLastError();
+	exit 1;
+ }
+
+Sets the lock counter to zero for the replicated directory testimportdir on server \\testserver.
+
+ if(!Win32::Lanman::NetReplImportDirUnlock("\\\\testserver", "testimportdir", REPL_UNLOCK_FORCE))
+ {
+	print "Sorry, something went wrong; error: ";
+	# get the error code
+	print Win32::Lanman::GetLastError();
+	exit 1;
+ }
+
+=item NetReplSetInfo($server, \%info)
+
+Modifies the Replicator service configuration information on server \\testserver.
+
+ if(!Win32::Lanman::NetReplSetInfo("\\\\testserver",
+				  {role => REPL_ROLE_BOTH,
+				   exportpath => "c:\\winnt\\system32\\repl\\export",
+				   exportlist => 'testexpdomain',
+				   importpath => "c:\\winnt\\system32\\repl\\import",
+				   importlist => 'testimpdomain',
+				   logonusername => '',
+				   interval => 10,
+				   pulse => 2,
+				   guardtime => 5,
+				   random => 120}))
+ {
+	print "Sorry, something went wrong; error: ";
+	# get the error code
+	print Win32::Lanman::GetLastError();
+	exit 1;
+ }
+
+=back
+
+=head2 Schedule
+
+=over 4
+
+=item NetScheduleJobAdd($server, \%info)
+
+Submits a job to run at a specified future time and date.
+
+=item NetScheduleJobDel($server, $minjobid, $maxjobid)
+
+Deletes a range of jobs queued to run at a computer.
+
+=item NetScheduleJobEnum($server, \@info)
+
+Lists the jobs queued on a specified computer.
+
+=item NetScheduleJobGetInfo($server, \@info)
+
+Retrieves information about a particular job queued on a specified computer.
+
+=back
+
+=head2 Schedule EXAMPLES:
+
+=over 4
+
+=item NetScheduleJobAdd($server, \%info)
+
+Submits a job to run at at 12 o'clock noon on server \\testserver.
+
+ if(!Win32::Lanman::NetScheduleJobAdd("\\\\testserver",
+				     {jobtime => 12 * 3600 * 1000,
+				      daysofmonth => 0, daysofmonth => 0,
+				      daysofweek => 0,
+				      flags => 0,
+				      command => "winfile.exe"}))
+ {
+	print "Sorry, something went wrong; error: ";
+	# get the error code
+	print Win32::Lanman::GetLastError();
+	exit 1;
+ }
+
+ print $info{jobid};
+
+=item NetScheduleJobDel($server, $minjobid, $maxjobid)
+
+Deletes all jobs between job id's 5 to 10 on server \\testserver.
+
+ if(!Win32::Lanman::NetScheduleJobDel("\\\\testserver", 5, 10))
+ {
+	print "Sorry, something went wrong; error: ";
+	# get the error code
+	print Win32::Lanman::GetLastError();
+	exit 1;
+ }
+
+=item NetScheduleJobEnum($server, \@info)
+
+Lists the job properties of all jobs queued on server \\testserver.
+
+ if(!Win32::Lanman::NetScheduleJobEnum("\\\\testserver", \@jobs))
+ {
+	print "Sorry, something went wrong; error: ";
+	# get the error code
+	print Win32::Lanman::GetLastError();
+	exit 1;
+ }
+
+ foreach $job (@jobs)
+ {
+	@keys = keys %$job;
+
+	foreach $key (@keys)
+	{
+		print "$key=${$job}{$key}\n";
+	}
+ }
+
+=item NetScheduleJobGetInfo($server, \@info)
+
+Retrieves information about job 5 queued on server \\testserver.
+
+ if(!Win32::Lanman::NetScheduleJobGetInfo("\\\\testserver", 5, \%job))
+ {
+	print "Sorry, something went wrong; error: ";
+	# get the error code
+	print Win32::Lanman::GetLastError();
+	exit 1;
+ }
+
+ @keys = keys %job;
+
+ foreach $key (@keys)
+ {
+	print "$key=$job{$key}\n";
+ }
+
+=back
+
+=head2 Server
+
+=over 4
+
+=item NetServerDiskEnum($server, \@info)
+
+Retrieves a list of disk drives on a server.
+
+=item NetServerEnum($server, $domain, $type, \@info)
+
+Lists all servers of the specified type that are visible in the specified domain. 
+
+$type can be any of the constants SV_TYPE_*. e.g. SV_TYPE_SQLSERVER , SV_TYPE_TERMINALSERVER , SV_TYPE_NT . 
+
+These can also be combined using |. To get all SQL servers or terminal servers user $type = SV_TYPE_SQLSERVER | SV_TYPE_TERMINALSERVER
+
+=item NetServerGetInfo($server, \%info, [$fullinfo])
+
+Retrieves information about the specified server.
+
+=item NetServerSetInfo($server, \%info, [$fullinfo])
+
+Sets a server’s operating parameters.
+
+=item NetServerTransportAdd($server, \%info)
+
+Binds the server to the transport.
+
+=item NetServerTransportDel($server, \%info)
+
+Unbinds (or disconnects) the transport protocol from the server.
+
+=item NetServerTransportEnum($server, \@info)
+
+Supplies information about transports that are managed by the server.
+
+=back
+
+=head2 Server EXAMPLES:
+
+=over 4
+
+=item NetServerDiskEnum($server, \@info)
+
+Retrieves a list of disk drives on server \\testserver.
+
+ if(!Win32::Lanman::NetServerDiskEnum("\\\\testserver", \@disks))
+ {
+	print "Sorry, something went wrong; error: ";
+	# get the error code
+	print Win32::Lanman::GetLastError();
+	exit 1;
+ }
+
+ foreach $disk (@disks)
+ {
+	print "$disk\n";
+ }
+
+=item NetServerEnum($server, $domain, $type, \@info)
+
+Lists all servers of the type SV_TYPE_NT that are visible in the domain testdomain. The command will
+be executed on \\\\testserver.
+
+ if(!Win32::Lanman::NetServerEnum("\\\\testserver", "testdomain", SV_TYPE_NT, \@info))
+ {
+	print "Sorry, something went wrong; error: ";
+	# get the error code
+	print Win32::Lanman::GetLastError();
+	exit 1;
+ }
+
+ foreach $server (@info)
+ {
+	@keys = keys %$server;
+
+	foreach $key(@keys)
+	{
+		print "$key=${$server}{$key}\n";
+	}
+ }
+
+=item NetServerGetInfo($server, \%info, [$fullinfo])
+
+Retrieves basic and extended information about the server \\testserver.
+
+ if(!Win32::Lanman::NetServerGetInfo("\\\\testserver", \%info, 1))
+ {
+	print "Sorry, something went wrong; error: ";
+	# get the error code
+	print Win32::Lanman::GetLastError();
+	exit 1;
+ }
+
+ @keys = keys %info;
+
+ foreach $key(@keys)
+ {
+	print "$key=$info{$key}\n";
+ }
+
+Retrieves only basic information about the server \\testserver.
+
+ if(!Win32::Lanman::NetServerGetInfo("\\\\testserver", \%info))
+ {
+	print "Sorry, something went wrong; error: ";
+	# get the error code
+	print Win32::Lanman::GetLastError();
+	exit 1;
+ }
+
+ @keys = keys %info;
+
+ foreach $key(@keys)
+ {
+	print "$key=$info{$key}\n";
+ }
+
+=item NetServerSetInfo($server, \%info, [$fullinfo])
+
+Changes the server’s operating parameters userpath to c:\users and hidden to true
+on server \\testserver.
+
+ if(!Win32::Lanman::NetServerGetInfo("\\\\testserver", \%info))
+ {
+	print "Sorry, something went wrong; error: ";
+	# get the error code
+	print Win32::Lanman::GetLastError();
+	exit 1;
+ }
+
+$info{'hidden'} = 1;
+$info{'userpath'} = "c:\\users";
+
+ if(!Win32::Lanman::NetServerSetInfo("\\\\testserver", \%info))
+ {
+	print "Sorry, something went wrong; error: ";
+	# get the error code
+	print Win32::Lanman::GetLastError();
+	exit 1;
+ }
+
+=item NetServerTransportAdd($server, \%info)
+
+Binds the server to the transport on server \\testserver.
+
+ if(!Win32::Lanman::NetServerTransportAdd("\\\\testserver",
+					 {'domain' => 'testdomain',
+					  'networkaddress' => '000000000000',
+					  'numberofvcs' => 0,
+					  'transportaddress' => 'TESTSERVER',
+					  'transportaddresslength' => length('TESTSERVER'),
+					  'transportname' => "\\Device\\NetBT_NdisWan7"
+					 }))
+ {
+	print "Sorry, something went wrong; error: ";
+	# get the error code
+	print Win32::Lanman::GetLastError();
+	exit 1;
+ }
+
+=item NetServerTransportDel($server, \%info)
+
+Unbinds (or disconnects) the transport protocol on server \\testserver.
+
+ if(!Win32::Lanman::NetServerTransportDel("\\\\testserver",
+					 {'domain' => 'testdomain',
+					  'networkaddress' => '000000000000',
+					  'numberofvcs' => 0,
+					  'transportaddress' => 'TESTSERVER',
+					  'transportaddresslength' => length('TESTSERVER'),
+					  'transportname' => "\\Device\\NetBT_NdisWan7"
+					 }))
+ {
+	print "Sorry, something went wrong; error: ";
+	# get the error code
+	print Win32::Lanman::GetLastError();
+	exit 1;
+ }
+
+=item NetServerTransportEnum($server, \@info)
+
+Supplies information about transports that are managed by the server \\testserver.
+
+ if(!Win32::Lanman::NetServerTransportEnum("\\\\testserver", \@info))
+ {
+	print "Sorry, something went wrong; error: ";
+	# get the error code
+	print Win32::Lanman::GetLastError();
+	exit 1;
+ }
+
+ foreach $server (@info)
+ {
+	@keys = keys %$server;
+
+	foreach $key(@keys)
+	{
+		print "$key=#${$server}{$key}#\n";
+	}
+ }
+
+=back
+
+=head2 Session
+
+=over 4
+
+=item NetSessionDel($server, $client, $user)
+
+Ends a session between a server and a workstation.
+
+=item NetSessionEnum($server, $client, $user, \@info)
+
+Provides information about all current sessions.
+
+=item NetSessionGetInfo($server, $client, $user, \%info)
+
+Retrieves information about a session established .
+
+=back
+
+=head2 Session EXAMPLES:
+
+=over 4
+
+=item NetSessionDel($server, $client, $user)
+
+Ends all session on server \\testserver.
+
+ if(!Win32::Lanman::NetSessionDel("\\\\testserver", '', ''))
+ {
+	print "Sorry, something went wrong; error: ";
+	# get the error code
+	print Win32::Lanman::GetLastError();
+	exit 1;
+ }
+
+Ends the session on server \\testserver to client \\testclient for user testuser.
+
+ if(!Win32::Lanman::NetSessionDel("\\\\testserver", "\\\\testclient", "testuser"))
+ {
+	print "Sorry, something went wrong; error: ";
+	# get the error code
+	print Win32::Lanman::GetLastError();
+	exit 1;
+ }
+
+=item NetSessionEnum($server, $client, $user, \@info)
+
+Provides information about all current sessions on server \\testserver.
+
+ if(!Win32::Lanman::NetSessionEnum("\\\\testserver", "", "", \@sessions))
+ {
+	print "Sorry, something went wrong; error: ";
+	# get the error code
+	print Win32::Lanman::GetLastError();
+	exit 1;
+ }
+
+ foreach $session (@sessions)
+ {
+	@keys = keys %$session;
+
+	foreach $key(@keys)
+	{
+		print "$key=#${$session}{$key}#\n";
+	}
+ }
+
+Provides information about the current sessions for client \\testclient and user testuser
+on server \\testserver.
+
+ if(!Win32::Lanman::NetSessionEnum("\\\\testserver", "\\\\testclient", "testuser", \@sessions))
+ {
+	print "Sorry, something went wrong; error: ";
+	# get the error code
+	print Win32::Lanman::GetLastError();
+	exit 1;
+ }
+
+ foreach $session (@sessions)
+ {
+	@keys = keys %$session;
+
+	foreach $key (@keys)
+	{
+		print "$key=#${$session}{$key}#\n";
+	}
+ }
+
+=item NetSessionGetInfo($server, $client, $user, \%info)
+
+Retrieves information about a session on server \\\\testserver for client \\testclient.
+
+ if(!Win32::Lanman::NetSessionGetInfo("\\\\testserver", "\\\\testclient", "", \%session))
+ {
+	print "Sorry, something went wrong; error: ";
+	# get the error code
+	print Win32::Lanman::GetLastError();
+	exit 1;
+ }
+
+ @keys = keys %session;
+
+ foreach $key (@keys)
+ {
+	print "$key=$session{$key}\n";
+ }
+
+=back
+
+=head2 Share
+
+In the following section on shares. Information about a share is stored in a hash (%shareinfo).
+The following are valid keys: netname, type, remark, permissions, max_uses, current_uses, path,
+passwd and security_descriptor (which is has a binary value)
+
+=over 4
+
+=item NetShareAdd($server, \%shareinfo)
+
+Adds a new share on $server.
+
+=item NetShareCheck($server, $path, \$type)
+
+Checks whether or not a $server is sharing a device.
+
+=item NetShareDel($server, $share)
+
+Deletes a share from $server.
+
+=item NetShareEnum($server, \@shares)
+
+Enumerates all shares on $server.
+
+=item NetShareGetInfo($server, $share, \%info)
+
+Gets information about $share on $server, the results are stored in %info
+
+=item NetShareSetInfo($server, $share, \%info)
+
+Sets information about $share on $server as specified in %info.
+
+=item NetConnectionEnum($server, $share_or_computer, \%connections)
+
+Gets all connections made to a shared resource on the server $server or all 
+connections established from a particular computer. If $share_or_computer
+has two backslashes befor the name it is interpreted as a computer name,
+otherwise as a share name.
+
+=back
+
+=head2 Share EXAMPLES:
+
+=over 4
+
+=item NetShareAdd($server, \%shareinfo)
+
+Adds a new share on server \\testdfsserver. If you want to set security, you have to build a
+security descriptor.
+
+ $secdesc = ...
+ if(!Win32::Lanman::NetShareAdd("\\\\testdfsserver",
+			       {'netname' => 'testshare', 			# share name
+				type => Win32::Lanman::STYPE_DISKTREE,		# share type
+				remark => 'remark for testshare',		# remark
+				permissions => 0,				# only used for share level security
+				max_uses => 5,					# number of users can connect
+				current_uses => 0,				# unused
+				path => 'c:\test',				# physical share path
+				passwd => 'password',				# password
+				security_descriptor => $secdesc}))		# sec. descriptor if you need security
+ {
+	print "Sorry, something went wrong; error: ";
+	# get the error code
+	print Win32::Lanman::GetLastError();
+	exit 1;
+ }
+
+=item NetShareCheck($server, $path, \$type)
+
+Checks if c:\test on server \\testserver is sharing a device.
+
+ if(!Win32::Lanman::NetShareCheck("\\\\testserver", "c:\\test", \$type))
+ {
+	print "Sorry, something went wrong; error: ";
+	# get the error code
+	print Win32::Lanman::GetLastError();
+	exit 1;
+ }
+
+ print $type;
+
+=item NetShareDel($server, $path)
+
+Deletes share testshare on server \\testserver
+
+ if(!Win32::Lanman::NetShareDel("\\\\testserver", "testshare"))
+ {
+	print "Sorry, something went wrong; error: ";
+	# get the error code
+	print Win32::Lanman::GetLastError();
+	exit 1;
+ }
+
+=item NetShareEnum($server, \@shares)
+
+Enums all shares on server \\testserver
+
+ if(!Win32::Lanman::NetShareEnum("\\\\testserver", \@shares))
+ {
+	print "Sorry, something went wrong; error: ";
+	# get the error code
+	print Win32::Lanman::GetLastError();
+	exit 1;
+ }
+
+ foreach $share (@shares)
+ {
+	print "${$share}{'netname'}\n";
+	print "${$share}{'type'}\n";
+	print "${$share}{'remark'}\n";
+	print "${$share}{'permissions'}\n";
+	print "${$share}{'max_uses'}\n";
+	print "${$share}{'current_uses'}\n";
+	print "${$share}{'path'}\n";
+	print "${$share}{'passwd'}\n";
+	#don't print these binary data
+	#print "${$share}{'security_descriptor'}\n";
+ }
+
+=item NetShareGetInfo($server, $share, \%info)
+
+Gets information on share testshare on server \\testserver
+
+ if(!Win32::Lanman::NetShareGetInfo("\\\\testserver", "testshare", \%info))
+ {
+	print "Sorry, something went wrong; error: ";
+	# get the error code
+	print Win32::Lanman::GetLastError();
+	exit 1;
+ }
+
+ print "$info{'netname'}\n";
+ print "$info{'type'}\n";
+ print "$info{'remark'}\n";
+ print "$info{'permissions'}\n";
+ print "$info{'max_uses'}\n";
+ print "$info{'current_uses'}\n";
+ print "$info{'path'}\n";
+ print "$info{'passwd'}\n";
+ #don't print these binary data
+ #print "$info{'security_descriptor'}\n";
 
 =item NetShareSetInfo($server, $share, \%info)
 
@@ -5024,7 +6507,6 @@ Gets all connections made from computer testcomputer to the server testserver.
 	}
  }
 
-
 =back
 
 =head2 Statistics
@@ -5035,6 +6517,11 @@ Gets all connections made from computer testcomputer to the server testserver.
 
 Retrieves operating statistics for a service.
 
+=back
+
+=head2 Statistics EXAMPLES:
+
+=over 4
 
 Retrieves operating statistics for the service server on server \\testserver.
 
@@ -5073,7 +6560,7 @@ Retrieves operating statistics for the service workstation on server \\testserve
 
 =back
 
-=head2 workstation
+=head2 Workstation
 
 =over 4
 
@@ -5081,38 +6568,31 @@ Retrieves operating statistics for the service workstation on server \\testserve
 
 Returns information about the configuration elements for a workstation.
 
-
 =item NetWkstaSetInfo($server, \%info)
 
 Configures a workstation.
-
 
 =item NetWkstaTransportAdd($server, \%info)
 
 Binds (or connects) the redirector to the transport.
 
-
 =item NetWkstaTransportDel($server, $transport, $force)
 
 Unbinds the transport protocol from the redirector.
 
-
 =item NetWkstaTransportEnum($server, \@info)
 
 Supplies information about transport protocols that are managed by the redirector.
-
 
 =item NetWkstaUserGetInfo(\@info)
 
 Returns information about the currently logged-on user. This function must be called
 in the context of the logged-on user.
 
-
 =item NetWkstaUserSetInfo(\@info)
 
 Returns information about the currently logged-on user. This function must be called
 in the context of the logged-on user.
-
 
 =item NetWkstaUserEnum($server, \@info)
 
@@ -5143,7 +6623,6 @@ Returns information about the configuration elements for \\testserver.
 	print "$key=$info{$key}\n";
  }
 
-
 =item NetWkstaSetInfo("\\\\testserver", \%info)
 
 Configures \\testserver.
@@ -5161,8 +6640,6 @@ Configures \\testserver.
 	exit 1;
  }
 
-
-
 =item NetWkstaTransportAdd($server, \%info)
 
 Binds (or connects) the redirector to the transport on server \\testserver.
@@ -5179,7 +6656,6 @@ Binds (or connects) the redirector to the transport on server \\testserver.
 	exit 1;
  }
 
-
 =item NetWkstaTransportDel($server, $transport, $force)
 
 Unbinds the transport protocol from the redirector on server \\testserver.
@@ -5191,7 +6667,6 @@ Unbinds the transport protocol from the redirector on server \\testserver.
 	print Win32::Lanman::GetLastError();
 	exit 1;
  }
-
 
 =item NetWkstaTransportEnum($server, \@info)
 
@@ -5215,7 +6690,6 @@ Supplies information about transport protocols that are managed by the redirecto
 	}
  }
 
-
 =item NetWkstaUserGetInfo(\@info)
 
 Returns information about the currently logged-on user. This function must be called
@@ -5236,7 +6710,6 @@ in the context of the logged-on user.
 	print "$key=$info{$key}\n";
  }
 
-
 =item NetWkstaUserSetInfo(\@info)
 
 Returns information about the currently logged-on user. This function must be called
@@ -5252,7 +6725,6 @@ in the context of the logged-on user.
 	print Win32::Lanman::GetLastError();
 	exit 1;
  }
-
 
 =item NetWkstaUserEnum($server, \@info)
 
@@ -5278,7 +6750,7 @@ Lists information about all users currently logged on \\testserver.
 
 =back
 
-=head2 time and misc
+=head2 Time and Misc
 
 =over 4
 
@@ -5292,7 +6764,7 @@ Retrieves the optional features the remote server supports.
 
 =back
 
-=head2 time and misc EXAMPLES:
+=head2 Time and Misc EXAMPLES:
 
 =over 4
 
@@ -5337,7 +6809,7 @@ Retrieves which of the options in $options are supported on server \\testserver.
 
 =back
 
-=head2 use
+=head2 Use
 
 =over 4
 
@@ -5345,16 +6817,13 @@ Retrieves which of the options in $options are supported on server \\testserver.
 
 Establishes a connection to a shared resource.
 
-
 =item NetUseDel($usename, [$forcedel])
 
 Deletes a connection to a shared resource.
 
-
 =item NetUseEnum(\@info)
 
 Enumerates all connections to shared resources.
-
 
 =item NetUseGetInfo($usename, \%info)
 
@@ -5407,7 +6876,6 @@ connects port lpt3: to \\testserver\testprint.
 	exit 1;
  }
 
-
 =item NetUseDel($usename, [$forcedel])
 
 Deletes a connection to \\testserver\testshare. If there are open files, the connection won't
@@ -5431,7 +6899,6 @@ Deletes the connection to drive h:. If there are open files, the connection will
 	exit 1;
  }
 
-
 =item NetUseEnum(\@info)
 
 Enumerates all connections to shared resources.
@@ -5451,7 +6918,6 @@ Enumerates all connections to shared resources.
 		print "$_=${$use}{$_}\n";
 	}
  }
-
 
 =item NetUseGetInfo($usename, \%info)
 
@@ -5484,7 +6950,6 @@ then make the calls against this server.
 
 Creates a new user $user on server $server.
 
-
 =item NetUserChangePassword($location, $user, $oldpassword, $newpassword)
 
 Changes the password for user $location\$user from $oldpassword to $newpassword. 
@@ -5492,7 +6957,7 @@ $oldpassword must be supplied, otherwise you will get error 86 (wrong password).
 
 To Change the password for a domain account run the command on the PDC (not a BDC!).
  
-To change a user's password without knowing the old password use NetUserSetInfo.
+To change a user's password without knowing the old password use NetUserSetInfo or NetUserSetProp.
 To do this you need to have admin rights to perform the task.
 $location should be either a domainname (clear text) or a servername ('\\server') 
 for local machine accounts. 
@@ -5501,49 +6966,52 @@ Note in this function should you desire to create a local machine account you B<
 use the "\\\\my_machine" format for $location; the module does B<not> insert the '\\' 
 for you for this function!
 
+=item NetUserCheckPassword($domain, $user, $password)
+
+Checks if a user password is valid or not. This function is implemented by the Win32
+LogonUser function and tries to log on the user over the network. If the user account 
+has been disabled, locked out or expired or the user has not been granted the 
+SeNetworkLogonRight (access this computer from the network) privilege, the function 
+fails even you have specified the correct password. With Windows 2000 your script needs 
+the SeTcbPrivilege (act as part of the operating system) privilege.
 
 =item NetUserDel($server, $user)
 
 Deletes user $user on server $server.
 
-
 =item NetUserEnum($domain, $filter, \@user)
 
 Enumerates all user in a domain or on a server.
-
 
 =item NetUserGetGroups($server, $user, \@groups)
 
 Enumerates all global groups on server $server to which user $user belongs.
 
-
 =item NetUserGetInfo($server, $user, \%info)
 
 Retrieves information about user $user on server $server.
-
 
 =item NetUserGetLocalGroups($server, $user, $flags, \@groups)
 
 Enumerates all local (and global if you specify LG_INCLUDE_INDIRECT in $flags) groups
 on server $server to which user $user belongs.
 
-
 =item NetUserSetGroups($server, $user, \@groups)
 
 Sets global group memberships for user $user on server $server.
-
 
 =item NetUserSetInfo($server, $user, \%info)
 
 Sets the parameters of user $user on server $server. You cannot specify a domain name, it must be a server.
 
+=item NetUserSetProp($server, $user, \%info)
 
+Sets on or more parameters of user $user on server $server. You cannot specify a domain name, it must be a server.
 
 =item NetUserModalsGet($server, \%info)
 
 Retrieves global information for all users and global groups in the security
 database on server $server.
-
 
 =item NetUserModalsSet($server, \%info)
 
@@ -5592,7 +7060,6 @@ Creates a new user testuser on server \\testserver.
 	exit 1;
  }
 
-
 =item NetUserChangePassword($domain, $user, $oldpassword, $newpassword)
 
 Changes user testuser's password in the domain testdomain.
@@ -5615,6 +7082,31 @@ Changes user testuser's password on the server \\testserver.
 	exit 1;
  }
 
+=item NetUserCheckPassword($domain, $user, $password)
+
+Checks if user testuser's password testpass in the domain testdomain is valid or not.
+
+ if(!Win32::Lanman::NetUserCheckPassword("testdomain", 'testuser', 'testpass'))
+ {
+	print "Password testpass for user testuser in domain testdomain isn't valid; error: ";
+	# get the error code
+	print Win32::Lanman::GetLastError();
+	exit 1;
+ }
+ 
+ print "Password testpass for user testuser in domain testdomain is valid.";
+
+Checks if user testuser's password testpass on the server \\testserver is valid or not.
+
+ if(!Win32::Lanman::NetUserCheckPassword("\\\\testserver", 'testuser', 'testpass'))
+ {
+	print "Password testpass for user testuser on server \\\\testserver isn't valid; error: ";
+	# get the error code
+	print Win32::Lanman::GetLastError();
+	exit 1;
+ }
+ 
+ print "Password testpass for user testuser on server \\\\testserver is valid.";
 
 =item NetUserDel($server, $user)
 
@@ -5627,7 +7119,6 @@ Deletes user testuser on server \\testserver.
 	print Win32::Lanman::GetLastError();
 	exit 1;
  }
-
 
 =item NetUserEnum($domain, $filter, \@user)
 
@@ -5719,7 +7210,6 @@ Enums all user on server \\testserver. Only normal accounts will be enumerated.
 	print "${$user}{'password_expired'}\n";
  }
 
-
 =item NetUserGetGroups($server, $user, \@groups)
 
 Enums all global groups on server \\testserver to which user testuser belongs.
@@ -5736,7 +7226,6 @@ Enums all global groups on server \\testserver to which user testuser belongs.
  {
 	print "${$group}{'name'}\n";
  }
-
 
 =item NetUserGetInfo($server, $user, \%info)
 
@@ -5781,7 +7270,6 @@ Retrieves information about user testuser on server \\testserver.
  print "$info{'home_dir_drive'}\n";
  print "$info{'password_expired'}\n";
 
-
 =item NetUserGetLocalGroups($server, $user, $flags, \@groups)
 
 Enums all local and global groups on server \\testserver to which user testuser belongs.
@@ -5799,7 +7287,6 @@ Enums all local and global groups on server \\testserver to which user testuser 
 	print "${$group}{'name'}\n";
  }
 
-
 =item NetUserSetGroups($server, $user, \@groups)
 
 Sets global group memberships (domain users, testgroup1 and testgroup2)
@@ -5813,10 +7300,11 @@ for user testuser on server \\testserver.
 	exit 1;
  }
 
-
 =item NetUserSetInfo($server, $user, \%info)
 
-Sets the parameters of user testuser on server \\testserver.
+Sets the parameters of user testuser on server \\testserver. It's recommended that you first call NetUserGetInfo
+to retrieve the current user parameters. Than you'd change the desired parameters and call NetUserSetInfo to
+write the changed values back to the SAM. If you only want to change a few parameters, you'd use NetUSerSetProp.
 
  if(!Win32::Lanman::NetUserSetInfo("\\\\testserver", "testuser",
 				  {'name' => 'testuser',
@@ -5844,6 +7332,37 @@ Sets the parameters of user testuser on server \\testserver.
  }
 
 
+=item NetUserSetProp($server, $user, \%info)
+
+Sets or or more the parameters of user testuser on server \\testserver. There's no need to call NetUserGetInfo first.
+You may specify the following parameters: name, password, home_dir, comment, flags, script_path, full_name, 
+usr_comment, workstations, acct_expires, logon_hours, country_code, code_page, primary_group_id, profile and 
+home_dir_drive. Because of the implementation, the call is not atomic. If a parameter couldn't be set, the call fails.
+
+ if(!Win32::Lanman::NetUserSetProp("\\\\testserver", "testuser",
+				  {'name' => 'testuser',
+				   'password' => 'testpassword',
+				   'home_dir' => '\\\\testserver\\testshare',
+				   'comment' => 'test users comment',
+				   'flags' => UF_ACCOUNTDISABLE | UF_PASSWD_CANT_CHANGE | UF_TEMP_DUPLICATE_ACCOUNT,
+				   'script_path' => '\\\\testserver\\testshare\\logon_script.bat',
+				   'full_name' => 'test users full name',
+				   'usr_comment' => 'test users usr comment',
+				   'workstations' => 'comp0001,comp0002,comp0003,comp0004,comp0005,comp0006,comp0007,comp0008',
+				   'acct_expires' => time() + 3600 * 24,
+				   'logon_hours' => pack("b168", "000000001111111100000000" x 7),
+				   'country_code' => 49,
+				   'code_page' => 850,
+				   'primary_group_id' => 513, # domain users
+				   'profile' => '\\\\testserver\\testshare\\profile_dir',
+				   'home_dir_drive' => 'Y:'}))
+ {
+	print "Sorry, something went wrong; error: ";
+	# get the error code
+	print Win32::Lanman::GetLastError();
+	exit 1;
+ }
+
 =item NetUserModalsGet($server, \%info)
 
 Retrieves global information (account policies) for all users and global groups in the security
@@ -5864,7 +7383,6 @@ database on server \\testserver.
 	print "$key: $info{$key}\n";
  }
 
-
 =item NetUserModalsSet($server, \%info)
 
 Sets global information (account policies) for all users and global groups in the security
@@ -5880,7 +7398,7 @@ You cannot change the domain id and the domain name.
 	exit 1;
  }
 
-set minimum password age to 14 days, maximum password age to 2 months,
+Set minimum password age to 14 days, maximum password age to 2 months,
 minimum password length to 8 character
 
  $info{'min_passwd_age'} = 14 * 3600 * 24;
@@ -5888,6 +7406,437 @@ minimum password length to 8 character
  $info{'min_passwd_len'} = 8;
 
  if(!Win32::Lanman::NetUserModalsSet("\\\\testserver", \%info))
+ {
+	print "Sorry, something went wrong; error: ";
+	# get the error code
+	print Win32::Lanman::GetLastError();
+	exit 1;
+ }
+
+=back
+
+=head2 Windows Networking
+
+The Windows Networking functions offer a similar functionality like the NetUseXXX functions and 
+some more.
+
+=over 4
+
+=item WNetAddConnection(\%useinfo)
+
+Connects a local device to a network resource. The function is implemented by the 
+WNetAddConnection2 or the WNetAddConnection3 call.
+
+=item WNetCancelConnection($conn [, $flags [, $forcecancel] ])
+
+Cancels an existing network connection. The function is implemented by the 
+WNetCancelConnection2 call.
+
+=item WNetEnumResource($scope, $type, $usage, \%startinfo, \@resinfo)
+
+Enumerates network resources.
+
+=item WNetConnectionDialog([ \%info ])
+
+Shows a browsing dialog box for connecting to network resources.
+
+=item WNetDisconnectDialog([ \%info ])
+
+Shows a browsing dialog box for disconnecting from network resources. The function
+is implemented by the WNetDisconnectDialog or the WNetDisconnectDialog1 call.
+
+=item WNetGetConnection($local, \$remote)
+
+Retrieves the name of the network resource associated with a local device.
+
+=item WNetGetNetworkInformation($provider, \%info)
+
+Retrieves information about a network provider.
+
+=item WNetGetProviderName($type, \$provider)
+
+Obtains the provider name for a specific type of network.
+
+=item WNetGetResourceInformation(\%resource, \%info)
+
+Obtains information about a network resource.
+
+=item WNetGetResourceParent(\%resource, \%parent)
+
+Retrieves the parent of a network resource.
+
+=item WNetGetUniversalName($localname, \%info)
+
+Takes a drive based path for a network resource and returns information that contains 
+a more universal form of the name.
+
+=item WNetGetUser($resource, \$user)
+
+Retrieves the current default user name, or the user name used to establish a 
+network connection. 
+
+=item WNetUseConnection(\%resource [, \%useinfo ])
+
+Makes a connection to a network resource.
+
+=back
+
+=head2 Windows Networking EXAMPLES:
+
+=over 4
+
+=item WNetAddConnection(\%useinfo)
+
+Connects the local device z: to the share testshare on server \\testserver.
+
+ $info{type} = &RESOURCETYPE_DISK;
+ $info{localname} = "z:";
+ $info{remotename} = "\\\\testserver\\testshare";
+
+ if(!Win32::Lanman::WNetAddConnection(\%info))
+ {
+	print "Sorry, something went wrong; error: ";
+	# get the error code
+	print Win32::Lanman::GetLastError();
+	exit 1;
+ }
+
+Connects the local device x: to the share testshare on server \\testserver. The connection
+will be established with credentials from user testuser in the domain testdomain and 
+the password testpass. The connection will be remembered if the user logs on again.
+
+ $info{type} = &RESOURCETYPE_DISK;
+ $info{localname} = "x:";
+ $info{remotename} = "\\\\testserver\\testshare";
+ $info{username} = "testdomain\\testuser";
+ $info{password} = "testpass";
+ $info{flags} = &CONNECT_UPDATE_PROFILE;
+
+You may also specify a network provider name.
+
+ $info{provider} = "Microsoft Windows Network";
+
+ if(!Win32::Lanman::WNetAddConnection(\%info))
+ {
+	print "Sorry, something went wrong; error: ";
+	# get the error code
+	print Win32::Lanman::GetLastError();
+	exit 1;
+ }
+
+Connects the local device lpt1: to the printer testprinter on server \\testserver.
+
+ $info{type} = &RESOURCETYPE_PRINT;
+ $info{localname} = "lpt1:";
+ $info{remotename} = "\\\\testserver\\testprinter";
+
+ if(!Win32::Lanman::WNetAddConnection(\%info))
+ {
+	print "Sorry, something went wrong; error: ";
+	# get the error code
+	print Win32::Lanman::GetLastError();
+	exit 1;
+ }
+
+Connects to ipc$ on server \\testserver. The connection will be established with 
+credentials from user testuser in the domain testdomain and the password testpass.
+
+ $info{type} = &RESOURCETYPE_ANY;
+ $info{remotename} = "\\\\testserver\\testprinter";
+ $info{password} = "testpass";
+ $info{flags} = &CONNECT_UPDATE_PROFILE;
+
+ if(!Win32::Lanman::WNetAddConnection(\%info))
+ {
+	print "Sorry, something went wrong; error: ";
+	# get the error code
+	print Win32::Lanman::GetLastError();
+	exit 1;
+ }
+
+=item WNetCancelConnection($conn [, $flags [, $forcecancel] ])
+
+Cancels the connection to drive z:. If there are open files to drive z: the connection
+won't be canceled. The connection to z: will be remembered if the user logs on again.
+
+ if(!Win32::Lanman::WNetCancelConnection("z:"))
+ {
+	print "Sorry, something went wrong; error: ";
+	# get the error code
+	print Win32::Lanman::GetLastError();
+	exit 1;
+ }
+
+Cancels the connection to drive z:. The connection will be canceled even if there are 
+still open files. The connection to z: won't be remembered furthermore.
+
+ if(!Win32::Lanman::WNetCancelConnection("z:", &CONNECT_UPDATE_PROFILE, 1))
+ {
+	print "Sorry, something went wrong; error: ";
+	# get the error code
+	print Win32::Lanman::GetLastError();
+	exit 1;
+ }
+
+Cancels the connection to \\testserver\testshare. 
+
+ if(!Win32::Lanman::WNetCancelConnection("\\\\testserver\\testshare"))
+ {
+	print "Sorry, something went wrong; error: ";
+	# get the error code
+	print Win32::Lanman::GetLastError();
+	exit 1;
+ }
+
+Cancels the connection to printer port lpt1:. 
+
+ if(!Win32::Lanman::WNetCancelConnection("lpt1:"))
+ {
+	print "Sorry, something went wrong; error: ";
+	# get the error code
+	print Win32::Lanman::GetLastError();
+	exit 1;
+ }
+
+=item WNetEnumResource($scope, $type, $usage, \%startinfo, \@resinfo)
+
+Enumerates global resources in your network.
+
+ if(!Win32::Lanman::WNetEnumResource(&RESOURCE_GLOBALNET, &RESOURCETYPE_ANY, 0, 0, \@info))
+ {
+	print "Sorry, something went wrong; error: ";
+	# get the error code
+	print Win32::Lanman::GetLastError();
+	exit 1;
+ }
+
+ foreach $item (@info)
+ {
+	foreach $key (sort keys %$item)
+	{
+		print "$key=${$item}{$key}\n";
+	}
+
+	print "#" x 80;
+ }
+
+Enumerates all resources in your network beginning at the top level. Be careful if 
+you run this code in a bigger network. It may take a long time.
+
+ sub EnumNetRes
+ {
+	my @info;
+	my $level = $_[0];
+
+	return 0
+		unless Win32::Lanman::WNetEnumResource(&RESOURCE_GLOBALNET, &RESOURCETYPE_ANY, 0, $_[1], \@info);
+
+	foreach my $item (@info)
+	{
+		print " " x (2 * $level), "provider=#${$item}{provider}#\n";
+		print " " x (2 * $level), "localname=${$item}{localname}\n";
+		print " " x (2 * $level), "remotename=${$item}{remotename}\n";
+		print " " x (2 * $level), "comment=${$item}{comment}\n";
+		print " " x (2 * $level), sprintf "scope=0x%x\n", ${$item}{scope};
+		print " " x (2 * $level), sprintf "type=0x%x\n", ${$item}{type};
+		print " " x (2 * $level), sprintf "usage=0x%x\n", ${$item}{usage};
+
+		print "#" x 80;
+
+		EnumNetRes($level + 1, $item);
+	}
+ }
+
+ EnumNetRes();
+
+=item WNetConnectionDialog([ \%info ])
+
+Shows a browsing dialog box for connecting to network resources.
+
+ print Win32::Lanman::WNetConnectionDialog() ? 
+		"Connection established" : "Dialog canceled";
+
+Shows a browsing dialog box and specifies some flags.
+
+ print Win32::Lanman::WNetConnectionDialog({flags => &CONNDLG_NOT_PERSIST | &CONNDLG_HIDE_BOX}) 
+		"Connection established" : "Dialog canceled";
+
+Shows a browsing dialog box and specifies the server \\testserver and share testshare
+to connect.
+
+ print Win32::Lanman::WNetConnectionDialog({flags => &CONNDLG_NOT_PERSIST | &CONNDLG_HIDE_BOX,
+					    remotename => "\\\\testserver\\testshare"}) 
+		"Connection established" : "Dialog canceled";
+
+=item WNetDisconnectDialog([ \%info ])
+
+Shows a browsing dialog box for disconnecting to network resources.
+
+ print Win32::Lanman::WNetDisconnectDialog() ?
+		"Connection removed" : "Dialog canceled";
+
+Disconnects drive z: from the network resource. The disconnect is not forced and the 
+connection to z: won't be remembered furthermore.
+
+ if(!Win32::Lanman::WNetDisconnectDialog({localname => "z:", 
+					  flags => &DISC_NO_FORCE | &DISC_UPDATE_PROFILE}))
+ {
+	print "Sorry, something went wrong; error: ";
+	# get the error code
+	print Win32::Lanman::GetLastError();
+	exit 1;
+ }
+
+ print "Connection removed";
+
+=item WNetGetConnection($local, \$remote)
+
+Retrieves the name of the network resource associated with drive z:.
+
+ if(!Win32::Lanman::WNetGetConnection("z:", \$remote)) 
+ {
+	print "Sorry, something went wrong; error: ";
+	# get the error code
+	print Win32::Lanman::GetLastError();
+	exit 1;
+ }
+
+ print "z:=$remote";
+
+Retrieves the name of the network resource associated with printer lpt1:.
+
+ if(!Win32::Lanman::WNetGetConnection("lpt1:", \$remote)) 
+ {
+	print "Sorry, something went wrong; error: ";
+	# get the error code
+	print Win32::Lanman::GetLastError();
+	exit 1;
+ }
+
+ print "lpt1:=$remote";
+
+=item WNetGetNetworkInformation($provider, \%info)
+
+Retrieves information about the Microsoft Windows Network provider.
+
+ if(!Win32::Lanman::WNetGetNetworkInformation("Microsoft Windows Network", \%info)) 
+ {
+	print "Sorry, something went wrong; error: ";
+	# get the error code
+	print Win32::Lanman::GetLastError();
+	exit 1;
+ }
+
+ foreach $key(sort keys %info)
+ {
+	print "$key=$info{$key}\n";
+ }
+
+=item WNetGetProviderName($type, \$provider)
+
+Obtains the provider name for the  WNNC_NET_LANMAN network (Microsoft Windows Network). 
+
+ if(!Win32::Lanman::WNetGetProviderName(&WNNC_NET_LANMAN, \$provider)) 
+ {
+	print "Sorry, something went wrong; error: ";
+	# get the error code
+	print Win32::Lanman::GetLastError();
+	exit 1;
+ }
+
+ print $provider;
+
+=item WNetGetResourceInformation(\%resource, \%info)
+
+Obtains information about the file \\testserver\testshare\testdir\testfile.txt. The 
+file must be exist. You may specify a network provider name, but it's optional.
+
+ if(!Win32::Lanman::WNetGetResourceInformation({remotename => "\\\\testserver\\testshare\\testdir\\testfile.txt",
+						provider => "Microsoft Windows Network"},
+					       \%info)) 
+ {
+	print "Sorry, something went wrong; error: ";
+	# get the error code
+	print Win32::Lanman::GetLastError();
+	exit 1;
+ }
+
+ foreach $key(sort keys %info)
+ {
+	print "$key=$info{$key}\n";
+ }
+
+=item WNetGetResourceParent(\%resource, \%parent)
+
+Retrieves the parent of the network resource \\testserver\testshare.
+
+ if(!Win32::Lanman::WNetGetResourceParent({remotename => "\\\\testserver\\testshare",
+					   provider => "Microsoft Windows Network"},
+					  \%info)) 
+ {
+	print "Sorry, something went wrong; error: ";
+	# get the error code
+	print Win32::Lanman::GetLastError();
+	exit 1;
+ }
+
+ foreach $key(sort keys %info)
+ {
+	print "$key=$info{$key}\n";
+ }
+
+=item WNetGetUniversalName($localname, \%info)
+
+Retrieves the universal form of the file name z:\testdir\testfile.txt.
+
+ if(!Win32::Lanman::WNetGetUniversalName("z:\\testdir\\testfile.txt", \%info)) 
+ {
+	print "Sorry, something went wrong; error: ";
+	# get the error code
+	print Win32::Lanman::GetLastError();
+	exit 1;
+ }
+
+ foreach $key(sort keys %info)
+ {
+	print "$key=$info{$key}\n";
+ }
+
+=item WNetGetUser($resource, \$user)
+
+Retrieves the user name used to establish a connection to drive z:. 
+
+ if(!Win32::Lanman::WNetGetUser("z:", \$user)) 
+ {
+	print "Sorry, something went wrong; error: ";
+	# get the error code
+	print Win32::Lanman::GetLastError();
+	exit 1;
+ }
+
+ print $user;
+
+=item WNetUseConnection(\%resource [, \%useinfo ])
+
+Connects drive z: to \\testserver\testshare. If the current user has no access to the
+network resource, the system brings up a dialog to supply user credentials.
+
+ if(!Win32::Lanman::WNetUseConnection({localname => "z:", remotename => "\\\\testserver\\testshare",
+				      flags => &CONNECT_INTERACTIVE | &CONNECT_PROMPT,
+				      type => &RESOURCETYPE_DISK}))
+
+ {
+	print "Sorry, something went wrong; error: ";
+	# get the error code
+	print Win32::Lanman::GetLastError();
+	exit 1;
+ }
+
+Connects drive lpt1: to \\testserver\testprinter.
+
+ if(!Win32::Lanman::WNetUseConnection({localname => "lpt1:", remotename => "\\\\testserver\\testprinter",
+				      type => &RESOURCETYPE_PRINT}))
+
  {
 	print "Sorry, something went wrong; error: ";
 	# get the error code
@@ -5907,36 +7856,30 @@ default service database by replacing $servicedb with the empty string (or "Serv
 Currently NT supports only the default database.
 If you specify an invalid database name, you'll get an error 1065 (database doesn't exist).
 
-
 =item StartService($server, $servicedb, $service)
 
 Starts the service $service on server $server. Specify an empty string to use the default
 service database in $servicedb.
-
 
 =item StopService($server, $servicedb, $service, \%status)
 
 Stops the service $service on server $server. The service status will be returned in
 %status. Specify an empty string to use the default service database in $servicedb.
 
-
 =item PauseService($server, $servicedb, $service, \%status)
 
 Pauses the service $service on server $server. The service status will be returned in
 %status. Specify an empty string to use the default service database in $servicedb.
-
 
 =item ContinueService($server, $servicedb, $service, \%status)
 
 Continues the service $service on server $server. The service status will be returned in
 %status. Specify an empty string to use the default service database in $servicedb.
 
-
 =item InterrogateService($server, $servicedb, $service, \%status)
 
 Interrogates the service $service on server $server. The service status will be returned in
 %status. Specify an empty string to use the default service database in $servicedb.
-
 
 =item ControlService($server, $servicedb, $service, $contol, \%status)
 
@@ -5948,7 +7891,6 @@ specific control code between 128 and 255. Do not specify SERVICE_CONTROL_SHUTDO
 continue, pause or interrogate a service, you can use the app. calls or ControlService. But
 you can send service specific controls between 128 and 255 to initiate a conversation with
 the service or something else. The most services ignore this messages.
-
 
 =item CreateService($server, $servicedb, \%param)
 
@@ -6012,14 +7954,11 @@ The account chosen requires the logon as service privilege.
 password: password for account; 
 	if  account =>LocalSystem, then password => ''
 
-
-
 =item DeleteService($server, $servicedb, $service)
 
 Deletes the service $service on server $server. Specify an empty string to use the default
 service database in $servicedb. If you delete a running service, the service will be marked
 as deleted, but doesn't stop the service! To stop it, call StopService.
-
 
 =item EnumServicesStatus($server, $servicedb, $type, $state, \@services)
 
@@ -6035,12 +7974,10 @@ Valid states are:
  SERVICE_INACTIVE	- inactive services
  SERVICE_STATE_ALL	- both of them
 
-
 =item EnumDependentServices($server, $servicedb, $service, $state, \@services)
 
 Enums all services dependent from service in $service on server $server. Specify an empty
 string to use the default service database in $servicedb.
-
 
 =item ChangeServiceConfig($server, $servicedb, $service, \%param)
 
@@ -6048,18 +7985,15 @@ Changes the service configuration to the values specified in %param for service 
 server $server. Specify an empty string to use the default service database in $servicedb. For
 a description of %param, see CreateService.
 
-
 =item GetServiceDisplayName($server, $servicedb, $service, \$display)
 
 Obtains the service display name of service $service on server $server. Specify an empty string
 to use the default service database in $servicedb.
 
-
 =item GetServiceKeyName($server, $servicedb, $display, \$service)
 
 Obtains the service name from the service display name $display on server $server. Specify an empty
 string to use the default service database in $servicedb.
-
 
 =item LockServiceDatabase($server, $servicedb, \$lock)
 
@@ -6068,30 +8002,25 @@ at a given time. LockServiceDatabase prevents the service control manager from s
 You have to call UnlockServiceDatabase to unlock the database. Specify an empty string to use the
 default service database in $servicedb.
 
-
 =item UnlockServiceDatabase($server, $servicedb, $lock)
 
 Unlocks the service control manager database on server $server by releasing the lock $lock. Specify an
 empty string to use the default service database in $servicedb.
-
 
 =item QueryServiceLockStatus($server, $servicedb, \%lock)
 
 Retrieves the lock status of the service control manager database on server $server. Specify an empty
 string to use the default service database in $servicedb.
 
-
 =item QueryServiceConfig($server, $servicedb, $service, \%config)
 
 Retrieves the configuration parameters of the service $service on server $server. Specify an empty
 string to use the default service database in $servicedb.
 
-
 =item QueryServiceStatus($server, $servicedb, $service, \%status)
 
 Retrieves the current status of the service $service on server $server. Specify an empty string to use
 the default service database in $servicedb.
-
 
 =item QueryServiceObjectSecurity($server, $servicedb, $service, $securityinformation, \$securitydescriptor)
 
@@ -6100,7 +8029,6 @@ specifies the requested security information. Valid security informations are OW
 GROUP_SECURITY_INFORMATION, DACL_SECURITY_INFORMATION and SACL_SECURITY_INFORMATION. To get
 SACL_SECURITY_INFORMATION, the calling process needs the SeSecurityPrivilege privilege enabled. Specify an
 empty string to use the default service database in $servicedb.
-
 
 =item SetServiceObjectSecurity($server, $servicedb, $service, $securityinformation, $securitydescriptor)
 
@@ -6114,21 +8042,17 @@ Note: Be careful when using this call, since if you revoke access to everyone, t
 everyone group, any people can start and stop your service (as default only administrators and power user
 can do this). Specify an empty string to use the default service database in $servicedb.
 
-
 =item QueryServiceConfig2($server, $servicedb, $service, \%config)
 
 Retrieves the optional configuration parameters of the service $service from the $servicedb database. This function requires Windows 2000.
-
 
 =item ChangeServiceConfig2($server, $servicedb, $service, \%config)
 
 Changes the optional configuration parameters of the service $service from the $servicedb database. This function requires Windows 2000.
 
-
 =item QueryServiceStatusEx($server, $servicedb, $service, \%status)
 
 Retrieves the current status of the specified service. This function requires Windows 2000.
-
 
 =item EnumServicesStatusEx($server, $servicedb, $type, $state, \@services [, $group])
 
@@ -6138,7 +8062,7 @@ If you omit the group parameter, the function returns all services filtered only
 
 =back
 
-=head2 Services EXAMPLES
+=head2 Services EXAMPLES:
 
 =over 4
 
@@ -6153,7 +8077,6 @@ Starts the schedule service on server \\testserver.
 	print Win32::Lanman::GetLastError();
 	exit 1;
  }
-
 
 =item StopService($server, $servicedb, $service, \%status)
 
@@ -6172,7 +8095,6 @@ for $keyeach (sort keys %status)
 	print "$key = $status{$key}\n";
  }
 
-
 =item PauseService($server, $servicedb, $service, \%status)
 
 Pauses the schedule service on server \\testserver and prints the status flags.
@@ -6189,7 +8111,6 @@ Pauses the schedule service on server \\testserver and prints the status flags.
  {
 	print "$key = $status{$key}\n";
  }
-
 
 =item ContinueService($server, $servicedb, $service, \%status)
 
@@ -6208,7 +8129,6 @@ Continues the schedule service on server \\testserver and prints the status flag
 	print "$key = $status{$key}\n";
  }
 
-
 =item InterrogateService($server, $servicedb, $service, \%status)
 
 Interrogates the schedule service on server \\testserver and prints the status flags.
@@ -6225,7 +8145,6 @@ Interrogates the schedule service on server \\testserver and prints the status f
  {
 	print "$key = $status{$key}\n";
  }
-
 
 =item ControlService($server, $servicedb, $service, $contol, \%status)
 
@@ -6258,7 +8177,6 @@ Sends the value 130 to the service myservice on server \\testserver and prints t
  {
 	print "$key = $status{$key}\n";
  }
-
 
 =item CreateService($server, $servicedb, \%param)
 
@@ -6349,7 +8267,6 @@ ordering group). The service can interact with the desktop.
 	exit 1;
  }
 
-
 =item DeleteService($server, $servicedb, $service)
 
 Deletes the service 'myservice' on server \\testserver.
@@ -6361,7 +8278,6 @@ Deletes the service 'myservice' on server \\testserver.
 	print Win32::Lanman::GetLastError();
 	exit 1;
  }
-
 
 =item EnumServicesStatus($server, $servicedb, $type, $state, \@services)
 
@@ -6409,7 +8325,6 @@ Enums the status of all active kernel drivers on server \\testserver.
 	}
  }
 
-
 =item EnumDependentServices($server, $servicedb, $service, $state, \@services)
 
 Enums the name and status of all services depend on service
@@ -6434,7 +8349,6 @@ LanmanWorkstation on server \\testserver.
 	}
  }
 
-
 =item ChangeServiceConfig($server, $servicedb, $service, \%param)
 
 Changes the service configuration for service myservice on server \\testserver. You have to
@@ -6453,7 +8367,6 @@ logon as service right to testdomain\testuser. See also CreateService examples.
 	exit 1;
  }
 
-
 =item GetServiceDisplayName($server, $servicedb, $service, \$display)
 
 Obtains the service display name of service myservice on server \\testserver.
@@ -6468,7 +8381,6 @@ Obtains the service display name of service myservice on server \\testserver.
 
  print $display;
 
-
 =item GetServiceKeyName($server, $servicedb, $display, \$service)
 
 Obtains the service name from the service display name 'my newest service' on server \\testserver.
@@ -6482,7 +8394,6 @@ Obtains the service name from the service display name 'my newest service' on se
  }
 
  print $service;
-
 
 =item LockServiceDatabase($server, $servicedb, \$lock)
 
@@ -6511,7 +8422,6 @@ unlock the database.
 
 Unlocks the service control manager database on server \\testserver. See the example above.
 
-
 =item QueryServiceLockStatus($server, $servicedb, \%lock)
 
 Retrieves the lock status of the service control manager database on server \\testserver.
@@ -6528,7 +8438,6 @@ Retrieves the lock status of the service control manager database on server \\te
  {
 	print "$key = $lock{$key}\n";
  }
-
 
 =item QueryServiceConfig($server, $servicedb, $service, \%config)
 
@@ -6560,7 +8469,6 @@ Retrieves the configuration parameters of the service myservice on server \\test
 	}
  }
 
-
 =item QueryServiceStatus($server, $servicedb, $service, \%status)
 
 Retrieves the current status of the service myservice on server \\testserver.
@@ -6577,7 +8485,6 @@ for $key (sort keys %status)
  {
 	print "$key = $status{$key}\n";
  }
-
 
 =item QueryServiceObjectSecurity($server, $servicedb, $service, $securityinformation, \$securitydescriptor)
 
@@ -6600,7 +8507,6 @@ SACL_SECURITY_INFORMATION will be retrieved.
  #Do not print these binary data.
  #print $securitydescriptor;
 
-
 =item SetServiceObjectSecurity($server, $servicedb, $service, $securityinformation, $securitydescriptor)
 
 Sets a security descriptor of the service myservice on server
@@ -6619,7 +8525,6 @@ a valid security descriptor in $securitydescriptor.
 	exit 1;
  }
 
-
 =item QueryServiceConfig2($server, $servicedb, $service, \%config)
 
 Retrieves the optional configuration parameters of the service testserv on the server \\testserver.
@@ -6636,7 +8541,6 @@ Retrieves the optional configuration parameters of the service testserv on the s
  {
 	print "$key = $config{$key}\n";
  }
-
 
 =item ChangeServiceConfig2($server, $servicedb, $service, \%config)
 
@@ -6662,7 +8566,6 @@ fails as soon as the actions parameter is specified.
 	exit 1;
  }
 
-
 =item QueryServiceStatusEx($server, $servicedb, $service, \%status)
 
 Retrieves the current status of the service testserv on the server \\testserver.
@@ -6679,7 +8582,6 @@ Retrieves the current status of the service testserv on the server \\testserver.
  {
 	print "\t$key = $status{$key}\n";
  }
-
 
 =item EnumServicesStatusEx($server, $servicedb, $type, $state, \@services [, $group])
 
@@ -6704,7 +8606,7 @@ Enumerates all services belonging to the group testgroup on the server \\testser
 
 =back
 
-=head2 eventlog
+=head2 Eventlog
 
 =over 4
 
@@ -6720,12 +8622,10 @@ This is because after each call the event log is closed.
 
 To get all events  set $first to 1 and $last to -1 (or 0xffffffff if you prefer).
 
-
 =item GetEventDescription($server, \%event)
 
 Retrieves the description of the event %event on server $server. %event must be retrieved
 by a ReadEventLog call.
-
 
 =item ClearEventLog($server, $source [, $filename])
 
@@ -6743,11 +8643,9 @@ As with ClearEventLog, BackupEventLog fails if filename exists.
 
 Writes an event to the event log $source on server $server.
 
-
 =item GetNumberOfEventLogRecords($server, $source, \$numrecords)
 
 Retrieves the number of records in the event log $source on server $server.
-
 
 =item GetOldestEventLogRecord($server, $source, \$oldestrecord)
 
@@ -6755,7 +8653,7 @@ Retrieves the oldest record number in the event log $source on server $server.
 
 =back
 
-=head2 EventLog EXAMPLES:
+=head2 Eventlog EXAMPLES:
 
 =over 4
 
@@ -6772,7 +8670,6 @@ on server \\testserver.
 	exit 1;
  }
 
-
 Reads all events from the security event log in reverse order on server \\testserver.
 
  if(!Win32::Lanman::ReadEventLog("\\\\testserver", 'security', 0xffffffff, 0, \@events))
@@ -6782,7 +8679,6 @@ Reads all events from the security event log in reverse order on server \\testse
 	print Win32::Lanman::GetLastError();
 	exit 1;
  }
-
 
 Retrieves the first and the last record number in the application log on server
 \\testserver. Then it reads all these events and prints out the event properties.
@@ -6865,7 +8761,6 @@ Retrieves the first and the last record number in the application log on server
 	}
  }
 
-
 =item GetEventDescription($server, \%event)
 
 Retrieves all records in the system log on server \\testserver. Then it reads
@@ -6888,7 +8783,6 @@ all these events and prints out the event descriptions.
 	print ${$event}{'eventdescription'};
  }
 
-
 =item BackupEventLog($server, $source, $filename)
 
 Makes a backup from the application eventlog on server \\testserver to the
@@ -6901,7 +8795,6 @@ file application.evt.
 	print Win32::Lanman::GetLastError();
 	exit 1;
  }
-
 
 =item ClearEventLog($server, $source [, $filename])
 
@@ -6927,7 +8820,6 @@ Clears the system eventlog on server \\testserver without backing up the events.
 	exit 1;
  }
 
-
 =item ReportEvent($server, $source, $type, $category, $id, $sid, \@strings, $data)
 
 Reports an event to the event log on server \\testserver.
@@ -6944,7 +8836,6 @@ Reports an event to the event log on server \\testserver.
 	exit 1;
  }
 
-
 =item GetNumberOfEventLogRecords($server, $source, \$numrecords)
 
 Retrieves the number of records in the event log system on server \\testserver.
@@ -6958,7 +8849,6 @@ Retrieves the number of records in the event log system on server \\testserver.
  }
 
  print "$numrecords\n";
-
 
 =item GetOldestEventLogRecord($server, $source, \$oldestrecord)
 
@@ -6976,11 +8866,11 @@ Retrieves the oldest record number in the event log system on server \\testserve
 
 =back
 
-=head2 windows terminal server
- 
+=head2 Windows Terminal Server (WTS)
+
 =over 4
 
-=item Note: 
+=item Note:
 
 The WTS dll (wtsapi32.dll) is not an integral part of Windows NT. The Lanman module tries
 to loads the dll dynamically when your script starts. The dll is not statically linked. If the dll
@@ -6988,13 +8878,10 @@ is present and can be loaded, then you can call the WTS functions. But if the dl
 be loaded, every WTS call fails. GetLastError() returns 126 (ERROR_MOD_NOT_FOUND). 
 Wtsapi32.dll needs three additional dlls: utildll.dll, regapi.dll and winsta.dll. Copy
 each of these dlls into your system32 directory.
-
-                                 
-
+ 
 =item WTSEnumerateServers($domain, \@sessions)
 
 Enumerates all WTS server in domain.
-
 
 =item WTSOpenServer($server, \$handle)
 
@@ -7008,27 +8895,22 @@ handle every time you call a WTS function, makes the job and closes the handle a
 The advantage: you don't need to deal with handles, the downside: the  overhead
 in opening and closing a handle at each call.
 
-
 =item WTSCloseServer($handle)
 
 Closes an handle on a WTS server. This call is not really necessary and only implemented
 for completeness. See also the remarks at WTSOpenServer.
 
-
 =item WTSEnumerateSessions($server, \@sessions)
 
 Enumerates sessions on a WTS server.
-
 
 =item WTSEnumerateProcesses($server, \@processes)
 
 Enumerates processes on a WTS server.
 
-
 =item WTSTerminateProcess($server, $processid [, $exitcode])
 
 Terminates a process on a WTS server.
-
 
 =item WTSQuerySessionInformation($server, $sessionid, \@infoclass, \%info)
 
@@ -7036,35 +8918,29 @@ Returns information about the specified session on a WTS server. You need to
 specify which information you are interested in. To get all information 
 available, use WTSInfoClassAll() as @infoclass parameter.
 
-
 =item WTSQueryUserConfig($server, $user, \@infoclass, \%config)
 
 Returns the WTS user properties. Call this on your domains primary domain controller.
 You need to specify which information you are interested in. To get all information 
 available, use WTSUserConfigAll() as @infoclass parameter.
 
-
 =item WTSSetUserConfig($server, $user, \%config)
 
 Sets the WTS user properties. Call this on your primary domain controller.
 The function sets all information contained in the %config hash.
 
-
 =item WTSSendMessage($server, $sessionid, $title, $message[, $style [, $timeout [, \$response]]])
 
 Displays a message box on the client desktop of a WTS session.
-
 
 =item WTSDisconnectSession($server, $sessionid [, $wait])
 
 Disconnects the logged on user from the specified WTS session without 
 closing the session.
 
-
 =item WTSLogoffSession($server, $sessionid [, $wait])
 
 Logs off the specified WTS session.
-
 
 =item WTSShutdownSystem($server[, $flag])
 
@@ -7072,14 +8948,13 @@ Shuts down the specified WTS server. Avoid this call. I believe it doesn't behav
 as expected. It ignores the $server parameter and shuts down the 
 local machine. Is this a bug or a feature? I don't know.
 
-
 =item WTSWaitSystemEvent($server[, $flag])
 
 Waits for a WTS event before returning to the caller.
 
 =back
 
-=head2 WTS EXAMPLES:
+=head2 Windows Terminal Server (WTS) EXAMPLES:
 
 =over 4
 
@@ -7100,7 +8975,6 @@ Enumerates all WTS server in domain testdomain.
 	print "${$server}{name}\n";
  }
 
-
 =item WTSOpenServer($server, \$handle)
 
 Opens and closes a WTS handle on server \\testserver. These calls are not really 
@@ -7124,7 +8998,6 @@ necessary. See the description above.
 	print Win32::Lanman::GetLastError();
 	exit 1;
  }
-
 
 =item WTSCloseServer($handle)
 
@@ -7150,7 +9023,6 @@ necessary. See the description above.
 	exit 1;
  }
 
-
 =item WTSEnumerateSessions($server, \@sessions)
 
 Enumerates all sessions on the WTS server \\testserver.
@@ -7170,7 +9042,6 @@ Enumerates all sessions on the WTS server \\testserver.
 		print "$key=${$session}{$key}\n";
 	}
  }
-
 
 =item WTSEnumerateProcesses($server, \@processes)
 
@@ -7198,7 +9069,6 @@ Enumerates all processes on the WTS server \\testserver.
 		}
 	}
  }
-
 
 =item WTSTerminateProcess($server, $processid [, $exitcode])
 
@@ -7246,7 +9116,6 @@ processes like csrss or winlogon.
 	}
  }
 
-
 =item WTSQuerySessionInformation($server, $sessionid, \@infoclass, \%info)
 
 Returns all information available for the session id 0 (session 0 is the WTS 
@@ -7264,7 +9133,6 @@ console) on server \\testserver.
  {
 	print "$key=$info{$key}\n";
  } 
-
 
 =item WTSQueryUserConfig($server, $user, \@infoclass, \%config)
 
@@ -7284,7 +9152,6 @@ Returns all WTS specific user properties for user testuser from server
 	print "$key=$user{$key}\n";
  } 
 
-
 =item WTSSetUserConfig($server, $user, \%config)
 
 Set WTS specific user properties for user testuser from server \\testserver. 
@@ -7302,7 +9169,6 @@ directory to c:\work\testuser.
 	print Win32::Lanman::GetLastError();
 	exit 1;
  }
-
 
 =item WTSSendMessage($server, $sessionid, $title, $message[, $style [, $timeout [, \$response]]])
 
@@ -7327,8 +9193,6 @@ message box or if the timeout elapsed.
 
  print $response;
 
-
-
 =item WTSDisconnectSession($server, $sessionid [, $wait])
 
 Disconnects the user logged on the desktop window station (session id 0) on
@@ -7342,7 +9206,6 @@ The calling process waits til the connection is closed ($wait == 1).
 	print Win32::Lanman::GetLastError();
 	exit 1;
  }
-
 
 =item WTSLogoffSession($server, $sessionid [, $wait])
 
@@ -7358,11 +9221,9 @@ off ($wait == 1).
 	exit 1;
  }
 
-
 =item WTSShutdownSystem($server[, $flag])
 
 Avoid using this call. It's buggy. See the notes above.
-
 
 =item WTSWaitSystemEvent($server[, $flag])
 
@@ -7378,7 +9239,6 @@ one event type by or'ing them. The $event returns which event occured.
 	print Win32::Lanman::GetLastError();
 	exit 1;
  }
-
 
 =back
 

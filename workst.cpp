@@ -1,12 +1,14 @@
 #define WIN32_LEAN_AND_MEAN
 
+
 #ifndef __WORKST_CPP
 #define __WORKST_CPP
 #endif
 
+
 #include <windows.h>
-#include <stdio.h>
 #include <lm.h>
+
 
 #include "workst.h"
 #include "wstring.h"
@@ -432,6 +434,9 @@ XS(XS_NT__Lanman_NetWkstaTransportEnum)
 					H_STORE_INT(properties, "wan_ish", info[count].wkti0_wan_ish);
 
 					A_STORE_REF(transportInfo, properties);
+
+					// decrement reference count
+					SvREFCNT_dec(properties);
 				}
 		}
 		__except(SetExceptCode(excode))
@@ -625,6 +630,9 @@ XS(XS_NT__Lanman_NetWkstaUserEnum)
 					H_STORE_WSTR(properties, "logon_server", (PWSTR)info[count].wkui1_logon_server);
 
 					A_STORE_REF(userInfo, properties);
+
+					// decrement reference count
+					SvREFCNT_dec(properties);
 				}
 		}
 		__except(SetExceptCode(excode))

@@ -1,13 +1,15 @@
 #define WIN32_LEAN_AND_MEAN
 
+
 #ifndef __SERVER_CPP
 #define __SERVER_CPP
 #endif
 
+
 #include <windows.h>
-#include <stdio.h>
 #include <lm.h>
 #include <lmserver.h>
+
 
 #include "server.h"
 #include "wstring.h"
@@ -57,6 +59,9 @@ XS(XS_NT__Lanman_NetServerDiskEnum)
 		{
 			// change server to unicode
 			server = ServerAsUnicode(SvPV(ST(0), PL_na));
+
+			// clean array
+			AV_CLEAR(serverInfo);
 
 			DWORD entries = 0;
 			DWORD total = 0;
@@ -156,6 +161,9 @@ XS(XS_NT__Lanman_NetServerEnum)
 					H_STORE_WSTR(properties, "comment", (PWSTR)info[count].sv101_comment);
 
 					A_STORE_REF(serverInfo, properties);
+
+					// decrement reference count
+					SvREFCNT_dec(properties);
 				}
 		}
 		__except(SetExceptCode(excode))
@@ -627,6 +635,9 @@ XS(XS_NT__Lanman_NetServerTransportEnum)
 					H_STORE_WSTR(properties, "domain", (PWSTR)info[count].svti1_domain);
 
 					A_STORE_REF(transportInfo, properties);
+
+					// decrement reference count
+					SvREFCNT_dec(properties);
 				}
 		}
 		__except(SetExceptCode(excode))

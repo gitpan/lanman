@@ -1,13 +1,15 @@
 #define WIN32_LEAN_AND_MEAN
 
+
 #ifndef __SERVICE_CPP
 #define __SERVICE_CPP
 #endif
 
+
 #include <windows.h>
-#include <stdio.h>
 #include <lm.h>
 #include <aclapi.h>
+
 
 #include "addloader.h"
 #include "service.h"
@@ -829,7 +831,7 @@ XS(XS_NT__Lanman_EnumServicesStatus)
 					for(DWORD count = 0; count < servStatusCount; count++)
 					{
 						// store service properties
-						HV *properties = newHV();
+						HV *properties = NewHV;
 
 						H_STORE_STR(properties, "name", servStatus[count].lpServiceName);
 						H_STORE_STR(properties, "display", servStatus[count].lpDisplayName);
@@ -842,6 +844,9 @@ XS(XS_NT__Lanman_EnumServicesStatus)
 						H_STORE_INT(properties, "hint", servStatus[count].ServiceStatus.dwWaitHint);
 
 						A_STORE_REF(services, properties);
+
+						// decrement reference count
+						SvREFCNT_dec(properties);
 					}
 				}
 				else
@@ -944,7 +949,7 @@ XS(XS_NT__Lanman_EnumDependentServices)
 					for(DWORD count = 0; count < servStatusCount; count++)
 					{
 						// store service properties
-						HV *properties = newHV();
+						HV *properties = NewHV;
 
 						H_STORE_STR(properties, "name", servStatus[count].lpServiceName);
 						H_STORE_STR(properties, "display", servStatus[count].lpDisplayName);
@@ -957,6 +962,9 @@ XS(XS_NT__Lanman_EnumDependentServices)
 						H_STORE_INT(properties, "hint", servStatus[count].ServiceStatus.dwWaitHint);
 
 						A_STORE_REF(services, properties);
+
+						// decrement reference count
+						SvREFCNT_dec(properties);
 					}
 				}
 				else
@@ -1572,13 +1580,16 @@ XS(XS_NT__Lanman_QueryServiceConfig)
 					if(serviceConfig->lpDependencies && *serviceConfig->lpDependencies)
 					{
 						// store dependencies
-						AV *depend = newAV();
+						AV *depend = NewAV;
 
 						for(PSTR dependPtr = serviceConfig->lpDependencies; *dependPtr; 
 								dependPtr += strlen(dependPtr) + 1)
 							A_STORE_STR(depend, dependPtr);
 
 						H_STORE_REF(config, "dependencies", depend);
+
+						// decrement reference count
+						SvREFCNT_dec(depend);
 					}
 				}
 				else
@@ -2076,19 +2087,25 @@ XS(XS_NT__Lanman_QueryServiceConfig2)
 
 						if(serviceActions->cActions)
 						{
-							AV *actions = newAV();
+							AV *actions = NewAV;
 
 							for(DWORD count = 0; count < serviceActions->cActions; count++)
 							{
-								HV *properties = newHV();
+								HV *properties = NewHV;
 
 								H_STORE_INT(properties, "type", serviceActions->lpsaActions[count].Type);
 								H_STORE_INT(properties, "delay", serviceActions->lpsaActions[count].Delay);
 
-								A_STORE_REF(actions, actions);
+								A_STORE_REF(actions, properties);
+
+								// decrement reference count
+								SvREFCNT_dec(properties);
 							}
 
 							H_STORE_REF(config, "actions", actions);
+
+							// decrement reference count
+							SvREFCNT_dec(actions);
 						}
 					}
 					else
@@ -2287,7 +2304,7 @@ XS(XS_NT__Lanman_EnumServicesStatusEx)
 					for(DWORD count = 0; count < servStatusCount; count++)
 					{
 						// store service properties
-						HV *properties = newHV();
+						HV *properties = NewHV;
 
 						H_STORE_STR(properties, "name", servStatus[count].lpServiceName);
 						H_STORE_STR(properties, "display", servStatus[count].lpDisplayName);
@@ -2310,6 +2327,9 @@ XS(XS_NT__Lanman_EnumServicesStatusEx)
 												servStatus[count].ServiceStatusProcess.dwServiceFlags);
 
 						A_STORE_REF(services, properties);
+
+						// decrement reference count
+						SvREFCNT_dec(properties);
 					}
 				} // if(EnumServicesStatusExCall(hSCManager, ...
 				else

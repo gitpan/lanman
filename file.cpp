@@ -1,12 +1,14 @@
 #define WIN32_LEAN_AND_MEAN
 
+
 #ifndef __FILE_CPP
 #define __FILE_CPP
 #endif
 
+
 #include <windows.h>
-#include <stdio.h>
 #include <lm.h>
+
 
 #include "file.h"
 #include "wstring.h"
@@ -82,6 +84,9 @@ XS(XS_NT__Lanman_NetFileEnum)
 					H_STORE_WSTR(properties, "username", (PWSTR)info[count].fi3_username);
 					
 					A_STORE_REF(fileInfo, properties);
+
+					// decrement reference count
+					SvREFCNT_dec(properties);
 				}
 		}
 		__except(SetExceptCode(excode))

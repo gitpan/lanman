@@ -1,18 +1,27 @@
 #define WIN32_LEAN_AND_MEAN
 
+
 #ifndef __USER_CPP
 #define __USER_CPP
 #endif
 
+
 #include <windows.h>
-#include <stdio.h>
 #include <lm.h>
+
 
 #include "user.h"
 #include "wstring.h"
 #include "strhlp.h"
 #include "misc.h"
 #include "usererror.h"
+
+
+///////////////////////////////////////////////////////////////////////////////
+//
+// defines
+//
+///////////////////////////////////////////////////////////////////////////////
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -283,8 +292,8 @@ XS(XS_NT__Lanman_NetUserEnum)
 			// get all user; if we get an access denied, we can call with level 10 only
 			if(LastError(NetUserEnum(server, level, filter, (PBYTE*)&info3, 0xffffffff, 
 															 &entries, &total, &handle)) == ERROR_ACCESS_DENIED)
-				LastError(NetUserEnum(server, level = 10, filter, (PBYTE*)&info10, 
-															0xffffffff, &entries, &total, &handle));
+				 LastError(NetUserEnum(server, level = 10, filter, (PBYTE*)&info10, 
+															 0xffffffff, &entries, &total, &handle));
 			
 			if(!LastError())
 			{
@@ -338,6 +347,9 @@ XS(XS_NT__Lanman_NetUserEnum)
 					}
 
 					A_STORE_REF(userInfo, properties);
+
+					// decrement reference count
+					SvREFCNT_dec(properties);
 				}
 			}
 		}
@@ -415,6 +427,9 @@ XS(XS_NT__Lanman_NetUserGetGroups)
 					H_STORE_INT(properties, "attributes", info[count].grui1_attributes);
 
 					A_STORE_REF(groups, properties);
+
+					// decrement reference count
+					SvREFCNT_dec(properties);
 				}
 				
 				CleanNetBuf(info);
@@ -500,7 +515,8 @@ XS(XS_NT__Lanman_NetUserGetInfo)
 					H_STORE_INT(userInfo, "auth_flags", info3->usri3_auth_flags);
 					H_STORE_INT(userInfo, "password_age", info3->usri3_password_age);
 					H_STORE_WSTR(userInfo, "home_dir", info3->usri3_home_dir);
-					H_STORE_WSTR(userInfo, "parms", info3->usri3_parms);
+					H_STORE_PTR(userInfo, "parms", info3->usri3_parms, 
+											(wcslen(info3->usri3_parms) + 1) * sizeof(WCHAR));
 					H_STORE_INT(userInfo, "last_logon", info3->usri3_last_logon);
 					H_STORE_INT(userInfo, "last_logoff", info3->usri3_last_logoff);
 					H_STORE_INT(userInfo, "bad_pw_count", info3->usri3_bad_pw_count);
@@ -628,11 +644,14 @@ XS(XS_NT__Lanman_NetUserGetLocalGroups)
 				for(DWORD count = 0; count < entries; count++)
 				{
 					// store user properties
-					HV *properties = newHV();
+					HV *properties = NewHV;
 
 					H_STORE_WSTR(properties, "name", info[count].lgrui0_name);
 
 					A_STORE_REF(groups, properties);
+
+					// decrement reference count
+					SvREFCNT_dec(properties);
 				}
 				
 				CleanNetBuf(info);
@@ -772,7 +791,7 @@ XS(XS_NT__Lanman_NetUserSetInfo)
 			server = ServerAsUnicode(SvPV(ST(0), PL_na));
 			user = S2W(SvPV(ST(1), PL_na));
 
-			DWORD level = 3;
+			DWORD level = 3, paramError = 0;
 
 			userInfo.usri3_name = H_FETCH_WSTR(info, "name");
 			userInfo.usri3_password = H_FETCH_WSTR(info, "password");
@@ -785,7 +804,8 @@ XS(XS_NT__Lanman_NetUserSetInfo)
 			userInfo.usri3_auth_flags = 0;
 			userInfo.usri3_full_name = H_FETCH_WSTR(info, "full_name");
 			userInfo.usri3_usr_comment = H_FETCH_WSTR(info, "usr_comment");
-			userInfo.usri3_parms = H_FETCH_WSTR(info, "parms");
+			unsigned parmsSize = H_FETCH_SLEN(info, "parms");
+			userInfo.usri3_parms = (PWSTR)H_FETCH_PTR(info, "parms", parmsSize);
 			userInfo.usri3_workstations = H_FETCH_WSTR(info, "workstations");
 			userInfo.usri3_last_logon = userInfo.usri3_last_logoff = 0;
 			userInfo.usri3_acct_expires = H_FETCH_INT(info, "acct_expires");
@@ -818,7 +838,7 @@ XS(XS_NT__Lanman_NetUserSetInfo)
 				userInfo2.usri2_parms = userInfo.usri3_parms;
 				userInfo2.usri2_country_code = userInfo.usri3_country_code;
 
-				LastError(NetUserSetInfo(server, user, level = 2, (PBYTE)&userInfo2, NULL));
+				LastError(NetUserSetInfo(server, user, level = 2, (PBYTE)&userInfo2, &paramError));
 			}
 		}
 		__except(SetExceptCode(excode))
@@ -846,6 +866,199 @@ XS(XS_NT__Lanman_NetUserSetInfo)
 	} // if(items == 3 && ...)
 	else
 		croak("Usage: Win32::Lanman::NetUserSetInfo($server, $user, \\%%info)\n");
+	
+	RETURNRESULT(LastError() == 0);
+}
+
+
+///////////////////////////////////////////////////////////////////////////////
+//
+// sets one or more pproperties of a user account
+//
+// param:  server	- computer to execute the command
+//         user		- user account to set information
+//				 info		- hash to set infos
+//
+// return: success - 1 
+//         failure - 0 
+//
+// note:   call GetLastError() to get the error code on failure
+//
+///////////////////////////////////////////////////////////////////////////////
+
+XS(XS_NT__Lanman_NetUserSetProp)
+{
+	dXSARGS;
+
+	ErrorAndResult;
+
+	// reset last error
+	LastError(0);
+
+	HV *info = NULL;
+
+	if(items == 3 && CHK_ASSIGN_HREF(info, ST(2)))
+	{
+		PWSTR server = NULL, user = NULL;
+		USER_INFO_0 user0 = { NULL };
+		USER_INFO_1003 user1003 = { NULL };
+		USER_INFO_1006 user1006 = { NULL };
+		USER_INFO_1007 user1007 = { NULL };
+		USER_INFO_1008 user1008 = { 0 };
+		USER_INFO_1009 user1009 = { NULL };
+		USER_INFO_1011 user1011 = { NULL };
+		USER_INFO_1012 user1012 = { NULL };
+		USER_INFO_1014 user1014 = { NULL };
+		USER_INFO_1017 user1017 = { 0 };
+		USER_INFO_1020 user1020 = { 0, NULL };
+		USER_INFO_1024 user1024 = { 0 };
+		USER_INFO_1025 user1025 = { 0 };
+		USER_INFO_1051 user1051 = { 0 };
+		USER_INFO_1052 user1052 = { NULL };
+		USER_INFO_1053 user1053 = { NULL };
+
+		__try
+		{
+			// change server and user to unicode
+			server = ServerAsUnicode(SvPV(ST(0), PL_na));
+			user = S2W(SvPV(ST(1), PL_na));
+
+			// sets user properties
+			if(H_EXISTS(info, "password")) 
+			{
+				user1003.usri1003_password = H_FETCH_WSTR(info, "password");
+				if(error = LastError(NetUserSetInfo(server, user, 1003, (PBYTE)&user1003, NULL)))
+					RaiseFalseError(error);
+			}
+
+			if(H_EXISTS(info, "home_dir")) 
+			{
+				user1006.usri1006_home_dir = H_FETCH_WSTR(info, "home_dir");
+				if(error = LastError(NetUserSetInfo(server, user, 1006, (PBYTE)&user1006, NULL)))
+					RaiseFalseError(error);
+			}
+
+			if(H_EXISTS(info, "comment")) 
+			{
+				user1007.usri1007_comment = H_FETCH_WSTR(info, "comment");
+				if(error = LastError(NetUserSetInfo(server, user, 1007, (PBYTE)&user1007, NULL)))
+					RaiseFalseError(error);
+			}
+
+			if(H_EXISTS(info, "flags")) 
+			{
+				user1008.usri1008_flags = H_FETCH_INT(info, "flags");
+				if(error = LastError(NetUserSetInfo(server, user, 1008, (PBYTE)&user1008, NULL)))
+					RaiseFalseError(error);
+			}
+
+			if(H_EXISTS(info, "script_path")) 
+			{
+				user1009.usri1009_script_path = H_FETCH_WSTR(info, "script_path");
+				if(error = LastError(NetUserSetInfo(server, user, 1009, (PBYTE)&user1009, NULL)))
+					RaiseFalseError(error);
+			}
+
+			if(H_EXISTS(info, "full_name")) 
+			{
+				user1011.usri1011_full_name = H_FETCH_WSTR(info, "full_name");
+				if(error = LastError(NetUserSetInfo(server, user, 1011, (PBYTE)&user1011, NULL)))
+					RaiseFalseError(error);
+			}
+
+			if(H_EXISTS(info, "usr_comment")) 
+			{
+				user1012.usri1012_usr_comment = H_FETCH_WSTR(info, "usr_comment");
+				if(error = LastError(NetUserSetInfo(server, user, 1012, (PBYTE)&user1012, NULL)))
+					RaiseFalseError(error);
+			}
+
+			if(H_EXISTS(info, "workstations")) 
+			{
+				user1014.usri1014_workstations = H_FETCH_WSTR(info, "workstations");
+				if(error = LastError(NetUserSetInfo(server, user, 1014, (PBYTE)&user1014, NULL)))
+					RaiseFalseError(error);
+			}
+
+			if(H_EXISTS(info, "acct_expires")) 
+			{
+				user1017.usri1017_acct_expires = H_FETCH_INT(info, "acct_expires");
+				if(error = LastError(NetUserSetInfo(server, user, 1017, (PBYTE)&user1017, NULL)))
+					RaiseFalseError(error);
+			}
+
+			if(H_EXISTS(info, "logon_hours")) 
+			{
+				user1020.usri1020_units_per_week = UNITS_PER_WEEK;
+				user1020.usri1020_logon_hours = (PBYTE)H_FETCH_STR(info, "logon_hours");
+				if(error = LastError(NetUserSetInfo(server, user, 1020, (PBYTE)&user1020, NULL)))
+					RaiseFalseError(error);
+			}
+
+			if(H_EXISTS(info, "country_code")) 
+			{
+				user1024.usri1024_country_code = H_FETCH_INT(info, "country_code");
+				if(error = LastError(NetUserSetInfo(server, user, 1024, (PBYTE)&user1024, NULL)))
+					RaiseFalseError(error);
+			}
+
+			if(H_EXISTS(info, "code_page")) 
+			{
+				user1025.usri1025_code_page = H_FETCH_INT(info, "code_page");
+				if(error = LastError(NetUserSetInfo(server, user, 1025, (PBYTE)&user1025, NULL)))
+					RaiseFalseError(error);
+			}
+
+			if(H_EXISTS(info, "primary_group_id")) 
+			{
+				user1051.usri1051_primary_group_id = H_FETCH_INT(info, "primary_group_id");
+				if(error = LastError(NetUserSetInfo(server, user, 1051, (PBYTE)&user1051, NULL)))
+					RaiseFalseError(error);
+			}
+
+			if(H_EXISTS(info, "profile")) 
+			{
+				user1052.usri1052_profile = H_FETCH_WSTR(info, "profile");
+				if(error = LastError(NetUserSetInfo(server, user, 1052, (PBYTE)&user1052, NULL)))
+					RaiseFalseError(error);
+			}
+
+			if(H_EXISTS(info, "home_dir_drive")) 
+			{
+				user1053.usri1053_home_dir_drive = H_FETCH_WSTR(info, "home_dir_drive");
+				if(error = LastError(NetUserSetInfo(server, user, 1053, (PBYTE)&user1053, NULL)))
+					RaiseFalseError(error);
+			}
+
+			// rename user
+			if(H_EXISTS(info, "name")) 
+			{
+				user0.usri0_name = H_FETCH_WSTR(info, "name");
+				if(error = LastError(NetUserSetInfo(server, user, 0, (PBYTE)&user0, NULL)))
+					RaiseFalseError(error);
+			}
+		}
+		__except(SetExceptCode(excode))
+		{
+			// set last error 
+			LastError(error ? error : excode);
+		}
+
+		// clean up
+		CleanPtr(user0.usri0_name);
+		CleanPtr(user1003.usri1003_password);
+		CleanPtr(user1006.usri1006_home_dir);
+		CleanPtr(user1007.usri1007_comment);
+		CleanPtr(user1009.usri1009_script_path);
+		CleanPtr(user1011.usri1011_full_name);
+		CleanPtr(user1012.usri1012_usr_comment);
+		CleanPtr(user1014.usri1014_workstations);
+		CleanPtr(user1052.usri1052_profile);
+		CleanPtr(server);
+		CleanPtr(user);
+	} // if(items == 3 && ...)
+	else
+		croak("Usage: Win32::Lanman::NetUserSetProp($server, $user, \\%%info)\n");
 	
 	RETURNRESULT(LastError() == 0);
 }
@@ -1034,3 +1247,57 @@ XS(XS_NT__Lanman_NetUserModalsSet)
 	RETURNRESULT(LastError() == 0);
 }
 
+///////////////////////////////////////////////////////////////////////////////
+//
+// checks user's password for validity
+//
+// param:	 domain		- domain or computer to execute the command
+//				 user			- user name
+//				 password	- users password
+//
+// return: success - 1
+//         failure - 0
+//
+// note:   call GetLastError() to get the error code on failure
+//
+///////////////////////////////////////////////////////////////////////////////
+
+XS(XS_NT__Lanman_NetUserCheckPassword)
+{
+	dXSARGS;
+
+	ErrorAndResult;
+
+	// reset last error
+	LastError(0);
+
+	if(items == 3)
+	{
+		PSTR domain = NULL, user = NULL, password = NULL;
+		HANDLE hToken = NULL;
+
+		__try
+		{
+			domain = SvPV(ST(0), PL_na);
+			user = SvPV(ST(1), PL_na);
+			password = SvPV(ST(2), PL_na);
+
+			// try to logon user
+			if(!LogonUser(user, domain, password, LOGON32_LOGON_NETWORK, LOGON32_PROVIDER_DEFAULT, 
+										&hToken))
+				LastError(GetLastError());
+		}
+		__except(SetExceptCode(excode))
+		{
+			// set last error
+			LastError(error ? error : excode);
+		}
+
+		// clean up
+		CloseHandle(hToken);
+	} // if(items == 3)
+	else
+		croak("Usage: Win32::Lanman::NetUserCheckPassword($domain, $user, $password)\n");
+
+	RETURNRESULT(LastError() == 0);
+}

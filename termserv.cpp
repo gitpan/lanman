@@ -1,20 +1,21 @@
 #define WIN32_LEAN_AND_MEAN
 
+
 #ifndef __TERMSERV_CPP
 #define __TERMSERV_CPP
 #endif
 
+
 #include <windows.h>
-#include <stdio.h>
 #include <lm.h>
 #include <wtsapi32.h>
+
 
 #include "termserv.h"
 #include "wstring.h"
 #include "strhlp.h"
 #include "misc.h"
 #include "usererror.h"
-
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -392,6 +393,9 @@ XS(XS_NT__Lanman_WTSEnumerateServers)
 				H_STORE_STR(properties, "name", serverInfo[count].pServerName);
 
 				A_STORE_REF(servers, properties);
+
+				// decrement reference count
+				SvREFCNT_dec(properties);
 			}
 		}
 		__except(SetExceptCode(excode))
@@ -598,6 +602,9 @@ XS(XS_NT__Lanman_WTSEnumerateSessions)
 				H_STORE_INT(properties, "state", sessInfo[count].State);
 
 				A_STORE_REF(sessions, properties);
+
+				// decrement reference count
+				SvREFCNT_dec(properties);
 			}
 		}
 		__except(SetExceptCode(excode))
@@ -689,6 +696,9 @@ XS(XS_NT__Lanman_WTSEnumerateProcesses)
 											GetLengthSid(procInfo[count].pUserSid));
 
 				A_STORE_REF(processes, properties);
+
+				// decrement reference count
+				SvREFCNT_dec(properties);
 			}
 		}
 		__except(SetExceptCode(excode))

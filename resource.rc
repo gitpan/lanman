@@ -13,7 +13,7 @@
 #undef APSTUDIO_READONLY_SYMBOLS
 
 /////////////////////////////////////////////////////////////////////////////
-// Englisch (USA) resources
+// English (U.S.) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
 #ifdef _WIN32
@@ -54,8 +54,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 1,0,8,0
- PRODUCTVERSION 1,0,8,0
+ FILEVERSION 1,0,9,0
+ PRODUCTVERSION 1,0,9,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -70,17 +70,17 @@ BEGIN
     BEGIN
         BLOCK "040904b0"
         BEGIN
-            VALUE "Comments", "Please send all comments or suggestions to  jens.helberg@de.bosch.com.\0"
+            VALUE "Comments", "Please send all comments or suggestions to jens.helberg@de.bosch.com.\0"
             VALUE "CompanyName", "Jens Helberg\0"
             VALUE "FileDescription", "LanManager Module for ActiveState Perl\0"
-            VALUE "FileVersion", "1.0.8.0\0"
+            VALUE "FileVersion", "1.0.9.0\0"
             VALUE "InternalName", "Lanman\0"
             VALUE "LegalCopyright", "You can use this module under the GNU public licence.\0"
             VALUE "LegalTrademarks", "\0"
             VALUE "OriginalFilename", "lanman.dll\0"
             VALUE "PrivateBuild", "\0"
             VALUE "ProductName", "\0"
-            VALUE "ProductVersion", "1.0.8.0\0"
+            VALUE "ProductVersion", "1.0.9.0\0"
             VALUE "SpecialBuild", "\0"
         END
     END
@@ -92,7 +92,7 @@ END
 
 #endif    // !_MAC
 
-#endif    // Englisch (USA) resources
+#endif    // English (U.S.) resources
 /////////////////////////////////////////////////////////////////////////////
 
 

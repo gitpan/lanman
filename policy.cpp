@@ -1,13 +1,15 @@
 #define WIN32_LEAN_AND_MEAN
 
+
 #ifndef __POLICY_CPP
 #define __POLICY_CPP
 #endif
 
+
 #include <windows.h>
-#include <stdio.h>
 #include <lm.h>
 #include <ntsecapi.h>
+
 
 #include "policy.h"
 #include "wstring.h"
@@ -527,9 +529,7 @@ XS(XS_NT__Lanman_EnumAccountPrivileges)
 		CleanLsaHandle(hPolicy);
 
 		// clear memory
-		if(lsaPrivileges)
-			LsaFreeMemory(lsaPrivileges);
-		
+		CleanLsaPtr(lsaPrivileges);
 		CleanPtr(sid);
 		FreeStr(server);
 		CleanPtr(privilege);
@@ -621,8 +621,7 @@ XS(XS_NT__Lanman_EnumPrivilegeAccounts)
 		CleanLsaHandle(hPolicy);
 
 		// clear memory
-		if(sids)
-			LsaFreeMemory(sids);
+		CleanLsaPtr(sids);
 		CleanPtr(account);
 		FreeStr(privilege);
 		FreeStr(server);
@@ -737,12 +736,16 @@ XS(XS_NT__Lanman_LsaQueryInformationPolicy)
 						if(((PPOLICY_AUDIT_EVENTS_INFO)infoBuffer)->MaximumAuditEventCount > 0)
 						{
 							PPOLICY_AUDIT_EVENTS_INFO auditEvents = (PPOLICY_AUDIT_EVENTS_INFO)infoBuffer;
+							
 							AV *options = NewAV;
 							
 							for(DWORD count = 0; count < auditEvents->MaximumAuditEventCount; count++)
 								A_STORE_INT(options, auditEvents->EventAuditingOptions[count]);
 						
 							H_STORE_REF(info, "eventauditingoptions", options);
+
+							// decrement reference count
+							SvREFCNT_dec(options);
 						}
 						H_STORE_INT(info, "maximumauditeventcount", 
 												((PPOLICY_AUDIT_EVENTS_INFO)infoBuffer)->MaximumAuditEventCount);
@@ -1346,6 +1349,10 @@ XS(XS_NT__Lanman_LsaEnumerateTrustedDomains)
 							H_STORE_PTR(prop, "sid", domains[count].Sid, GetLengthSid(domains[count].Sid));
 
 						A_STORE_REF(trustedDomains, prop);
+
+						// decrement reference count
+						SvREFCNT_dec(prop);
+
 					} // for(DWORD count = 0; count < numDomains; count++)
 				else
 					LastError(error);
@@ -1494,6 +1501,9 @@ XS(XS_NT__Lanman_LsaLookupNames)
 						}
 
 						A_STORE_REF(info, prop);
+
+						// decrement reference count
+						SvREFCNT_dec(prop);
 					} // for(DWORD count = 0; count < numDomains; count++)
 				} // if(!(error = LsaNtStatusToWinError(error)) || error == ERROR_SOME_NOT_MAPPED)
 				else
@@ -1518,6 +1528,161 @@ XS(XS_NT__Lanman_LsaLookupNames)
 	} // if(items == 3 && ...
 	else
 		croak("Usage: Win32::Lanman::LsaLookupNames($server, \\@accounts, \\@info)\n");
+
+	RETURNRESULT(LastError() == 0);
+}
+
+
+///////////////////////////////////////////////////////////////////////////////
+//
+// looks up for account names
+//
+// param:  server  - computer to execute the command
+//				 info    - gets the sids and other information
+//
+// return: success - 1 
+//         failure - 0 
+//
+// note:   there will no error generated, if not all accounts could be resolved;
+//				 the use flag will be set to SidTypeUnknown (8) if the account 
+//				 couldn't be resolved
+//
+///////////////////////////////////////////////////////////////////////////////
+
+XS(XS_NT__Lanman_LsaLookupNamesEx)
+{
+	dXSARGS;
+
+	ErrorAndResult;
+
+	// reset last error
+	LastError(0);
+
+	AV *accounts = NULL;
+	AV *info = NULL;
+
+	// check argument type
+	if(items == 3 && CHK_ASSIGN_AREF(accounts, ST(1)) && CHK_ASSIGN_AREF(info, ST(2)))
+	{
+		PWSTR server = NULL;
+		LSA_HANDLE hPolicy = NULL;
+		PLSA_UNICODE_STRING names = NULL;
+		PLSA_REFERENCED_DOMAIN_LIST refDomains = NULL;
+		PLSA_TRANSLATED_SID transSids = NULL;
+		PSID sid = NULL;
+
+		__try
+		{
+			// change server to unicode
+			server = ServerAsUnicode(SvPV(ST(0), PL_na));
+
+			AV_CLEAR(info);
+
+			// first try open policy
+			if(OpenPolicy(server, POLICY_LOOKUP_NAMES, &hPolicy, &error))
+			{
+				DWORD numAccounts = AV_LEN(accounts) + 1;
+				PSTR name = NULL, copyPtr = NULL;
+
+				for(DWORD count = 0, size = 0; count < numAccounts; count++)
+					if(name = A_FETCH_STR(accounts, count))
+						size += sizeof(LSA_UNICODE_STRING) + (strlen(name) + 1) * sizeof(WCHAR);
+
+				names = (PLSA_UNICODE_STRING)NewMem(size);
+				copyPtr = (PSTR)names + sizeof(LSA_UNICODE_STRING) * numAccounts;
+
+				for(count = 0; count < numAccounts; count++)
+					if(name = A_FETCH_STR(accounts, count))
+					{
+						DWORD nameSize = (strlen(name) + 1) * sizeof(WCHAR);
+
+						names[count].MaximumLength = nameSize;
+						names[count].Length = names[count].MaximumLength - sizeof(WCHAR);
+						MBTWC(name, names[count].Buffer = (PWSTR)copyPtr, nameSize);
+						copyPtr += nameSize;
+					}
+
+				error = LsaLookupNames(hPolicy, numAccounts, names, &refDomains, &transSids);
+				
+				if(!(error = LsaNtStatusToWinError(error)) || error == ERROR_SOME_NOT_MAPPED)
+				{
+					error = 0;
+
+					for(count = 0; count < numAccounts; count++)
+					{
+						HV *prop = NewHV;
+
+						// store members
+						H_STORE_INT(prop, "use", transSids[count].Use);
+
+						if(transSids[count].Use != SidTypeDomain && 
+							 transSids[count].Use != SidTypeInvalid &&
+							 transSids[count].Use != SidTypeUnknown)
+							H_STORE_INT(prop, "relativeid", transSids[count].RelativeId);
+
+						if(transSids[count].Use != SidTypeInvalid &&
+							 transSids[count].Use != SidTypeUnknown &&
+							 transSids[count].DomainIndex >= 0 && 
+							 transSids[count].DomainIndex < refDomains->Entries)
+						{
+							PLSA_TRUST_INFORMATION domainInfo = 
+								refDomains->Domains + transSids[count].DomainIndex;
+
+							if(domainInfo->Name.Buffer)
+								H_STORE_WSTR(prop, "domain", domainInfo->Name.Buffer);
+
+							if(domainInfo->Sid && IsValidSid(domainInfo->Sid))
+							{
+								DWORD sidLen = GetLengthSid(domainInfo->Sid);
+
+								H_STORE_PTR(prop, "domainsid", domainInfo->Sid, sidLen);
+								
+								// build the user sid quickly from the domain sid and the rid;
+								// as first allec memory (one subauthority more than the domain)
+								sid = (PSID)NewMem(sidLen + sizeof(DWORD));
+
+								// copy the domain sid
+								CopySid(sidLen, sid, domainInfo->Sid);
+
+								// increment the subauthority count
+								((PBYTE)sid)[1]++;
+
+								// append the rid
+								*(PDWORD)((PSTR)sid + sidLen) = transSids[count].RelativeId;
+
+								H_STORE_PTR(prop, "sid", sid, sidLen + sizeof(DWORD));
+								CleanPtr(sid);
+							}
+						}
+
+						A_STORE_REF(info, prop);
+
+						// decrement reference count
+						SvREFCNT_dec(prop);
+					} // for(DWORD count = 0; count < numDomains; count++)
+				} // if(!(error = LsaNtStatusToWinError(error)) || error == ERROR_SOME_NOT_MAPPED)
+				else
+					LastError(error);
+			}
+			else
+				LastError(error);
+		}
+		__except(SetExceptCode(excode))
+		{
+			// set last error 
+			LastError(error ? error : excode);
+		}
+
+		// clean up
+		FreeStr(server);
+		CleanLsaHandle(hPolicy);
+		CleanLsaPtr(refDomains);
+		CleanLsaPtr(transSids);
+		CleanPtr(names);
+		CleanPtr(sid);
+	} // if(items == 3 && ...
+	else
+		croak("Usage: Win32::Lanman::LsaLookupNamesEx($server, \\@accounts, \\@info)\n");
 
 	RETURNRESULT(LastError() == 0);
 }
@@ -1628,6 +1793,9 @@ XS(XS_NT__Lanman_LsaLookupSids)
 						}
 
 						A_STORE_REF(info, prop);
+
+						// decrement reference count
+						SvREFCNT_dec(prop);
 					} // for(DWORD count = 0; count < numDomains; count++)
 				else
 					LastError(error);
@@ -2129,6 +2297,10 @@ XS(XS_NT__Lanman_LsaQueryTrustedDomainInfo)
 								A_STORE_WSTR(names, inf->Names[count].Buffer);
 
 							H_STORE_REF(info, "names", names);
+
+								// decrement reference count
+							SvREFCNT_dec(names);
+
 							break;
 						}
 						*/
@@ -2207,9 +2379,16 @@ XS(XS_NT__Lanman_LsaQueryTrustedDomainInfo)
 														inf->IncomingAuthenticationInformation[count].AuthInfoLength);
 
 								A_STORE_REF(incInfo, autInfo);
+
+								// decrement reference count
+								SvREFCNT_dec(autInfo);
 							}
 
 							H_STORE_REF(info, "incomingauthenticationinformation", incInfo);
+
+							// decrement reference count
+							SvREFCNT_dec(incInfo);
+
 
 							AV *incPrevInfo = NewAV;
 
@@ -2228,9 +2407,15 @@ XS(XS_NT__Lanman_LsaQueryTrustedDomainInfo)
 														inf->IncomingAuthenticationInformation[count].AuthInfoLength);
 
 								A_STORE_REF(incPrevInfo, autInfo);
+
+								// decrement reference count
+								SvREFCNT_dec(autInfo);
 							}
 
 							H_STORE_REF(info, "incomingpreviousauthenticationinformation", incPrevInfo);
+
+							// decrement reference count
+							SvREFCNT_dec(incPrevInfo);
 
 							AV *outInfo = NewAV;
 
@@ -2249,9 +2434,15 @@ XS(XS_NT__Lanman_LsaQueryTrustedDomainInfo)
 														inf->IncomingAuthenticationInformation[count].AuthInfoLength);
 
 								A_STORE_REF(outInfo, autInfo);
+
+								// decrement reference count
+								SvREFCNT_dec(autInfo);
 							}
 
 							H_STORE_REF(info, "outgoingauthenticationinformation", outInfo);
+
+							// decrement reference count
+							SvREFCNT_dec(outInfo);
 
 							AV *outPrevInfo = NewAV;
 
@@ -2270,9 +2461,15 @@ XS(XS_NT__Lanman_LsaQueryTrustedDomainInfo)
 														inf->IncomingAuthenticationInformation[count].AuthInfoLength);
 
 								A_STORE_REF(outPrevInfo, autInfo);
+
+								// decrement reference count
+								SvREFCNT_dec(autInfo);
 							}
 
 							H_STORE_REF(info, "outgoingpreviousauthenticationinformation", outPrevInfo);
+
+							// decrement reference count
+							SvREFCNT_dec(outPrevInfo);
 
 							break;
 						}
@@ -2311,17 +2508,317 @@ XS(XS_NT__Lanman_LsaQueryTrustedDomainInfo)
 	RETURNRESULT(LastError() == 0);
 }
 
-/*
-XS(XS_NT__Lanman_LsaTest)
+
+///////////////////////////////////////////////////////////////////////////////
+//
+// set domain settings
+//
+// param:  server			- computer to execute the command
+//				 domainsid	- domain sid
+//				 infotype		- information type to set
+//				 info				- information to set
+//
+// return: success - 1 
+//         failure - 0 
+//
+///////////////////////////////////////////////////////////////////////////////
+
+XS(XS_NT__Lanman_LsaSetTrustedDomainInformation)
 {
 	dXSARGS;
 
-	LsaSetTrustedDomainInformation(NULL, NULL, TrustedDomainNameInformation, NULL);
-	LsaSetTrustedDomainInfoByName(NULL, NULL, TrustedDomainNameInformation, NULL);
-	//LsaEnumerateTrustedDomainsEx(NULL, NULL, NULL, NULL, 0);
+	ErrorAndResult;
+
+	// reset last error
+	LastError(0);
+
+	HV *info = NULL;
+
+	// check argument type
+	if(items == 4 && CHK_ASSIGN_HREF(info, ST(3)))
+	{
+		PWSTR server = NULL;
+		PSID domainSid = 0;
+		PVOID infoBuffer = NULL;
+		LSA_HANDLE hPolicy = NULL;
+
+		__try
+		{
+			// change server to unicode
+			server = ServerAsUnicode(SvPV(ST(0), PL_na));
+			domainSid = (PSID)SvPV(ST(1), PL_na);
+			TRUSTED_INFORMATION_CLASS infoType = (TRUSTED_INFORMATION_CLASS)SvIV(ST(2));
+			DWORD access = 0;
+
+			// determine access needed
+			switch(infoType)
+			{
+				case TrustedDomainNameInformation:
+				{
+					PSTR name = H_FETCH_STR(info, "name");
+					DWORD nameSize = name ? strlen(name) + 1 : 0;
+
+					// the working structure
+					PTRUSTED_DOMAIN_NAME_INFO inf = (PTRUSTED_DOMAIN_NAME_INFO)
+							NewMem(sizeof(TRUSTED_DOMAIN_NAME_INFO) + nameSize * sizeof(WCHAR));
+					inf->Name.MaximumLength = nameSize * sizeof(WCHAR);
+					inf->Name.Length = inf->Name.MaximumLength - sizeof(WCHAR);
+					inf->Name.Buffer = (PWSTR)((PSTR)&inf->Name + sizeof(LSA_UNICODE_STRING));
+
+					MBTWC(name, inf->Name.Buffer, nameSize * sizeof(WCHAR));
+
+					// set working structure pointer to common pointer
+					infoBuffer = (PVOID)inf;
+
+					// set access needed
+					access = POLICY_TRUST_ADMIN;
+					break;
+				}
+
+				case TrustedPosixOffsetInformation:
+				{
+					// the working structure
+					PTRUSTED_POSIX_OFFSET_INFO inf = 
+						(PTRUSTED_POSIX_OFFSET_INFO)NewMem(sizeof(TRUSTED_POSIX_OFFSET_INFO));
+
+					inf->Offset = H_FETCH_INT(info, "offset");
+
+					// set working structure pointer to common pointer
+					infoBuffer = (PVOID)inf;
+
+					// set access needed
+					access = 0;
+					break;
+				}
+
+				case TrustedPasswordInformation:
+				{
+					PSTR password = H_FETCH_STR(info, "password");
+					DWORD passwordSize = password ? strlen(password) + 1 : 0;
+					PSTR oldPassword = H_FETCH_STR(info, "oldpassword");
+					DWORD oldPasswordSize = oldPassword ? strlen(oldPassword) + 1 : 0;
+
+					// the working structure
+					PTRUSTED_PASSWORD_INFO inf = (PTRUSTED_PASSWORD_INFO)
+							NewMem(sizeof(TRUSTED_PASSWORD_INFO) + passwordSize * sizeof(WCHAR) +
+										 oldPasswordSize * sizeof(WCHAR));
+					inf->Password.MaximumLength = passwordSize * sizeof(WCHAR);
+					inf->Password.Length = inf->Password.MaximumLength - sizeof(WCHAR);
+					inf->Password.Buffer = (PWSTR)((PSTR)&inf->Password + sizeof(LSA_UNICODE_STRING));
+
+					MBTWC(password, inf->Password.Buffer, passwordSize * sizeof(WCHAR));
+
+					inf->OldPassword.MaximumLength = oldPasswordSize * sizeof(WCHAR);
+					inf->OldPassword.Length = 
+						__max(inf->OldPassword.MaximumLength, sizeof(WCHAR)) - sizeof(WCHAR);
+					if(oldPassword)
+					{
+						inf->OldPassword.Buffer = 
+							(PWSTR)((PSTR)inf->Password.Buffer + inf->Password.MaximumLength);
+						MBTWC(oldPassword, inf->OldPassword.Buffer, oldPasswordSize * sizeof(WCHAR));
+					}
+
+					// set working structure pointer to common pointer
+					infoBuffer = (PVOID)inf;
+
+					// set access needed
+					access = POLICY_CREATE_SECRET;
+					break;
+				}
+
+			} // switch(infoType)
+
+			// first try open policy
+			if(OpenPolicy(server, access, &hPolicy, &error))
+			{
+				error = LsaSetTrustedDomainInformation(hPolicy, domainSid, infoType, infoBuffer);
+
+				if(error = LsaNtStatusToWinError(error))
+					LastError(error);
+			}
+			else
+				LastError(error);
+		}
+		__except(SetExceptCode(excode))
+		{
+			// set last error 
+			LastError(error ? error : excode);
+		}
+		
+		// clean up
+		FreeStr(server);
+		CleanLsaHandle(hPolicy);
+		CleanPtr(infoBuffer);
+	} // if(items == 4 && ...
+	else
+		croak("Usage: Win32::Lanman::LsaSetTrustedDomainInformation($server, $domainsid, "
+																																"$infotype, \\%%info)\n");
 
 	RETURNRESULT(LastError() == 0);
 }
-*/
+
+
+///////////////////////////////////////////////////////////////////////////////
+//
+// retrieves lsa data strings
+//
+// param:  server	- computer to execute the command
+//				 key		- key name
+//				 data		- retrieves the data string
+//
+// return: success - 1 
+//         failure - 0 
+//
+///////////////////////////////////////////////////////////////////////////////
+
+XS(XS_NT__Lanman_LsaRetrievePrivateData)
+{
+	dXSARGS;
+
+	ErrorAndResult;
+
+	// reset last error
+	LastError(0);
+
+	SV *data = NULL;
+
+	// check argument type
+	if(items == 3 && CHK_ASSIGN_SREF(data, ST(2)))
+	{
+		PWSTR server = NULL;
+		PLSA_UNICODE_STRING lsaKey = NULL;
+		PLSA_UNICODE_STRING lsaData = NULL;
+		PWSTR dataPtr = NULL;
+		LSA_HANDLE hPolicy = NULL;
+
+		__try
+		{
+			// clear hash
+			SV_CLEAR(data);
+
+			// change server to unicode
+			server = ServerAsUnicode(SvPV(ST(0), PL_na));
+
+			PSTR key = SvPV(ST(1), PL_na);
+
+			NEW_LSA_STR(lsaKey, key);
+
+			// first try open policy
+			if(OpenPolicy(server, POLICY_GET_PRIVATE_INFORMATION, &hPolicy, &error))
+			{
+				error = LsaRetrievePrivateData(hPolicy, lsaKey, &lsaData);
+
+				if(error = LsaNtStatusToWinError(error))
+					LastError(error);
+				else
+				{
+					dataPtr = (PWSTR)NewMem(lsaData->Length + sizeof(WCHAR));
+					wcsncpy(dataPtr, lsaData->Buffer, lsaData->Length >> 1);
+					S_STORE_WSTR(data, dataPtr);
+				}
+			}
+			else
+				LastError(error);
+		}
+		__except(SetExceptCode(excode))
+		{
+			// set last error 
+			LastError(error ? error : excode);
+		}
+		
+		// clean up
+		FreeStr(server);
+		CleanLsaHandle(hPolicy);
+		CleanPtr(lsaKey);
+		CleanLsaPtr(lsaData);
+		CleanPtr(dataPtr);
+	} // if(items == 3 && ...
+	else
+		croak("Usage: Win32::Lanman::LsaRetrievePrivateData($server, $key, \\$data)\n");
+
+	RETURNRESULT(LastError() == 0);
+}
+
+
+///////////////////////////////////////////////////////////////////////////////
+//
+// sets lsa data strings
+//
+// param:  server	- computer to execute the command
+//				 key		- key name
+//				 data		- data string to set
+//
+// return: success - 1 
+//         failure - 0 
+//
+///////////////////////////////////////////////////////////////////////////////
+
+XS(XS_NT__Lanman_LsaStorePrivateData)
+{
+	dXSARGS;
+
+	ErrorAndResult;
+
+	// reset last error
+	LastError(0);
+
+	// check argument type
+	if(items == 3)
+	{
+		PWSTR server = NULL;
+		PLSA_UNICODE_STRING lsaKey = NULL;
+		PLSA_UNICODE_STRING lsaData = NULL;
+		LSA_HANDLE hPolicy = NULL;
+
+		__try
+		{
+			// change server to unicode
+			server = ServerAsUnicode(SvPV(ST(0), PL_na));
+
+			PSTR key = SvPV(ST(1), PL_na), data = SvPV(ST(2), PL_na);
+			DWORD keySize = strlen(key) + 1, dataSize = strlen(data) + 1;
+
+			lsaKey = (PLSA_UNICODE_STRING)NewMem(sizeof(LSA_UNICODE_STRING) + keySize * sizeof(WCHAR));
+			lsaKey->MaximumLength = keySize * sizeof(WCHAR);
+			lsaKey->Length = lsaKey->MaximumLength - sizeof(WCHAR);
+			lsaKey->Buffer = (PWSTR)((PSTR)lsaKey + sizeof(LSA_UNICODE_STRING));
+
+			MBTWC(key, lsaKey->Buffer, keySize * sizeof(WCHAR));
+
+			lsaData = (PLSA_UNICODE_STRING)NewMem(sizeof(LSA_UNICODE_STRING) + dataSize * sizeof(WCHAR));
+			lsaData->MaximumLength = dataSize * sizeof(WCHAR);
+			lsaData->Length = lsaData->MaximumLength - sizeof(WCHAR);
+			lsaData->Buffer = (PWSTR)((PSTR)lsaData + sizeof(LSA_UNICODE_STRING));
+
+			MBTWC(data, lsaData->Buffer, dataSize * sizeof(WCHAR));
+
+			// first try open policy
+			if(OpenPolicy(server, POLICY_CREATE_SECRET, &hPolicy, &error))
+			{
+				error = LsaStorePrivateData(hPolicy, lsaKey, lsaData);
+
+				if(error = LsaNtStatusToWinError(error))
+					LastError(error);
+			}
+			else
+				LastError(error);
+		}
+		__except(SetExceptCode(excode))
+		{
+			// set last error 
+			LastError(error ? error : excode);
+		}
+
+		// clean up
+		FreeStr(server);
+		CleanLsaHandle(hPolicy);
+		CleanPtr(lsaData);
+		CleanPtr(lsaKey);
+	} // if(items == 3 && ...
+	else
+		croak("Usage: Win32::Lanman::LsaStorePrivateData($server, $key, $data)\n");
+
+	RETURNRESULT(LastError() == 0);
+}
 
 

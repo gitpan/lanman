@@ -1,13 +1,15 @@
 #define WIN32_LEAN_AND_MEAN
 
+
 #ifndef __HANDLE_CPP
 #define __HANDLE_CPP
 #endif
 
+
 #include <windows.h>
-#include <stdio.h>
 #include <lm.h>
 #include <lmchdev.h>
+
 
 #include "handle.h"
 #include "wstring.h"

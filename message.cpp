@@ -1,12 +1,14 @@
 #define WIN32_LEAN_AND_MEAN
 
+
 #ifndef __MESSAGE_CPP
 #define __MESSAGE_CPP
 #endif
 
+
 #include <windows.h>
-#include <stdio.h>
 #include <lm.h>
+
 
 #include "message.h"
 #include "wstring.h"

@@ -1,12 +1,14 @@
 #define WIN32_LEAN_AND_MEAN
 
+
 #ifndef __REPL_CPP
 #define __REPL_CPP
 #endif
 
+
 #include <windows.h>
-#include <stdio.h>
 #include <lm.h>
+
 
 #include "repl.h"
 #include "wstring.h"
@@ -179,7 +181,7 @@ XS(XS_NT__Lanman_NetReplExportDirEnum)
 				for(DWORD count = 0; count < entries; count++)
 				{
 					// store directory properties
-					HV *properties = newHV();
+					HV *properties = NewHV;
 
 					H_STORE_WSTR(properties, "dirname", replInfo[count].rped2_dirname);
 					H_STORE_INT(properties, "integrity", replInfo[count].rped2_integrity);
@@ -188,6 +190,9 @@ XS(XS_NT__Lanman_NetReplExportDirEnum)
 					H_STORE_INT(properties, "locktime", replInfo[count].rped2_locktime);
 
 					A_STORE_REF(directories, properties);
+
+					// decrement reference count
+					SvREFCNT_dec(properties);
 				}
 		}
 		__except(SetExceptCode(excode))
@@ -675,6 +680,9 @@ XS(XS_NT__Lanman_NetReplImportDirEnum)
 					H_STORE_INT(properties, "locktime", replInfo[count].rpid1_locktime);
 
 					A_STORE_REF(directories, properties);
+
+					// decrement reference count
+					SvREFCNT_dec(properties);
 				}
 		}
 		__except(SetExceptCode(excode))
@@ -688,7 +696,7 @@ XS(XS_NT__Lanman_NetReplImportDirEnum)
 		CleanNetBuf(replInfo);
 	} // if(items == 2 && ...)
 	else
-		croak("Usage: Win32::Lanman::NetReplImportDirAdd($server, \\@directories)\n");
+		croak("Usage: Win32::Lanman::NetReplImportDirEnum($server, \\@directories)\n");
 	
 	RETURNRESULT(LastError() == 0);
 }

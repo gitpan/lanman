@@ -1,12 +1,14 @@
 #define WIN32_LEAN_AND_MEAN
 
+
 #ifndef __DS_CPP
 #define __DS_CPP
 #endif
 
+
 #include <windows.h>
-#include <stdio.h>
 #include <lm.h>
+
 
 #include "ds.h"
 #include "addloader.h"
@@ -554,5 +556,3 @@ XS(XS_NT__Lanman_NetUnregisterDomainNameChangeNotification)
 	
 	RETURNRESULT(LastError() == 0);
 }
-
-

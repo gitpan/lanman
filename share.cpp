@@ -1,12 +1,14 @@
 #define WIN32_LEAN_AND_MEAN
 
+
 #ifndef __SHARE_CPP
 #define __SHARE_CPP
 #endif
 
+
 #include <windows.h>
-#include <stdio.h>
 #include <lm.h>
+
 
 #include "share.h"
 #include "wstring.h"
@@ -287,6 +289,9 @@ XS(XS_NT__Lanman_NetShareEnum)
 					}
 
 					A_STORE_REF(info, properties);
+
+					// decrement reference count
+					SvREFCNT_dec(properties);
 				}
 		}
 		__except(SetExceptCode(excode))
@@ -531,6 +536,9 @@ XS(XS_NT__Lanman_NetConnectionEnum)
 					H_STORE_WSTR(properties, "netname", (PWSTR)connInfo[count].coni1_netname);
 
 					A_STORE_REF(info, properties);
+
+					// decrement reference count
+					SvREFCNT_dec(properties);
 				}
 		}
 		__except(SetExceptCode(excode))
@@ -549,168 +557,3 @@ XS(XS_NT__Lanman_NetConnectionEnum)
 	
 	RETURNRESULT(LastError() == 0);
 }
-
-
-
-
-
-BOOL BuildSecurityDescriptor(PERL_CALL PSTR server, AV *accounts, 
-														 PSECURITY_DESCRIPTOR *secDesc, PDWORD secDescSize,
-														 PDWORD lastError)
-{
-	ErrorAndResult;
-
-	PSECURITY_DESCRIPTOR absSecDesc = NULL;
-	PACCESS_ALLOWED_ACE *aces = NULL;
-	DWORD numAces = 0, acesSize = 0;
-	PSTR domain = NULL;
-	PACL acl = NULL;
-
-	__try
-	{
-		// alloc memory for ace's
-		aces = (PACCESS_ALLOWED_ACE*)NewMem(sizeof(PACCESS_ALLOWED_ACE) * 
-																				(numAces = AV_LEN(accounts) + 1));
-		memset(aces, 0, sizeof(PACCESS_ALLOWED_ACE) * numAces);
-
-		for(int count = 0; count < numAces; count++)
-		{
-			HV *account = A_FETCH_RHASH(accounts, count);
-
-			if(!account)
-				RaiseFalseError(INVALID_ARGUMENT_PTR_ERROR);
-
-			PSTR user = H_FETCH_STR(account, "account");
-			int access = H_FETCH_INT(account, "access");
-
-			DWORD sidSize = 0, domainSize = 0;
-			SID_NAME_USE usePtr;
-
-			// calculate memory
-			LookupAccountName(server, user, aces[count], &sidSize, domain, &domainSize, 
-												&usePtr);
-
-			acesSize += sidSize + sizeof(ACCESS_ALLOWED_ACE) - sizeof(DWORD);
-			
-			// allocate memory
-			aces[count] = (PACCESS_ALLOWED_ACE)NewMem(sidSize + sizeof(ACCESS_ALLOWED_ACE) - 
-																								sizeof(DWORD));
-			domain = (PSTR)NewMem(domain, domainSize, 1);
-
-			aces[count]->Header.AceType = ACCESS_ALLOWED_ACE_TYPE;
-			aces[count]->Header.AceFlags = 0;
-			aces[count]->Header.AceSize = sidSize;
-			aces[count]->Mask = sidSize + sizeof(ACCESS_ALLOWED_ACE) - sizeof(DWORD);
-
-			// look for user name
-			if(!LookupAccountName(server, user, &aces[count]->SidStart, &sidSize, 
-														domain, &domainSize, &usePtr))
-				RaiseFalse();
-		} // for(int count = 0, ...)
-
-		// alloc memory for acl
-		acl = (PACL)NewMem(sizeof(ACL) + acesSize);
-
-		// initialize acl
-		if(!InitializeAcl(acl, sizeof(ACL) + acesSize, ACL_REVISION))
-			RaiseFalse();
-
-		// alloc memory for security descriptor
-		absSecDesc = (PSECURITY_DESCRIPTOR)NewMem(sizeof(SECURITY_DESCRIPTOR));
-
-		// create a valid security descriptor
-		if(!InitializeSecurityDescriptor(absSecDesc, SECURITY_DESCRIPTOR_REVISION))
-			RaiseFalse();
-
-		// set acl to the security descriptor
-		if(!SetSecurityDescriptorDacl(absSecDesc, TRUE, acl, FALSE))
-			RaiseFalse();
-
-		// copy ace's to the acl
-		for(count = 0; count < numAces; count++)
-			if(!AddAccessAllowedAce(acl, ACL_REVISION, aces[count]->Mask, 
-															&aces[count]->SidStart))
-				RaiseFalse();
-
-		*secDescSize = sizeof(SECURITY_DESCRIPTOR_RELATIVE) + acl->AclSize;
-
-		// alloc memory 
-		*secDesc = (PSECURITY_DESCRIPTOR)NewMem(*secDescSize);
-
-		// copy the absolute security descriptor to an self relative format
-		if(!MakeSelfRelativeSD(absSecDesc, *secDesc, secDescSize))
-			RaiseFalse();
-	}
-	__except(SetExceptCode(excode))
-	{
-		SetErrorVar();
-	}
-
-	// clean up
-	for(int count = 0; count < numAces; count++)
-		CleanPtr(aces[count]);
-
-	CleanPtr(aces);
-	CleanPtr(domain);
-	CleanPtr(acl);
-	CleanPtr(absSecDesc);
-
-	// clean up only if an error occured
-	CleanPtrOnErr(*secDesc);
-
-	return result;
-}
-
-
-
-XS(XS_NT__Lanman_BuildSecurityDescriptor)
-{
-	dXSARGS;
-
-	ErrorAndResult;
-
-	// reset last error
-	LastError(0);
-
-	AV *accounts = NULL;
-	SV *descriptor = NULL;
-
-	DWORD descSize = 0;
-
-	if(items == 3 && CHK_ASSIGN_AREF(accounts, ST(1)) && CHK_ASSIGN_SREF(descriptor, ST(2)))
-	{
-		PSTR server = NULL;
-
-		__try
-		{
-			PSECURITY_DESCRIPTOR desc = NULL;
-			
-			server = ServerAsAnsi(SvPV(ST(0), PL_na));
-
-			// clear scalar
-			SV_CLEAR(descriptor);
-
-			if(BuildSecurityDescriptor(P_PERL server, accounts, &desc, &descSize, &error))
-			{
-				S_STORE_PTR(descriptor, desc, descSize);
-				
-				CleanPtr(desc);
-			}
-			else
-				LastError(error);
-		}
-		__except(SetExceptCode(excode))
-		{
-			// set last error 
-			LastError(error ? error : excode);
-		}
-
-		// clean up
-		CleanPtr(server);
-	} // if(items == 2 ...)
-	else
-		croak("Usage: Win32::Lanman::BuildSecurityDescriptor(\\@accounts, \\$securitydescriptor)\n");
-	
-	RETURNRESULT(LastError() == 0);
-}
-

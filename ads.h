@@ -1,34 +1,28 @@
-#define WIN32_LEAN_AND_MEAN
+#ifndef __ADS_H
+#define __ADS_H
 
 
-#ifndef __ALERT_CPP
-#define __ALERT_CPP
-#endif
-
-
-#include <windows.h>
-#include <time.h>
-#include <lm.h>
-
-
-#include "alert.h"
-#include "wstring.h"
-#include "misc.h"
-#include "usererror.h"
+#include "plmisc.h"
 
 
 ///////////////////////////////////////////////////////////////////////////////
 //
-// globals
+// defines
 //
 ///////////////////////////////////////////////////////////////////////////////
 
 
 ///////////////////////////////////////////////////////////////////////////////
 //
-// 
+// prototypes
 //
-// param:  
+///////////////////////////////////////////////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////////////////
+//
+//
+//
+// param:  eventHandle	- notification handle
 //
 // return: success - 1 
 //         failure - 0 
@@ -37,20 +31,8 @@
 //
 ///////////////////////////////////////////////////////////////////////////////
 
-XS(XS_NT__Lanman_NetAlertRaise)
-{
-	dXSARGS;
+XS(XS_NT__Lanman_DsGetDcName);
 
-	// reset last error
-	LastError(0);
 
-	if(1)
-	{
-	} 
-	else
-		croak("Usage: Win32::Lanman::NetRaiseAlert()\n");
-	
-	RETURNRESULT(LastError() == 0);
-}
-
+#endif //#ifndef __ADS_H
 

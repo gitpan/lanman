@@ -1,13 +1,15 @@
 #define WIN32_LEAN_AND_MEAN
 
+
 #ifndef __DFS_CPP
 #define __DFS_CPP
 #endif
 
+
 #include <windows.h>
-#include <stdio.h>
 #include <lm.h>
 #include <lmdfs.h>
+
  
 #include "dfs.h"
 #include "addloader.h"
@@ -157,13 +159,22 @@ XS(XS_NT__Lanman_NetDfsEnum)
 
 						// store the new entry
 						A_STORE_REF(storage, storageItem);
+
+						// decrement reference count
+						SvREFCNT_dec(storageItem);
 					}
 					
 					H_STORE_REF(properties, "storage", storage);
+
+					// decrement reference count
+					SvREFCNT_dec(storage);
 				}
 
 				// store the new entry
 				A_STORE_REF(dfs, properties);
+
+				// decrement reference count
+				SvREFCNT_dec(properties);
 			}
 		}
 		__except(SetExceptCode(excode))
@@ -253,9 +264,15 @@ XS(XS_NT__Lanman_NetDfsGetInfo)
 
 						// push the new entry
 						A_STORE_REF(storage, storageItem);
+
+						// decrement reference count
+						SvREFCNT_dec(storageItem);
 					}
 
 					H_STORE_REF(dfs, "storage", storage);
+
+					// decrement reference count
+					SvREFCNT_dec(storage);
 				}
 			}
 		}
@@ -314,7 +331,12 @@ XS(XS_NT__Lanman_NetDfsRemove)
 		{
 			// change dfsroot, server and share to unicode
 			entryPath = S2W(SvPV(ST(0), PL_na));
-			server = ServerAsUnicode(SvPV(ST(1), PL_na));
+			
+			// in contrast with the msdn documentation, the call fails if the server name begins with 
+			// two backslashes; this seems to be a bug, so we need to avoid the backslashes in the
+			// server name
+			//server = ServerAsUnicode(SvPV(ST(1), PL_na));
+			server = ServerAsUnicodeWithoutBackslashes(SvPV(ST(1), PL_na));
 			share = S2W(SvPV(ST(2), PL_na));
 			
 			LastError(NetDfsRemove(entryPath, server, share));
@@ -1020,9 +1042,15 @@ XS(XS_NT__Lanman_NetDfsGetClientInfo)
 					H_STORE_WSTR(properties, "sharename", clientInfo->Storage[count].ShareName);
 
 					A_STORE_REF(storages, properties);
+
+					// decrement reference count
+					SvREFCNT_dec(properties);
 				}
 
 				H_STORE_REF(info, "storage", storages);
+
+				// decrement reference count
+				SvREFCNT_dec(storages);
 			}
 		}
 		__except(SetExceptCode(excode))

@@ -6,18 +6,18 @@ prj=lanman
 #
 # output directory for the appropriate build
 #
-outdir6xx=.\perl.615.release
-outdir5xx=.\perl.522.release
-outdir3xx=.\perl.316.release
+outdir6xx=.\perl.6xx.release
+outdir5xx=.\perl.5xx.release
+outdir3xx=.\perl.3xx.release
 
 #
 # where is the perl appropriate directory (the include header files must reside 
 # in $(outdir)\lib\core); for perl 5.003_07 build 3xx this is also the 
 # directory where the project is installed in if you call nmake install
 #
-perldir6xx=c:\programme\perl.615
-perldir5xx=c:\programme\perl.522
-perldir3xx=c:\programme\perl.316
+perldir6xx=c:\programme\perl.6xx
+perldir5xx=c:\programme\perl.5xx
+perldir3xx=c:\programme\perl.3xx
 
 #
 # set the misc directory
@@ -94,7 +94,9 @@ link_add_flags=perl56.lib
 # dll name to create
 dllname=$(prj).dll
 # prefix output tar.gz file
-targz_prefix=5.6.
+targz_prefix=
+# tar.gz file directory
+targz_dir=mswin32-x86-multi-thread
 
 !elseif "$(cfg)" == "perl.5xx"
 
@@ -116,6 +118,8 @@ link_add_flags=
 dllname=$(prj).dll
 # prefix output tar.gz file
 targz_prefix=
+# tar.gz file directory
+targz_dir=x86
 
 !elseif "$(cfg)" == "perl.3xx"
 
@@ -123,30 +127,22 @@ targz_prefix=
 # set parameters to build for (for perl 5.003_07 build 3xx)
 #
 
-#
 # set the output directory
-#
 outdir=$(outdir3xx)
-#
 # where is perl installed? 
-#
 perldir=$(perldir3xx)
-#
 # where do I find the perl include files?
-#
 perlsrcdir=$(perldir)\lib\core
-#
 # additional compiler settings
-#
 cpp_add_flags=/D PERL_5003_07
-#
 # additional linker settings
-#
 link_add_flags=
-#
 # dll name to create
-#
 dllname=$(prj).pll
+# prefix output tar.gz file
+targz_prefix=
+# tar.gz file directory
+targz_dir=
 
 !endif 
 
@@ -164,7 +160,8 @@ link_flags=kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.
 	shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib ws2_32.lib \
 	netapi32.lib mpr.lib /nologo /subsystem:windows /dll /machine:I386 \
 	/pdb:$(outdir)\$(prj).pdb /def:.\$(prj).def /out:$(outdir)\$(dllname)	\
-	/implib:$(outdir)\$(prj).lib /incremental:no /libpath:$(perlsrcdir) $(link_add_flags)
+	/implib:$(outdir)\$(prj).lib /incremental:no "/libpath:$(platformsdk)\lib"	\
+	/libpath:$(perlsrcdir) $(link_add_flags) /opt:nowin98
 
 #
 # set resource compiler flags
@@ -176,34 +173,57 @@ rc_flags=/l 0x407 /fo$(outdir)\resource.res /d NDEBUG
 #
 objfiles=$(outdir)\access.obj	\
 	$(outdir)\addloader.obj \
-	$(outdir)\alert.obj \
-	$(outdir)\dfs.obj \
-	$(outdir)\domain.obj \
-	$(outdir)\ds.obj \
-	$(outdir)\eventlog.obj \
-	$(outdir)\file.obj \
-	$(outdir)\get.obj \
-	$(outdir)\group.obj \
-	$(outdir)\handle.obj \
-	$(outdir)\lanman.obj \
-	$(outdir)\message.obj \
-	$(outdir)\misc.obj \
-	$(outdir)\plmisc.obj \
-	$(outdir)\policy.obj \
-	$(outdir)\reghlp.obj \
-	$(outdir)\repl.obj \
-	$(outdir)\schedule.obj \
-	$(outdir)\server.obj \
-	$(outdir)\service.obj \
-	$(outdir)\session.obj \
-	$(outdir)\share.obj \
-	$(outdir)\stat.obj \
-	$(outdir)\strhlp.obj \
-	$(outdir)\termserv.obj \
-	$(outdir)\timeofd.obj \
-	$(outdir)\use.obj \
-	$(outdir)\user.obj \
+	$(outdir)\alert.obj	\
+	$(outdir)\browse.obj	\
+	$(outdir)\dfs.obj	\
+	$(outdir)\domain.obj	\
+	$(outdir)\ds.obj	\
+	$(outdir)\eventlog.obj	\
+	$(outdir)\file.obj	\
+	$(outdir)\get.obj	\
+	$(outdir)\group.obj	\
+	$(outdir)\handle.obj	\
+	$(outdir)\iphelp.obj	\
+	$(outdir)\lanman.obj	\
+	$(outdir)\message.obj	\
+	$(outdir)\misc.obj	\
+	$(outdir)\plmisc.obj	\
+	$(outdir)\policy.obj	\
+	$(outdir)\reghlp.obj	\
+	$(outdir)\repl.obj	\
+	$(outdir)\schedule.obj	\
+	$(outdir)\server.obj	\
+	$(outdir)\service.obj	\
+	$(outdir)\session.obj	\
+	$(outdir)\share.obj	\
+	$(outdir)\stat.obj	\
+	$(outdir)\strhlp.obj	\
+	$(outdir)\termserv.obj	\
+	$(outdir)\timeofd.obj	\
+	$(outdir)\use.obj	\
+	$(outdir)\user.obj	\
+	$(outdir)\wnetwork.obj	\
 	$(outdir)\workst.obj	\
+	$(outdir)\wstring.obj
+
+dns_objfiles=$(outdir)\dns.obj	\
+	$(outdir)\misc.obj	\
+	$(outdir)\plmisc.obj	\
+	$(outdir)\strhlp.obj	\
+	$(outdir)\wstring.obj
+
+ads_objfiles=$(outdir)\ads.obj	\
+	$(outdir)\lanman.ads.obj	\
+	$(outdir)\misc.obj	\
+	$(outdir)\plmisc.obj	\
+	$(outdir)\strhlp.obj	\
+	$(outdir)\wstring.obj
+
+iphlp_objfiles=$(outdir)\iphlp.obj	\
+	$(outdir)\lanman.iphlp.obj	\
+	$(outdir)\misc.obj	\
+	$(outdir)\plmisc.obj	\
+	$(outdir)\strhlp.obj	\
 	$(outdir)\wstring.obj
 
 #
@@ -211,7 +231,7 @@ objfiles=$(outdir)\access.obj	\
 #
 !if "$(cfg)" != "perl.3xx"
 
-all : $(outdir) $(outdir)\$(dllname) $(instdir)\$(cfg)\x86 $(instdir)\$(cfg)\x86\win32-$(prj).$(targz_prefix)tar.gz	\
+all : $(outdir) $(outdir)\$(dllname) $(instdir)\$(cfg)\$(targz_dir) $(instdir)\$(cfg)\$(targz_dir)\win32-$(prj).$(targz_prefix)tar.gz	\
 	$(instdir)\$(cfg)\win32-$(prj).ppd
 
 !else
@@ -256,7 +276,13 @@ $(outdir)\addloader.obj : .\addloader.cpp
 $(outdir)\alert.obj : .\alert.cpp
 	$(cpp) $(cpp_flags) $?
 
+$(outdir)\browse.obj : .\browse.cpp
+	$(cpp) $(cpp_flags) $?
+
 $(outdir)\dfs.obj : .\dfs.cpp
+	$(cpp) $(cpp_flags) $?
+
+$(outdir)\dns.obj : .\dns.cpp
 	$(cpp) $(cpp_flags) $?
 
 $(outdir)\domain.obj : .\domain.cpp
@@ -278,6 +304,9 @@ $(outdir)\group.obj : .\group.cpp
 	$(cpp) $(cpp_flags) $?
 
 $(outdir)\handle.obj : .\handle.cpp
+	$(cpp) $(cpp_flags) $?
+
+$(outdir)\iphelp.obj : .\iphelp.cpp
 	$(cpp) $(cpp_flags) $?
 
 $(outdir)\lanman.obj : .\lanman.cpp
@@ -334,6 +363,9 @@ $(outdir)\use.obj : .\use.cpp
 $(outdir)\user.obj : .\user.cpp
 	$(cpp) $(cpp_flags) $?
 
+$(outdir)\wnetwork.obj : .\wnetwork.cpp
+	$(cpp) $(cpp_flags) $?
+
 $(outdir)\workst.obj : .\workst.cpp
 	$(cpp) $(cpp_flags) $?
 
@@ -349,8 +381,8 @@ $(outdir)\$(dllname) : $(outdir) .\$(prj).def $(outdir)\resource.res $(objfiles)
 #
 # create install directory (6.xx, 5.xx)
 #
-$(instdir)\$(cfg)\x86 :
-	if not exist $(instdir)\$(cfg)\x86 mkdir $(instdir)\$(cfg)\x86
+$(instdir)\$(cfg)\$(targz_dir) :
+	if not exist $(instdir)\$(cfg)\$(targz_dir) mkdir $(instdir)\$(cfg)\$(targz_dir)
 
 #
 # create install directory (3.xx)
@@ -373,7 +405,7 @@ $(instdir)\$(cfg)\$(prj).pm : $(miscdir)\$(prj).pm
 #
 # create tar.gz file
 #
-$(instdir)\$(cfg)\x86\win32-$(prj).$(targz_prefix)tar.gz : $(outdir)\$(dllname) $(instdir)\$(cfg)\x86
+$(instdir)\$(cfg)\$(targz_dir)\win32-$(prj).$(targz_prefix)tar.gz : $(outdir)\$(dllname) $(instdir)\$(cfg)\$(targz_dir)
 	if not exist $(instdir)\$(cfg)\mkgz\blib\arch\auto\win32\$(prj) mkdir $(instdir)\$(cfg)\mkgz\blib\arch\auto\win32\$(prj)
 	if not exist $(instdir)\$(cfg)\mkgz\blib\arch\auto\win32\.exists copy nul $(instdir)\$(cfg)\mkgz\blib\arch\auto\win32\.exists
 	if not exist $(instdir)\$(cfg)\mkgz\blib\arch\auto\win32\$(prj)\.exists copy nul $(instdir)\$(cfg)\mkgz\blib\arch\auto\win32\$(prj)\.exists
@@ -383,9 +415,15 @@ $(instdir)\$(cfg)\x86\win32-$(prj).$(targz_prefix)tar.gz : $(outdir)\$(dllname) 
 	if not exist $(instdir)\$(cfg)\mkgz\blib\arch\auto\win32\$(prj)\$(prj).lib copy $(outdir)\$(prj).lib $(instdir)\$(cfg)\mkgz\blib\arch\auto\win32\$(prj)\$(prj).lib
 	if not exist $(instdir)\$(cfg)\mkgz\blib\arch\auto\win32\$(prj)\$(prj).exp copy $(outdir)\$(prj).exp $(instdir)\$(cfg)\mkgz\blib\arch\auto\win32\$(prj)\$(prj).exp
 	if not exist $(instdir)\$(cfg)\mkgz\blib\lib\win32\$(prj).pm copy $(miscdir)\$(prj).pm $(instdir)\$(cfg)\mkgz\blib\lib\win32\$(prj).pm
-	if not exist $(instdir)\$(cfg)\mkgz\blib\html\lib\site\$(prj) mkdir $(instdir)\$(cfg)\mkgz\blib\html\lib\site\$(prj)
-	if not exist $(instdir)\$(cfg)\mkgz\blib\html\lib\site\$(prj)\.exists copy nul $(instdir)\$(cfg)\mkgz\blib\html\lib\site\$(prj)\.exists
-	pod2html --infile=$(instdir)\$(cfg)\mkgz\blib\lib\win32\$(prj).pm --outfile=$(instdir)\$(cfg)\mkgz\blib\html\lib\site\$(prj)\$(prj).html
+	if not exist $(instdir)\$(cfg)\mkgz\blib\html\site mkdir $(instdir)\$(cfg)\mkgz\blib\html\site
+	if not exist $(instdir)\$(cfg)\mkgz\blib\html\site\.exists copy nul $(instdir)\$(cfg)\mkgz\blib\html\site\.exists
+	if not exist $(instdir)\$(cfg)\mkgz\blib\html\site\lib mkdir $(instdir)\$(cfg)\mkgz\blib\html\site\lib
+	if not exist $(instdir)\$(cfg)\mkgz\blib\html\site\lib\.exists copy nul $(instdir)\$(cfg)\mkgz\blib\html\site\lib\.exists
+	if not exist $(instdir)\$(cfg)\mkgz\blib\html\site\lib\win32 mkdir $(instdir)\$(cfg)\mkgz\blib\html\site\lib\win32
+	if not exist $(instdir)\$(cfg)\mkgz\blib\html\site\lib\win32\.exists copy nul $(instdir)\$(cfg)\mkgz\blib\html\site\lib\win32\.exists
+	pod2html --infile=$(instdir)\$(cfg)\mkgz\blib\lib\win32\$(prj).pm --outfile=$(instdir)\$(cfg)\mkgz\blib\html\site\lib\win32\$(prj).html
+	if exist .\pod2htmd.x~~ del .\pod2htmd.x~~
+	if exist .\pod2htmi.x~~ del .\pod2htmi.x~~
 	perl	-e "chdir '$(instdir)\$(cfg)\mkgz'; use Archive::Tar; $$tar = Archive::Tar->new();"	\
 		-e "@files=qw/"	\
 		-e	"blib"	\
@@ -402,13 +440,15 @@ $(instdir)\$(cfg)\x86\win32-$(prj).$(targz_prefix)tar.gz : $(outdir)\$(dllname) 
 		-e	"blib\lib\win32"	\
 		-e	"blib\lib\win32\.exists"	\
 		-e	"blib\lib\win32\$(prj).pm"	\
-		-e	"blib\html\lib"	\
-		-e	"blib\html\lib\site"	\
-		-e	"blib\html\lib\site\$(prj)"	\
-		-e	"blib\html\lib\site\$(prj)\.exists"	\
-		-e	"blib\html\lib\site\$(prj)\$(prj).html/;"	\
+		-e	"blib\html\site"	\
+		-e	"blib\html\site\.exists"	\
+		-e	"blib\html\site\lib"	\
+		-e	"blib\html\site\lib\.exists"	\
+		-e	"blib\html\site\lib\win32"	\
+		-e	"blib\html\site\lib\win32\.exists"	\
+		-e	"blib\html\site\lib\win32\$(prj).html/;"	\
 		-e "$$tar->add_files(@files); $$tar->write('win32-$(prj).tar.gz', 1);"
-	copy $(instdir)\$(cfg)\mkgz\win32-$(prj).tar.gz $(instdir)\$(cfg)\x86\win32-$(prj).$(targz_prefix)tar.gz
+	copy $(instdir)\$(cfg)\mkgz\win32-$(prj).tar.gz $(instdir)\$(cfg)\$(targz_dir)\win32-$(prj).$(targz_prefix)tar.gz
          
 #
 # create ppm file
@@ -421,7 +461,7 @@ $(instdir)\$(cfg)\win32-$(prj).ppd :
 #
 !if "$(cfg)" != "perl.3xx"
 
-install : $(instdir)\$(cfg)\x86\win32-$(prj).$(targz_prefix)tar.gz $(instdir)\$(cfg)\win32-$(prj).ppd
+install : $(instdir)\$(cfg)\$(targz_dir)\win32-$(prj).$(targz_prefix)tar.gz $(instdir)\$(cfg)\win32-$(prj).ppd
 	ppm install -location=$(instdir)\$(cfg) win32-$(prj)
 
 !else
@@ -441,20 +481,22 @@ install : $(perldir3xx)\lib\auto\win32\$(prj) $(perldir3xx)\lib\auto\win32\$(prj
 !endif
 
 #
-# create zip directory
+# create zip directories
 #
+$(zipdir)\mswin32-x86-multi-thread :
+	if not exist $(zipdir)\mswin32-x86-multi-thread mkdir $(zipdir)\mswin32-x86-multi-thread
+
 $(zipdir)\x86 :
 	if not exist $(zipdir)\x86 mkdir $(zipdir)\x86
 
 #
 # create tar.gz files
 #
-$(zipdir)\x86\win32-$(prj).5.6.tar.gz : $(instdir)\perl.6xx\x86\win32-$(prj).5.6.tar.gz
-	copy $(instdir)\perl.6xx\x86\win32-$(prj).5.6.tar.gz $(zipdir)\x86\win32-$(prj).5.6.tar.gz
+$(zipdir)\mswin32-x86-multi-thread\win32-$(prj).tar.gz : $(instdir)\perl.6xx\mswin32-x86-multi-thread\win32-$(prj).tar.gz
+	copy $(instdir)\perl.6xx\mswin32-x86-multi-thread\win32-$(prj).tar.gz $(zipdir)\mswin32-x86-multi-thread\win32-$(prj).tar.gz
 
 $(zipdir)\x86\win32-$(prj).tar.gz : $(instdir)\perl.5xx\x86\win32-$(prj).tar.gz
 	copy $(instdir)\perl.5xx\x86\win32-$(prj).tar.gz $(zipdir)\x86\win32-$(prj).tar.gz
-
 
 #
 # create pm files
@@ -465,8 +507,8 @@ $(zipdir)\win32-$(prj).ppd : $(instdir)\perl.5xx\win32-$(prj).ppd
 #
 # zip the package
 #
-zip : $(zipdir)\x86 $(zipdir)\x86\win32-$(prj).tar.gz	$(zipdir)\win32-$(prj).ppd	\
-	$(zipdir)\x86\win32-$(prj).5.6.tar.gz
+zip : $(zipdir)\x86 $(zipdir)\mswin32-x86-multi-thread $(zipdir)\x86\win32-$(prj).tar.gz \
+	$(zipdir)\mswin32-x86-multi-thread\win32-$(prj).tar.gz $(zipdir)\win32-$(prj).ppd
 	copy .\*.cpp .\$(zipdir)\*
 	copy .\*.h .\$(zipdir)\*
 	copy .\resource.rc .\$(zipdir)\*
@@ -475,10 +517,9 @@ zip : $(zipdir)\x86 $(zipdir)\x86\win32-$(prj).tar.gz	$(zipdir)\win32-$(prj).ppd
 	copy .\$(miscdir)\install.pl .\$(zipdir)\*
 	copy .\$(miscdir)\restrict.txt .\$(zipdir)\*
 	copy .\$(miscdir)\history.txt .\$(zipdir)\*
-	copy .\$(outdir6xx)\$(prj).dll .\$(zipdir)\$(prj).615.dll
-	copy .\$(outdir5xx)\$(prj).dll .\$(zipdir)\$(prj).522.dll
-	copy .\$(outdir3xx)\$(prj).pll .\$(zipdir)\$(prj).316.pll
+	copy .\$(miscdir)\readme.txt .\$(zipdir)\*
+	copy .\$(outdir6xx)\$(prj).dll .\$(zipdir)\$(prj).6xx.dll
+	copy .\$(outdir5xx)\$(prj).dll .\$(zipdir)\$(prj).5xx.dll
+	copy .\$(outdir3xx)\$(prj).pll .\$(zipdir)\$(prj).3xx.pll
 	copy .\makefile .\$(zipdir)\makefile
 	pkzip -add .\$(zipdir)\$(prj).zip -r -path=relative .\$(zipdir)\*
-
-

@@ -1,5 +1,5 @@
-#ifndef __USER_H
-#define __USER_H
+#ifndef __WNETWORK_H
+#define __WNETWORK_H
 
 
 #include "plmisc.h"
@@ -14,29 +14,9 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 //
-// creates a new user
+// makes a connection to a network resource 
 //
-// param:  server - computer to execute the command
-//         user   - user name and properties
-//
-// return: success - 1 
-//         failure - 0 
-//
-// note:   call GetLastError() to get the error code on failure
-//
-///////////////////////////////////////////////////////////////////////////////
-
-XS(XS_NT__Lanman_NetUserAdd);
-
-
-///////////////////////////////////////////////////////////////////////////////
-//
-// changes an user's password
-//
-// param:  domain			 - domain or computer to execute the command
-//         user				 - user name
-//				 oldpassword - users old password
-//				 newpassword - users new password
+// param:  connInfo	- hash with the connection info
 //
 // return: success - 1 
 //         failure - 0 
@@ -45,15 +25,15 @@ XS(XS_NT__Lanman_NetUserAdd);
 //
 ///////////////////////////////////////////////////////////////////////////////
 
-XS(XS_NT__Lanman_NetUserChangePassword);
-
+XS(XS_NT__Lanman_WNetAddConnection);
 
 ///////////////////////////////////////////////////////////////////////////////
 //
-// deletes an user
+// cancels an existing network connection
 //
-// param:  server			 - computer to execute the command
-//         user				 - user name
+// param:  conn					- connection to remove
+//				 flags				-	connection type (must be CONNECT_UPDATE_PROFILE or 0)
+//				 forcecancel	- enforces the disconnect even if there are open files
 //
 // return: success - 1 
 //         failure - 0 
@@ -62,16 +42,17 @@ XS(XS_NT__Lanman_NetUserChangePassword);
 //
 ///////////////////////////////////////////////////////////////////////////////
 
-XS(XS_NT__Lanman_NetUserDel);
-
+XS(XS_NT__Lanman_WNetCancelConnection);
 
 ///////////////////////////////////////////////////////////////////////////////
 //
-// provides information about all user accounts on a server
+// enumerates network resources
 //
-// param:  server	- computer to execute the command
-//         filter	- account type filter
-//				 info		- array to store infos
+// param:  scope			- connection scope
+//				 type				- connection type
+//				 usage			- connection usage
+//				 startinfo	- location to start from
+//				 resinfo		- retrieves the resource infos
 //
 // return: success - 1 
 //         failure - 0 
@@ -80,16 +61,13 @@ XS(XS_NT__Lanman_NetUserDel);
 //
 ///////////////////////////////////////////////////////////////////////////////
 
-XS(XS_NT__Lanman_NetUserEnum);
-
+XS(XS_NT__Lanman_WNetEnumResource);
 
 ///////////////////////////////////////////////////////////////////////////////
 //
-// retrieves a list of global groups to which a user belongs
+// starts a browsing dialog box for connecting to network resources
 //
-// param:  server	- computer to execute the command
-//         user		- user name to search for in each group account
-//				 groups	- array to store infos
+// param:  info	- specifies options for the dialog box
 //
 // return: success - 1 
 //         failure - 0 
@@ -98,16 +76,13 @@ XS(XS_NT__Lanman_NetUserEnum);
 //
 ///////////////////////////////////////////////////////////////////////////////
 
-XS(XS_NT__Lanman_NetUserGetGroups);
-
+XS(XS_NT__Lanman_WNetConnectionDialog);
 
 ///////////////////////////////////////////////////////////////////////////////
 //
-// retrieves information about a user account on a server
+// starts a browsing dialog box for disconnecting from network resources
 //
-// param:  server	- computer to execute the command
-//         user		- user name on which to return information
-//				 info		- hash to store infos
+// param:  hwnd		- owner window for the dialog box
 //
 // return: success - 1 
 //         failure - 0 
@@ -116,17 +91,14 @@ XS(XS_NT__Lanman_NetUserGetGroups);
 //
 ///////////////////////////////////////////////////////////////////////////////
 
-XS(XS_NT__Lanman_NetUserGetInfo);
-
+XS(XS_NT__Lanman_WNetDisconnectDialog);
 
 ///////////////////////////////////////////////////////////////////////////////
 //
-// retrieves a list of local groups to which a user belongs
+// retrieves the name of the network resource associated with a local device
 //
-// param:  server	- computer to execute the command
-//         user		- user name to search for in each group account
-//				 flags	- currently LG_INCLUDE_INDIRECT is allowed
-//				 groups	- array to store infos
+// param:  local	- local name
+//				 remote	- retrieves the remote name
 //
 // return: success - 1 
 //         failure - 0 
@@ -135,16 +107,14 @@ XS(XS_NT__Lanman_NetUserGetInfo);
 //
 ///////////////////////////////////////////////////////////////////////////////
 
-XS(XS_NT__Lanman_NetUserGetLocalGroups);
-
+XS(XS_NT__Lanman_WNetGetConnection);
 
 ///////////////////////////////////////////////////////////////////////////////
 //
-// sets global group memberships for a specified user account
+// returns extended information about a specific network provider
 //
-// param:  server	- computer to execute the command
-//         user		- name of the user for which to set global group memberships
-//				 groups	- array with group names
+// param:  provider	- provider name
+//				 info			- retrieves the network infos
 //
 // return: success - 1 
 //         failure - 0 
@@ -153,16 +123,14 @@ XS(XS_NT__Lanman_NetUserGetLocalGroups);
 //
 ///////////////////////////////////////////////////////////////////////////////
 
-XS(XS_NT__Lanman_NetUserSetGroups);
-
+XS(XS_NT__Lanman_WNetGetNetworkInformation);
 
 ///////////////////////////////////////////////////////////////////////////////
 //
-// sets the parameters of a user account
+// obtains the provider name for a specific type of network
 //
-// param:  server	- computer to execute the command
-//         user		- user account to set information
-//				 info		- hash to set infos
+// param:  type			- network type
+//				 provider	- retrieves the provider name
 //
 // return: success - 1 
 //         failure - 0 
@@ -171,16 +139,65 @@ XS(XS_NT__Lanman_NetUserSetGroups);
 //
 ///////////////////////////////////////////////////////////////////////////////
 
-XS(XS_NT__Lanman_NetUserSetInfo);
-
+XS(XS_NT__Lanman_WNetGetProviderName);
 
 ///////////////////////////////////////////////////////////////////////////////
 //
-// sets one or more pproperties of a user account
+// provided with a remote path to a network resource, the function identifies 
+// the network provider that owns the resource and obtains information about 
+// the type of the resource
 //
-// param:  server	- computer to execute the command
-//         user		- user account to set information
-//				 info		- hash to set infos
+// param:  resource - resource information to get the info for
+//				 info			- retrieves the info
+//				 
+// return: success - 1 
+//         failure - 0 
+//
+// note:   call GetLastError() to get the error code on failure
+//
+///////////////////////////////////////////////////////////////////////////////
+
+XS(XS_NT__Lanman_WNetGetResourceInformation);
+
+///////////////////////////////////////////////////////////////////////////////
+//
+// returns the parent of a network resource in the network browse hierarchy
+//
+// param:  resouce	- resource information to get the parent for
+//				 parent		- retrieves the parent
+//				 
+// return: success - 1 
+//         failure - 0 
+//
+// note:   call GetLastError() to get the error code on failure
+//
+///////////////////////////////////////////////////////////////////////////////
+
+XS(XS_NT__Lanman_WNetGetResourceParent);
+
+///////////////////////////////////////////////////////////////////////////////
+//
+// returns information that contains a more universal form of a local name
+//
+// param:  localpath	- local resource name
+//				 info				- retrieves the unc path info
+//				 
+// return: success - 1 
+//         failure - 0 
+//
+// note:   call GetLastError() to get the error code on failure
+//
+///////////////////////////////////////////////////////////////////////////////
+
+XS(XS_NT__Lanman_WNetGetUniversalName);
+
+///////////////////////////////////////////////////////////////////////////////
+//
+// retrieves the current default user name, or the user name used to establish 
+// a network connection
+//
+// param:  resource	- network resource
+//				 user			- retrieves the user name
 //
 // return: success - 1 
 //         failure - 0 
@@ -189,16 +206,14 @@ XS(XS_NT__Lanman_NetUserSetInfo);
 //
 ///////////////////////////////////////////////////////////////////////////////
 
-XS(XS_NT__Lanman_NetUserSetProp);
-
+XS(XS_NT__Lanman_WNetGetUser);
 
 ///////////////////////////////////////////////////////////////////////////////
 //
-// retrieves global information for all users and global groups in the security 
-// database.
+// makes a connection to a network resource
 //
-// param:  server	- computer to execute the command
-//				 info		- hash to store infos
+// param:  resource	- hash with info about the connection
+//				 connInfo	- receives the connection info
 //
 // return: success - 1 
 //         failure - 0 
@@ -207,44 +222,6 @@ XS(XS_NT__Lanman_NetUserSetProp);
 //
 ///////////////////////////////////////////////////////////////////////////////
 
-XS(XS_NT__Lanman_NetUserModalsGet);
+XS(XS_NT__Lanman_WNetUseConnection);
 
-
-///////////////////////////////////////////////////////////////////////////////
-//
-// sets global information for all users and global groups in the security 
-// database
-//
-// param:  server	- computer to execute the command
-//				 info		- hash to set infos
-//
-// return: success - 1 
-//         failure - 0 
-//
-// note:   call GetLastError() to get the error code on failure; you cannot set
-//				 information at level 2
-//
-///////////////////////////////////////////////////////////////////////////////
-
-XS(XS_NT__Lanman_NetUserModalsSet);
-
-///////////////////////////////////////////////////////////////////////////////
-//
-// checks user's password for validity
-//
-// param:	 domain		- domain or computer to execute the command
-//				 user			- user name
-//				 password	- users password
-//
-// return: success - 1
-//         failure - 0
-//
-// note:   call GetLastError() to get the error code on failure
-//
-///////////////////////////////////////////////////////////////////////////////
-
-XS(XS_NT__Lanman_NetUserCheckPassword);
-
-#endif //#ifndef __USER_H
-
-
+#endif //#ifndef __WNETWORK_H

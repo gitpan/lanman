@@ -1,12 +1,14 @@
 #define WIN32_LEAN_AND_MEAN
 
+
 #ifndef __GROUP_CPP
 #define __GROUP_CPP
 #endif
 
+
 #include <windows.h>
-#include <stdio.h>
 #include <lm.h>
+
 
 #include "group.h"
 #include "wstring.h"
@@ -207,6 +209,76 @@ XS(XS_NT__Lanman_NetLocalGroupAddMembers)
 
 ///////////////////////////////////////////////////////////////////////////////
 //
+// adds users or global groups to a local group
+//
+// param:  server  - computer to execute the command
+//         group   - local group name
+//         members - user or global groups to add
+//
+// return: success - 1 
+//         failure - 0 
+//
+// note:   call GetLastError() to get the error code on failure
+//
+///////////////////////////////////////////////////////////////////////////////
+
+XS(XS_NT__Lanman_NetLocalGroupAddMembersBySid)
+{
+	dXSARGS;
+
+	ErrorAndResult;
+
+	// reset last error
+	LastError(0);
+
+	AV *members = NULL;
+
+	if(items == 3 && CHK_ASSIGN_AREF(members, ST(2)))
+	{
+		int numMembers = AV_LEN(members) + 1;
+
+		// if there are no members in the array do nothing
+		if(numMembers <= 0)
+			RETURNRESULT(1);
+
+		PLOCALGROUP_MEMBERS_INFO_0 info = NULL;
+		PWSTR server = NULL, group = NULL;
+
+		__try
+		{
+			// store group members
+			info = 
+				(PLOCALGROUP_MEMBERS_INFO_0)NewMem(sizeof(LOCALGROUP_MEMBERS_INFO_0) * numMembers);
+
+			// change server and group to unicode
+			server = ServerAsUnicode(SvPV(ST(0), PL_na));
+			group = S2W(SvPV(ST(1), PL_na));
+
+			for(int count = 0; count < numMembers; count++)
+				info[count].lgrmi0_sid = A_FETCH_STR(members, count);
+
+			LastError(NetLocalGroupAddMembers(server, group, 0, (PBYTE)info, numMembers));
+		}
+		__except(SetExceptCode(excode))
+		{
+			// set last error 
+			LastError(error ? error : excode);
+		}
+
+		// clean up
+		CleanPtr(info);
+		FreeStr(server);
+		FreeStr(group);
+	} // if(items == 3 && ...)
+	else
+		croak("Usage: Win32::Lanman::NetLocalGroupAddMembersBySid($server, $group, \\@members)\n");
+	
+	RETURNRESULT(LastError() == 0);
+}
+
+
+///////////////////////////////////////////////////////////////////////////////
+//
 // deletes a local group
 //
 // param:  server  - computer to execute the command
@@ -386,6 +458,76 @@ XS(XS_NT__Lanman_NetLocalGroupDelMembers)
 
 ///////////////////////////////////////////////////////////////////////////////
 //
+// removes users or global groups from a local group
+//
+// param:  server  - computer to execute the command
+//         group   - local group name
+//         members - user or global groups to remove
+//
+// return: success - 1 
+//         failure - 0 
+//
+// note:   call GetLastError() to get the error code on failure
+//
+///////////////////////////////////////////////////////////////////////////////
+
+XS(XS_NT__Lanman_NetLocalGroupDelMembersBySid)
+{
+	dXSARGS;
+
+	ErrorAndResult;
+
+	// reset last error
+	LastError(0);
+
+	AV *members = NULL;
+
+	if(items == 3 && CHK_ASSIGN_AREF(members, ST(2)))
+	{
+		int numMembers = AV_LEN(members) + 1;
+
+		// if there are no members in the array do nothing
+		if(numMembers <= 0)
+			RETURNRESULT(1);
+
+		PLOCALGROUP_MEMBERS_INFO_0 info = NULL;
+		PWSTR server = NULL, group = NULL;
+
+		__try
+		{
+			// store group members
+			info = 
+				(PLOCALGROUP_MEMBERS_INFO_0)NewMem(sizeof(LOCALGROUP_MEMBERS_INFO_0) * numMembers);
+
+			// change server and group to unicode
+			server = ServerAsUnicode(SvPV(ST(0), PL_na));
+			group = S2W(SvPV(ST(1), PL_na));
+
+			for(int count = 0; count < numMembers; count++)
+				info[count].lgrmi0_sid = A_FETCH_STR(members, count);
+
+			LastError(NetLocalGroupDelMembers(server, group, 0, (PBYTE)info, numMembers));
+		}
+		__except(SetExceptCode(excode))
+		{
+			// set last error 
+			LastError(error ? error : excode);
+		}
+
+		// clean up
+		CleanPtr(info);
+		FreeStr(server);
+		FreeStr(group);
+	} // if(items == 3 && ...)
+	else
+		croak("Usage: Win32::Lanman::NetLocalGroupDelMembersBySid($server, $group, \\@members)\n");
+	
+	RETURNRESULT(LastError() == 0);
+}
+
+
+///////////////////////////////////////////////////////////////////////////////
+//
 // enums all local groups
 //
 // param:  server - computer to execute the command
@@ -452,6 +594,9 @@ XS(XS_NT__Lanman_NetLocalGroupEnum)
 						H_STORE_WSTR(properties, "comment", info[count].lgrpi1_comment);
 
 						A_STORE_REF(groups, properties);
+
+						// decrement reference count
+						SvREFCNT_dec(properties);
 					}
 
 					// did we got all?
@@ -574,6 +719,7 @@ XS(XS_NT__Lanman_NetLocalGroupGetMembers)
 	{
 		PWSTR server = NULL, group = NULL;
 		PLOCALGROUP_MEMBERS_INFO_2 members = NULL;
+		DWORD level = 2;
 
 		__try
 		{
@@ -590,11 +736,11 @@ XS(XS_NT__Lanman_NetLocalGroupGetMembers)
 			DWORD handle = 0;
 
 			// sometimes our buffer is to small to hold the info all together, so we have
-			// to do it in more than one steps
+			// to do it in more than one step
 			for( ; ; )
 			{
 				// get all group members; if buflen is too small, increment it
-				while((error = NetLocalGroupGetMembers(server, group, 2, (PBYTE*)&members, 
+				while((error = NetLocalGroupGetMembers(server, group, level, (PBYTE*)&members, 
 																							 buflen, &entries, &total, 
 																							 &handle)) == NERR_BufTooSmall &&
 							(!entries || entries != total))
@@ -603,6 +749,17 @@ XS(XS_NT__Lanman_NetLocalGroupGetMembers)
 					continue;
 				}
 
+				// try again at level 0 if the goup couldn't be found
+				if(error == NERR_GroupNotFound)
+					while((error = NetLocalGroupGetMembers(server, group, level = 0, (PBYTE*)&members, 
+																								 buflen, &entries, &total, 
+																								 &handle)) == NERR_BufTooSmall &&
+								(!entries || entries != total))
+					{
+						buflen += 0x4000;
+						continue;
+					}
+
 				if(!error || error == ERROR_MORE_DATA)
 				{
 					for(DWORD count = 0; count < entries; count++)
@@ -610,12 +767,21 @@ XS(XS_NT__Lanman_NetLocalGroupGetMembers)
 						// store group members
 						HV *properties = NewHV;
 
-						H_STORE_WSTR(properties, "domainandname", members[count].lgrmi2_domainandname);
-						H_STORE_PTR(properties, "sid", members[count].lgrmi2_sid, 
-												GetLengthSid(members[count].lgrmi2_sid));
-						H_STORE_INT(properties, "sidusage", members[count].lgrmi2_sidusage);
+						if(level == 2)
+						{
+							H_STORE_PTR(properties, "sid", members[count].lgrmi2_sid, 
+													GetLengthSid(members[count].lgrmi2_sid));
+							H_STORE_WSTR(properties, "domainandname", members[count].lgrmi2_domainandname);
+							H_STORE_INT(properties, "sidusage", members[count].lgrmi2_sidusage);
+						}
+						else
+							H_STORE_PTR(properties, "sid", ((PLOCALGROUP_MEMBERS_INFO_0)members)[count].lgrmi0_sid, 
+													GetLengthSid(((PLOCALGROUP_MEMBERS_INFO_0)members)[count].lgrmi0_sid));
 
 						A_STORE_REF(users, properties);
+
+						// decrement reference count
+						SvREFCNT_dec(properties);
 					}
 
 					// did we got all?
@@ -773,6 +939,70 @@ XS(XS_NT__Lanman_NetLocalGroupSetMembers)
 	} // if(items == 3 && ...)
 	else
 		croak("Usage: Win32::Lanman::NetLocalGroupSetMembers($server, $group, \\@members)\n");
+	
+	RETURNRESULT(LastError() == 0);
+}
+
+
+///////////////////////////////////////////////////////////////////////////////
+//
+// sets user or global groups to a local group
+//
+// param:  server  - computer to execute the command
+//         group   - group name
+//         members - members to set to the local group
+//
+// return: success - 1 
+//         failure - 0 
+//
+// note:   call GetLastError() to get the error code on failure
+//
+///////////////////////////////////////////////////////////////////////////////
+
+XS(XS_NT__Lanman_NetLocalGroupSetMembersBySid)
+{
+	dXSARGS;
+
+	ErrorAndResult;
+
+	// reset last error
+	LastError(0);
+
+	AV *users = NULL;
+
+	if(items == 3 && CHK_ASSIGN_AREF(users, ST(2)))
+	{
+		PWSTR server = NULL, group = NULL;
+		PLOCALGROUP_MEMBERS_INFO_0 members = NULL;
+
+		__try
+		{
+			// change server and group to unicode
+			server = ServerAsUnicode(SvPV(ST(0), PL_na));
+			group = S2W(SvPV(ST(1), PL_na));
+
+			int numMembers = AV_LEN(users) + 1;
+			members = 
+				(PLOCALGROUP_MEMBERS_INFO_0)NewMem(sizeof(LOCALGROUP_MEMBERS_INFO_0) * numMembers);
+
+			for(int count = 0; count < numMembers; count++)
+				members[count].lgrmi0_sid = A_FETCH_STR(users, count);
+			
+			LastError(NetLocalGroupSetMembers(server, group, 0, (PBYTE)members, numMembers));
+		}
+		__except(SetExceptCode(excode))
+		{
+			// set last error 
+			LastError(error ? error : excode);
+		}
+
+		// clean up
+		CleanPtr(members);
+		FreeStr(server);
+		FreeStr(group);
+	} // if(items == 3 && ...)
+	else
+		croak("Usage: Win32::Lanman::NetLocalGroupSetMembersBySid($server, $group, \\@members)\n");
 	
 	RETURNRESULT(LastError() == 0);
 }
@@ -1066,6 +1296,9 @@ XS(XS_NT__Lanman_NetGroupEnum)
 						H_STORE_INT(properties, "attributes", info[count].grpi2_attributes);
 
 						A_STORE_REF(groups, properties);
+
+						// decrement reference count
+						SvREFCNT_dec(properties);
 					}
 
 					// did we got all
@@ -1204,6 +1437,8 @@ XS(XS_NT__Lanman_NetGroupGetUsers)
 			// clear array
 			AV_CLEAR(users);
 
+			// sometimes our buffer is to small to hold the info all together, so we have
+			// to do it in more than one step
 			for( ; ; )
 			{
 				// get all group members; if buflen is too small, increment it
@@ -1226,6 +1461,9 @@ XS(XS_NT__Lanman_NetGroupGetUsers)
 						H_STORE_INT(properties, "attributes", members[count].grui1_attributes);
 
 						A_STORE_REF(users, properties);
+
+						// decrement reference count
+						SvREFCNT_dec(properties);
 					}
 
 					// did we got all

@@ -11,13 +11,14 @@
 //
 ///////////////////////////////////////////////////////////////////////////////
 
+
 ///////////////////////////////////////////////////////////////////////////////
 //
 // reads records from the eventlog
 //
 // param:  server - computer to execute the command
 //				 source	- which part of the eventlog (system, security, application
-//									or a eventlog backup file)
+//									or an eventlog backup file)
 //         first  - read from the first record ...
 //				 last   - ... til the last record
 //				 events	- array to store information
@@ -58,7 +59,8 @@ XS(XS_NT__Lanman_GetEventDescription);
 // makes a backup from the eventlog
 //
 // param:  server		- computer to execute the command
-//				 source		- which part of the eventlog (system, security or application)
+//				 source		- which part of the eventlog (system, security or 
+//										application)
 //				 fileName - backup file name
 //
 // return: success - 1 
@@ -76,7 +78,8 @@ XS(XS_NT__Lanman_BackupEventLog);
 // clears an eventlog and makes an optionally backup before clearing
 //
 // param:  server		- computer to execute the command
-//				 source		- which part of the eventlog (system, security or application)
+//				 source		- which part of the eventlog (system, security or 
+//										application)
 //				 fileName - backup file name
 //
 // return: success - 1 
@@ -94,7 +97,8 @@ XS(XS_NT__Lanman_ClearEventLog);
 // writes an event to the event log
 //
 // param:  server		- computer to execute the command
-//				 source		- which part of the eventlog (system, security or application)
+//				 source		- which part of the eventlog (system, security or 
+//										application)
 //				 type			- event type (error, warning, information, audit)
 //				 category	- event category
 //				 id				- event id
@@ -120,7 +124,8 @@ XS(XS_NT__Lanman_ReportEvent);
 // gets the number of records in an event log
 //
 // param:  server			- computer to execute the command
-//				 source			- which part of the eventlog (system, security or application)
+//				 source			- which part of the eventlog (system, security or 
+//											application)
 //				 numrecords - gets the number of records
 //
 // return: success - 1 
@@ -138,7 +143,8 @@ XS(XS_NT__Lanman_GetNumberOfEventLogRecords);
 // gets the oldest record number in an event log
 //
 // param:  server				- computer to execute the command
-//				 source				- which part of the eventlog (system, security or application)
+//				 source				- which part of the eventlog (system, security or 
+//												application)
 //				 oldestrecord - gets the oldest record number
 //
 // return: success - 1 
@@ -149,6 +155,27 @@ XS(XS_NT__Lanman_GetNumberOfEventLogRecords);
 ///////////////////////////////////////////////////////////////////////////////
 
 XS(XS_NT__Lanman_GetOldestEventLogRecord);
+
+///////////////////////////////////////////////////////////////////////////////
+//
+// waits until an event is written to the event log or the timeout elapses
+//
+// param:  server				- computer to execute the command (remote computers are
+//												currently not allowed  - GetLastError returns 
+//												ERROR_INVALID_HANDLE)
+//				 source				- which part of the eventlog (system, security or 
+//												application)
+//				 timeout			- optional parameter how long to wait for the event,
+//												default: infinite
+//
+// return: success - 1 
+//         failure - 0 
+//
+// note:   call GetLastError() to get the error code on failure
+//
+///////////////////////////////////////////////////////////////////////////////
+
+XS(XS_NT__Lanman_NotifyChangeEventLog);
 
 
 #endif //#ifndef __EVENTLOG_H

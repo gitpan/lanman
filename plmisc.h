@@ -2,7 +2,7 @@
 #define __PLMISC_H
 
 
-// perl 5.003_07 build 316
+// perl 5.003_07 build 3xx
 #ifdef PERL_5003_07
 
 	#ifndef PERL_OBJECT
@@ -20,7 +20,7 @@
 
 #endif
 
-// perl 5.005_03 build 522
+// perl 5.005_03 build 5xx
 #ifdef PERL_5005_03
 
 	#ifndef PERL_OBJECT
@@ -36,7 +36,7 @@
 
 #endif
 
-// perl 5.6.0 build 613
+// perl 5.6.0 build 6xx
 #ifdef PERL_5_6_0
 
 	#ifdef PERL_OBJECT

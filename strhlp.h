@@ -13,9 +13,9 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 //
-// converts a string to net bios name (\\name)
+// converts a string to netbios name (\\name)
 //
-// param:  server				- computer computer name
+// param:  server	- computer computer name
 //
 // return: converted string
 //
@@ -25,12 +25,11 @@
 
 PSTR ServerAsAnsi(PSTR server);
 
-
 ///////////////////////////////////////////////////////////////////////////////
 //
-// converts a string to net bios name in unicode (\\name)
+// converts a string to netbios name in unicode (\\name)
 //
-// param:  server				- computer computer name
+// param:  server	- computer computer name
 //
 // return: converted string
 //
@@ -39,6 +38,34 @@ PSTR ServerAsAnsi(PSTR server);
 ///////////////////////////////////////////////////////////////////////////////
 
 PWSTR ServerAsUnicode(PSTR server);
+
+///////////////////////////////////////////////////////////////////////////////
+//
+// converts a string to netbios name without leading backslashes
+//
+// param:  server	- computer computer name
+//
+// return: converted string
+//
+// note:   if there is not enougth memory, an exception will be raised
+//
+///////////////////////////////////////////////////////////////////////////////
+
+PSTR ServerAsAnsiWithoutBackslashes(PSTR server);
+
+///////////////////////////////////////////////////////////////////////////////
+//
+// converts a string to netbios name in unicode without leading backslashes
+//
+// param:  server	- computer computer name
+//
+// return: converted string
+//
+// note:   if there is not enougth memory, an exception will be raised
+//
+///////////////////////////////////////////////////////////////////////////////
+
+PWSTR ServerAsUnicodeWithoutBackslashes(PSTR server);
 
 
 #endif //#ifndef __STRHLP_H

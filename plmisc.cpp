@@ -1,11 +1,13 @@
 #define WIN32_LEAN_AND_MEAN
 
+
 #ifndef __PLMISC_CPP
 #define __PLMISC_CPP
 #endif
 
 
 #include <windows.h>
+
 
 #include "plmisc.h"
 

@@ -1,12 +1,14 @@
 #define WIN32_LEAN_AND_MEAN
 
+
 #ifndef __SESSION_CPP
 #define __SESSION_CPP
 #endif
 
+
 #include <windows.h>
-#include <stdio.h>
 #include <lm.h>
+
 
 #include "session.h"
 #include "wstring.h"
@@ -130,7 +132,7 @@ XS(XS_NT__Lanman_NetSessionEnum)
 				for(DWORD count = 0; count < entries; count++)
 				{
 					// store session properties
-					HV *properties = newHV();
+					HV *properties = NewHV;
 
 					H_STORE_WSTR(properties, "cname", (PWSTR)info502[count].sesi502_cname);
 					H_STORE_WSTR(properties, "username", (PWSTR)info502[count].sesi502_username);
@@ -141,7 +143,10 @@ XS(XS_NT__Lanman_NetSessionEnum)
 					H_STORE_WSTR(properties, "cltype_name", (PWSTR)info502[count].sesi502_cltype_name);
 					H_STORE_WSTR(properties, "transport", (PWSTR)info502[count].sesi502_transport);
 					
-					av_push(sessionInfo, (SV*)newRV((SV*)properties));
+					A_STORE_REF(sessionInfo, properties);
+
+					// decrement reference count
+					SvREFCNT_dec(properties);
 				}
 			else
 				if(LastError() == ERROR_ACCESS_DENIED && 
@@ -151,7 +156,7 @@ XS(XS_NT__Lanman_NetSessionEnum)
 					for(DWORD count = 0; count < entries; count++)
 					{
 						// store session properties
-						HV *properties = newHV();
+						HV *properties = NewHV;
 
 						H_STORE_WSTR(properties, "cname", (PWSTR)info10[count].sesi10_cname);
 						H_STORE_WSTR(properties, "username", (PWSTR)info10[count].sesi10_username);
@@ -159,6 +164,9 @@ XS(XS_NT__Lanman_NetSessionEnum)
 						H_STORE_INT(properties, "idle_time", info10[count].sesi10_idle_time);
 
 						A_STORE_REF(sessionInfo, properties);
+
+						// decrement reference count
+						SvREFCNT_dec(properties);
 					}
 		}
 		__except(SetExceptCode(excode))

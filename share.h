@@ -136,6 +136,4 @@ XS(XS_NT__Lanman_NetShareSetInfo);
 XS(XS_NT__Lanman_NetConnectionEnum);
 
 
-XS(XS_NT__Lanman_BuildSecurityDescriptor);
-
 #endif //#ifndef __SHARE_H

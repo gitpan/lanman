@@ -1,20 +1,23 @@
 #define WIN32_LEAN_AND_MEAN
 
+
 #ifndef __LANMAN_CPP
 #define __LANMAN_CPP
 #endif
 
+
 #include <windows.h>
-#include <stdio.h>
 #include <lm.h>
 #include <lmdfs.h>
 #include <wtsapi32.h>
 #include <ntsecapi.h>
+#include <dsgetdc.h>
 
 
 //#include "access.h"
 #include "addloader.h"
 //#include "alert.h"
+#include "browse.h"
 #include "dfs.h"
 #include "domain.h"
 #include "ds.h"
@@ -37,6 +40,7 @@
 //#include "stat.h"
 #include "termserv.h"
 #include "timeofd.h"
+#include "wnetwork.h"
 #include "workst.h"
 #include "wstring.h"
 #include "use.h"
@@ -97,8 +101,6 @@ static long constant(PERL_CALL PSTR name)
 			RET_VAL_IF_EQUAL(AF_OP_PRINT, name);
 			RET_VAL_IF_EQUAL(AF_OP_SERVER, name);
 	
-			RET_VAL_IF_EQUAL(ACCESS_SYSTEM_SECURITY, name);// move to security
-
 			RET_VAL_IF_EQUAL(ALLOCATE_RESPONSE, name);
 
 			RET_VAL_IF_EQUAL(AuditCategoryAccountLogon, name);
@@ -127,8 +129,33 @@ static long constant(PERL_CALL PSTR name)
 			RET_VAL_IF_EQUAL(Batch, name);
 			break;
 
+		case 'C':
+			RET_VAL_IF_EQUAL(CONNECT_CURRENT_MEDIA, name);
+			RET_VAL_IF_EQUAL(CONNECT_DEFERRED, name);
+			RET_VAL_IF_EQUAL(CONNECT_INTERACTIVE, name);
+			RET_VAL_IF_EQUAL(CONNECT_LOCALDRIVE, name);
+			RET_VAL_IF_EQUAL(CONNECT_NEED_DRIVE, name);
+			RET_VAL_IF_EQUAL(CONNECT_PROMPT, name);
+			RET_VAL_IF_EQUAL(CONNECT_REDIRECT, name);
+			RET_VAL_IF_EQUAL(CONNECT_REFCOUNT, name);
+			RET_VAL_IF_EQUAL(CONNECT_RESERVED, name);
+			RET_VAL_IF_EQUAL(CONNECT_TEMPORARY, name);
+			RET_VAL_IF_EQUAL(CONNECT_UPDATE_PROFILE, name);
+			RET_VAL_IF_EQUAL(CONNECT_UPDATE_RECENT, name);
+
+			RET_VAL_IF_EQUAL(CONNDLG_CONN_POINT, name);
+			RET_VAL_IF_EQUAL(CONNDLG_HIDE_BOX, name);
+			RET_VAL_IF_EQUAL(CONNDLG_NOT_PERSIST, name);
+			RET_VAL_IF_EQUAL(CONNDLG_PERSIST, name);
+			RET_VAL_IF_EQUAL(CONNDLG_RO_PATH, name);
+			RET_VAL_IF_EQUAL(CONNDLG_USE_MRU, name);
+			break;
+			
 		case 'D':
-			RET_VAL_IF_EQUAL(DACL_SECURITY_INFORMATION, name);	// move to security
+			RET_VAL_IF_EQUAL(DACL_SECURITY_INFORMATION, name);
+
+			RET_VAL_IF_EQUAL(DISC_NO_FORCE, name);
+			RET_VAL_IF_EQUAL(DISC_UPDATE_PROFILE, name);
 
 			RET_VAL_IF_EQUAL(DEF_MAX_PWHIST, name);
 
@@ -141,8 +168,6 @@ static long constant(PERL_CALL PSTR name)
 			RET_VAL_IF_EQUAL(DFS_VOLUME_STATE_OK, name);
 			RET_VAL_IF_EQUAL(DFS_VOLUME_STATE_OFFLINE, name);
 			RET_VAL_IF_EQUAL(DFS_VOLUME_STATE_ONLINE, name);
-
-			RET_VAL_IF_EQUAL(DELETE, name);						// move to security
 			break;
 
 		case 'E':
@@ -169,14 +194,9 @@ static long constant(PERL_CALL PSTR name)
 			break;
 
 		case 'G':
-			RET_VAL_IF_EQUAL(GENERIC_ALL, name);								// move to security
-			RET_VAL_IF_EQUAL(GENERIC_EXECUTE, name);						// move to security
-			RET_VAL_IF_EQUAL(GENERIC_READ, name);								// move to security
-			RET_VAL_IF_EQUAL(GENERIC_WRITE, name);							// move to security
-
-			RET_VAL_IF_EQUAL(GROUP_SECURITY_INFORMATION, name);	// move to security
+			RET_VAL_IF_EQUAL(GROUP_SECURITY_INFORMATION, name);
 			break;
-
+	
 		case 'I':
 			RET_VAL_IF_EQUAL(IDASYNC, name);					// WTS
 			RET_VAL_IF_EQUAL(IDTIMEOUT, name);				// WTS
@@ -276,7 +296,6 @@ static long constant(PERL_CALL PSTR name)
 
 		case 'M':
 			RET_VAL_IF_EQUAL(MAJOR_VERSION_MASK, name);
-			RET_VAL_IF_EQUAL(MAXIMUM_ALLOWED, name);		// move to security
 
 			RET_VAL_IF_EQUAL(MsV1_0InteractiveLogon, name);
 			RET_VAL_IF_EQUAL(MsV1_0Lm20Logon, name);
@@ -364,6 +383,9 @@ static long constant(PERL_CALL PSTR name)
 			RET_VAL_IF_EQUAL(NETLOGON_REDO_NEEDED, name);
 			RET_VAL_IF_EQUAL(NETLOGON_REPLICATION_IN_PROGRESS, name);
 			RET_VAL_IF_EQUAL(NETLOGON_REPLICATION_NEEDED, name);
+
+			RET_VAL_IF_EQUAL(NETPROPERTY_PERSISTENT, name);
+
 			RET_VAL_IF_EQUAL(Network, name);
 
 			RET_VAL_IF_EQUAL(NetSetupDnsMachine, name);
@@ -465,13 +487,12 @@ static long constant(PERL_CALL PSTR name)
 			RET_VAL_IF_EQUAL(PolicyServerDisabled, name);
 			RET_VAL_IF_EQUAL(PolicyServerEnabled, name);
 
-			RET_VAL_IF_EQUAL(PROTECTED_DACL_SECURITY_INFORMATION, name);	// W2K move to security
-			RET_VAL_IF_EQUAL(PROTECTED_SACL_SECURITY_INFORMATION, name);	// W2K move to security
-
 			RET_VAL_IF_EQUAL(Proxy, name);
 			break;
 			
 		case 'R':
+			RET_VAL_IF_EQUAL(REMOTE_NAME_INFO_LEVEL, name);
+
 			RET_VAL_IF_EQUAL(REPL_EXTENT_FILE, name);
 			RET_VAL_IF_EQUAL(REPL_EXTENT_TREE, name);
 			RET_VAL_IF_EQUAL(REPL_INTEGRITY_FILE, name);
@@ -487,23 +508,41 @@ static long constant(PERL_CALL PSTR name)
 			RET_VAL_IF_EQUAL(REPL_UNLOCK_NOFORCE, name);
 
 			RET_VAL_IF_EQUAL(RESOURCE_CONNECTED, name);
+			RET_VAL_IF_EQUAL(RESOURCE_CONTEXT, name);
 			RET_VAL_IF_EQUAL(RESOURCE_GLOBALNET, name);
+			RET_VAL_IF_EQUAL(RESOURCE_RECENT, name);
 			RET_VAL_IF_EQUAL(RESOURCE_REMEMBERED, name);
 			RET_VAL_IF_EQUAL(RESOURCETYPE_ANY, name);
 			RET_VAL_IF_EQUAL(RESOURCETYPE_DISK, name);
 			RET_VAL_IF_EQUAL(RESOURCETYPE_PRINT, name);
+			RET_VAL_IF_EQUAL(RESOURCETYPE_RESERVED, name);
+			RET_VAL_IF_EQUAL(RESOURCETYPE_UNKNOWN, name);
+
+			RET_VAL_IF_EQUAL(RESOURCEDISPLAYTYPE_DIRECTORY, name);
 			RET_VAL_IF_EQUAL(RESOURCEDISPLAYTYPE_DOMAIN, name);
+			RET_VAL_IF_EQUAL(RESOURCEDISPLAYTYPE_FILE, name);
 			RET_VAL_IF_EQUAL(RESOURCEDISPLAYTYPE_GENERIC, name);
+			RET_VAL_IF_EQUAL(RESOURCEDISPLAYTYPE_GROUP, name);
+			RET_VAL_IF_EQUAL(RESOURCEDISPLAYTYPE_NDSCONTAINER, name);
+			RET_VAL_IF_EQUAL(RESOURCEDISPLAYTYPE_NETWORK, name);
+			RET_VAL_IF_EQUAL(RESOURCEDISPLAYTYPE_ROOT, name);
 			RET_VAL_IF_EQUAL(RESOURCEDISPLAYTYPE_SERVER, name);
 			RET_VAL_IF_EQUAL(RESOURCEDISPLAYTYPE_SHARE, name);
+			RET_VAL_IF_EQUAL(RESOURCEDISPLAYTYPE_SHAREADMIN, name);
+			RET_VAL_IF_EQUAL(RESOURCEDISPLAYTYPE_TREE, name);
+
+			RET_VAL_IF_EQUAL(RESOURCEUSAGE_ALL, name);
 			RET_VAL_IF_EQUAL(RESOURCEUSAGE_CONNECTABLE, name);
 			RET_VAL_IF_EQUAL(RESOURCEUSAGE_CONTAINER, name);
-
-			RET_VAL_IF_EQUAL(READ_CONTROL, name);		// move to security
+			RET_VAL_IF_EQUAL(RESOURCEUSAGE_ATTACHED, name);
+			RET_VAL_IF_EQUAL(RESOURCEUSAGE_NOLOCALDEVICE, name);
+			RET_VAL_IF_EQUAL(RESOURCEUSAGE_RESERVED, name);
+			RET_VAL_IF_EQUAL(RESOURCEUSAGE_SIBLING, name);
 			break;
 
 		case 'S':
-			RET_VAL_IF_EQUAL(SACL_SECURITY_INFORMATION, name);	// move to security
+			RET_VAL_IF_EQUAL(SACL_SECURITY_INFORMATION, name);
+
 			RET_VAL_IF_EQUAL(SC_ACTION_NONE, name);
 			RET_VAL_IF_EQUAL(SC_ACTION_REBOOT, name);
 			RET_VAL_IF_EQUAL(SC_ACTION_RESTART, name);
@@ -643,11 +682,6 @@ static long constant(PERL_CALL PSTR name)
 			RET_VAL_IF_EQUAL(SV_VISIBLE, name);
 			RET_VAL_IF_EQUAL(SW_AUTOPROF_LOAD_MASK, name);
 			RET_VAL_IF_EQUAL(SW_AUTOPROF_SAVE_MASK, name);
-
-			RET_VAL_IF_EQUAL(SYNCHRONIZE, name);	// move to security
-			RET_VAL_IF_EQUAL(SPECIFIC_RIGHTS_ALL, name);	// move to security
-			RET_VAL_IF_EQUAL(STANDARD_RIGHTS_REQUIRED, name);	// move to security
-			RET_VAL_IF_EQUAL(STANDARD_RIGHTS_ALL, name);	// move to security
 			break;
 		
 		case 'T':
@@ -691,25 +725,36 @@ static long constant(PERL_CALL PSTR name)
 			RET_VAL_IF_EQUAL(UAS_ROLE_BACKUP, name);
 			RET_VAL_IF_EQUAL(UAS_ROLE_PRIMARY, name);
 
+			RET_VAL_IF_EQUAL(UNIVERSAL_NAME_INFO_LEVEL, name);
+
+			RET_VAL_IF_EQUAL(UF_ACCOUNT_TYPE_MASK, name);
 			RET_VAL_IF_EQUAL(UF_ACCOUNTDISABLE, name);
 			RET_VAL_IF_EQUAL(UF_DONT_EXPIRE_PASSWD, name);
+			RET_VAL_IF_EQUAL(UF_DONT_REQUIRE_PREAUTH, name);
+			RET_VAL_IF_EQUAL(UF_ENCRYPTED_TEXT_PASSWORD_ALLOWED, name);
 			RET_VAL_IF_EQUAL(UF_HOMEDIR_REQUIRED, name);
 			RET_VAL_IF_EQUAL(UF_INTERDOMAIN_TRUST_ACCOUNT, name);
 			RET_VAL_IF_EQUAL(UF_LOCKOUT, name);
+			RET_VAL_IF_EQUAL(UF_MACHINE_ACCOUNT_MASK, name);
+			RET_VAL_IF_EQUAL(UF_MNS_LOGON_ACCOUNT, name);
 			RET_VAL_IF_EQUAL(UF_NORMAL_ACCOUNT, name);
+			RET_VAL_IF_EQUAL(UF_NOT_DELEGATED, name);
 			RET_VAL_IF_EQUAL(UF_PASSWD_CANT_CHANGE, name);
 			RET_VAL_IF_EQUAL(UF_PASSWD_NOTREQD, name);
+			// only supported by Whistler
+			//RET_VAL_IF_EQUAL(UF_PASSWORD_EXPIRED, name);
 			RET_VAL_IF_EQUAL(UF_SCRIPT, name);
 			RET_VAL_IF_EQUAL(UF_SERVER_TRUST_ACCOUNT, name);
+			RET_VAL_IF_EQUAL(UF_SETTABLE_BITS, name);
+			RET_VAL_IF_EQUAL(UF_SMARTCARD_REQUIRED, name);
 			RET_VAL_IF_EQUAL(UF_TEMP_DUPLICATE_ACCOUNT, name);
+			RET_VAL_IF_EQUAL(UF_TRUSTED_FOR_DELEGATION, name);
+			RET_VAL_IF_EQUAL(UF_USE_DES_KEY_ONLY, name);
 			RET_VAL_IF_EQUAL(UF_WORKSTATION_TRUST_ACCOUNT, name);
 
 			RET_VAL_IF_EQUAL(UNITS_PER_WEEK, name);
 
 			RET_VAL_IF_EQUAL(Unlock, name);
-
-			RET_VAL_IF_EQUAL(UNPROTECTED_DACL_SECURITY_INFORMATION, name);	// W2K move to security
-			RET_VAL_IF_EQUAL(UNPROTECTED_SACL_SECURITY_INFORMATION, name);	// W2K move to security
 
 			RET_VAL_IF_EQUAL(USE_SPECIFIC_TRANSPORT, name);
 
@@ -743,8 +788,50 @@ static long constant(PERL_CALL PSTR name)
 			RET_VAL_IF_EQUAL(WNCON_NOTROUTED, name);
 			RET_VAL_IF_EQUAL(WNCON_SLOWLINK, name);
 
-			RET_VAL_IF_EQUAL(WRITE_DAC, name);			// move to security
-			RET_VAL_IF_EQUAL(WRITE_OWNER, name);		// move to security
+			RET_VAL_IF_EQUAL(WNNC_CRED_MANAGER, name);
+			RET_VAL_IF_EQUAL(WNNC_NET_10NET, name);
+			RET_VAL_IF_EQUAL(WNNC_NET_3IN1, name);
+			RET_VAL_IF_EQUAL(WNNC_NET_9TILES, name);
+			RET_VAL_IF_EQUAL(WNNC_NET_APPLETALK, name);
+			RET_VAL_IF_EQUAL(WNNC_NET_AS400, name);
+			RET_VAL_IF_EQUAL(WNNC_NET_AVID, name);
+			RET_VAL_IF_EQUAL(WNNC_NET_BMC, name);
+			RET_VAL_IF_EQUAL(WNNC_NET_BWNFS, name);
+			RET_VAL_IF_EQUAL(WNNC_NET_CLEARCASE, name);
+			RET_VAL_IF_EQUAL(WNNC_NET_COGENT, name);
+			RET_VAL_IF_EQUAL(WNNC_NET_CSC, name);
+			RET_VAL_IF_EQUAL(WNNC_NET_DCE, name);
+			RET_VAL_IF_EQUAL(WNNC_NET_DECORB, name);
+			RET_VAL_IF_EQUAL(WNNC_NET_DISTINCT, name);
+			RET_VAL_IF_EQUAL(WNNC_NET_DOCUSPACE, name);
+			RET_VAL_IF_EQUAL(WNNC_NET_EXTENDNET, name);
+			RET_VAL_IF_EQUAL(WNNC_NET_FARALLON, name);
+			RET_VAL_IF_EQUAL(WNNC_NET_FJ_REDIR, name);
+			RET_VAL_IF_EQUAL(WNNC_NET_FTP_NFS, name);
+			RET_VAL_IF_EQUAL(WNNC_NET_FRONTIER, name);
+			RET_VAL_IF_EQUAL(WNNC_NET_HOB_NFS, name);
+			RET_VAL_IF_EQUAL(WNNC_NET_IBMAL, name);
+			RET_VAL_IF_EQUAL(WNNC_NET_INTERGRAPH, name);
+			RET_VAL_IF_EQUAL(WNNC_NET_LANMAN, name);
+			RET_VAL_IF_EQUAL(WNNC_NET_LANTASTIC, name);
+			RET_VAL_IF_EQUAL(WNNC_NET_LANSTEP, name);
+			RET_VAL_IF_EQUAL(WNNC_NET_LIFENET, name);
+			RET_VAL_IF_EQUAL(WNNC_NET_LOCUS, name);
+			RET_VAL_IF_EQUAL(WNNC_NET_MANGOSOFT, name);
+			RET_VAL_IF_EQUAL(WNNC_NET_MASFAX, name);
+			RET_VAL_IF_EQUAL(WNNC_NET_MSNET, name);
+			RET_VAL_IF_EQUAL(WNNC_NET_NETWARE, name);
+			RET_VAL_IF_EQUAL(WNNC_NET_OBJECT_DIRE, name);
+			RET_VAL_IF_EQUAL(WNNC_NET_PATHWORKS, name);
+			RET_VAL_IF_EQUAL(WNNC_NET_POWERLAN, name);
+			RET_VAL_IF_EQUAL(WNNC_NET_PROTSTOR, name);
+			RET_VAL_IF_EQUAL(WNNC_NET_RDR2SAMPLE, name);
+			RET_VAL_IF_EQUAL(WNNC_NET_SERNET, name);
+			RET_VAL_IF_EQUAL(WNNC_NET_SHIVA, name);
+			RET_VAL_IF_EQUAL(WNNC_NET_SUN_PC_NFS, name);
+			RET_VAL_IF_EQUAL(WNNC_NET_SYMFONET, name);
+			RET_VAL_IF_EQUAL(WNNC_NET_TWINS, name);
+			RET_VAL_IF_EQUAL(WNNC_NET_VINES, name);
 
 			RET_VAL_IF_EQUAL((long)WTS_CURRENT_SERVER, name);
 			RET_VAL_IF_EQUAL((long)WTS_CURRENT_SERVER_HANDLE, name);
@@ -853,7 +940,7 @@ XS(XS_NT__Lanman_constant)
 		sv_setiv(ST(0), constant(P_PERL name));
 	}
 	else
-		croak("Usage: NT::Lanman::constant(name, arg)\n");
+		croak("Usage: Win32::Lanman::constant(name, arg)\n");
 
 	XSRETURN(1);
 }
@@ -902,6 +989,38 @@ XS(XS_NT__Lanman_SetLastError)
 	XSRETURN(1);
 }
 
+XS(XS_NT__Lanman_test)
+{
+	dXSARGS;
+/*
+	static count = 0;
+
+	AV *test1 = NULL;
+
+	if(items == 1 && CHK_ASSIGN_AREF(test1, ST(0)))
+	{
+		printf(".");
+		// clear hash
+		AV_CLEAR(test1);
+
+		for(int i = 0; i < 1; i++, count++)
+		{
+			HV *prop = NewHV;
+
+			// decrement reference count
+			SvREFCNT_dec(prop);
+			
+			//A_STORE_REF(test1, prop);
+			
+			//A_STORE_INT(test1, count);
+		}
+	}
+	else
+		croak("Usage: Win32::Lanman::test(\\@test)\n");
+*/
+	RETURNRESULT(LastError() == 0);
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 //
 // export function to perl; all calls to the module are defined here
@@ -913,15 +1032,15 @@ XS(boot_Win32__Lanman)
 	dXSARGS;
 	PSTR file = __FILE__;
 
+	//newXS("Win32::Lanman::test", XS_NT__Lanman_test, file);
+
 	newXS("Win32::Lanman::constant", XS_NT__Lanman_constant, file);
 	newXS("Win32::Lanman::GetLastError", XS_NT__Lanman_GetLastError, file);
 	newXS("Win32::Lanman::SetLastError", XS_NT__Lanman_SetLastError, file);
 
 	// not complete function group
-	//
 	//newXS("Win32::Lanman::NetAlertRaise", XS_NT__Lanman_NetAlertRaise, file);
-	//
-	//
+	//newXS("Win32::Lanman::I_BrowserServerEnum", XS_NT__Lanman_I_BrowserServerEnum, file);
 
 	// dfs
 	newXS("Win32::Lanman::NetDfsAdd", XS_NT__Lanman_NetDfsAdd, file);
@@ -935,7 +1054,7 @@ XS(boot_Win32__Lanman)
 	newXS("Win32::Lanman::NetDfsMove", XS_NT__Lanman_NetDfsMove, file);
 
 	// logon
-	newXS("Win32::Lanman::NetEnumerateTrustedDomains", 
+	newXS("Win32::Lanman::NetEnumerateTrustedDomains",
 				XS_NT__Lanman_NetEnumerateTrustedDomains, file);
 	newXS("Win32::Lanman::I_NetLogonControl", XS_NT__Lanman_I_NetLogonControl, file);
 	newXS("Win32::Lanman::I_NetLogonControl2", XS_NT__Lanman_I_NetLogonControl2, file);
@@ -971,11 +1090,15 @@ XS(boot_Win32__Lanman)
 				XS_NT__Lanman_NetLocalGroupAddMember, file);
 	newXS("Win32::Lanman::NetLocalGroupAddMembers", 
 				XS_NT__Lanman_NetLocalGroupAddMembers, file);
+	newXS("Win32::Lanman::NetLocalGroupAddMembersBySid", 
+				XS_NT__Lanman_NetLocalGroupAddMembersBySid, file);
 	newXS("Win32::Lanman::NetLocalGroupDel", XS_NT__Lanman_NetLocalGroupDel, file);
 	newXS("Win32::Lanman::NetLocalGroupDelMember", 
 				XS_NT__Lanman_NetLocalGroupDelMember, file);
 	newXS("Win32::Lanman::NetLocalGroupDelMembers", 
 				XS_NT__Lanman_NetLocalGroupDelMembers, file);
+	newXS("Win32::Lanman::NetLocalGroupDelMembersBySid", 
+				XS_NT__Lanman_NetLocalGroupDelMembersBySid, file);
 	newXS("Win32::Lanman::NetLocalGroupEnum",	XS_NT__Lanman_NetLocalGroupEnum, file);
 	newXS("Win32::Lanman::NetLocalGroupGetInfo", 
 				XS_NT__Lanman_NetLocalGroupGetInfo, file);
@@ -984,6 +1107,8 @@ XS(boot_Win32__Lanman)
 	newXS("Win32::Lanman::NetLocalGroupSetInfo", XS_NT__Lanman_NetLocalGroupSetInfo, file);
 	newXS("Win32::Lanman::NetLocalGroupSetMembers", 
 				XS_NT__Lanman_NetLocalGroupSetMembers, file);
+	newXS("Win32::Lanman::NetLocalGroupSetMembersBySid", 
+				XS_NT__Lanman_NetLocalGroupSetMembersBySid, file);
 
 	// message
 	newXS("Win32::Lanman::NetMessageBufferSend", 
@@ -1066,8 +1191,27 @@ XS(boot_Win32__Lanman)
 				XS_NT__Lanman_NetUserGetLocalGroups, file);
 	newXS("Win32::Lanman::NetUserSetGroups", XS_NT__Lanman_NetUserSetGroups, file);
 	newXS("Win32::Lanman::NetUserSetInfo", XS_NT__Lanman_NetUserSetInfo, file);
+	newXS("Win32::Lanman::NetUserSetProp", XS_NT__Lanman_NetUserSetProp, file);
 	newXS("Win32::Lanman::NetUserModalsGet", XS_NT__Lanman_NetUserModalsGet, file);
 	newXS("Win32::Lanman::NetUserModalsSet", XS_NT__Lanman_NetUserModalsSet, file);
+	newXS("Win32::Lanman::NetUserCheckPassword", XS_NT__Lanman_NetUserCheckPassword, file);
+
+	// wnetwork
+	newXS("Win32::Lanman::WNetAddConnection", XS_NT__Lanman_WNetAddConnection, file);
+	newXS("Win32::Lanman::WNetCancelConnection", XS_NT__Lanman_WNetCancelConnection, file);
+	newXS("Win32::Lanman::WNetEnumResource", XS_NT__Lanman_WNetEnumResource, file);
+	newXS("Win32::Lanman::WNetConnectionDialog", XS_NT__Lanman_WNetConnectionDialog, file);
+	newXS("Win32::Lanman::WNetDisconnectDialog", XS_NT__Lanman_WNetDisconnectDialog, file);
+	newXS("Win32::Lanman::WNetGetConnection", XS_NT__Lanman_WNetGetConnection, file);
+	newXS("Win32::Lanman::WNetGetNetworkInformation", XS_NT__Lanman_WNetGetNetworkInformation, file);
+	newXS("Win32::Lanman::WNetGetProviderName", XS_NT__Lanman_WNetGetProviderName, file);
+	
+	newXS("Win32::Lanman::WNetGetResourceInformation", XS_NT__Lanman_WNetGetResourceInformation, file);
+	newXS("Win32::Lanman::WNetGetResourceParent", XS_NT__Lanman_WNetGetResourceParent, file);
+	newXS("Win32::Lanman::WNetGetUniversalName", XS_NT__Lanman_WNetGetUniversalName, file);
+
+	newXS("Win32::Lanman::WNetGetUser", XS_NT__Lanman_WNetGetUser, file);
+	newXS("Win32::Lanman::WNetUseConnection", XS_NT__Lanman_WNetUseConnection, file);
 
 	// workstation
 	newXS("Win32::Lanman::NetWkstaGetInfo", XS_NT__Lanman_NetWkstaGetInfo, file);
@@ -1102,6 +1246,7 @@ XS(boot_Win32__Lanman)
 	newXS("Win32::Lanman::LsaEnumerateTrustedDomains", 
 				XS_NT__Lanman_LsaEnumerateTrustedDomains, file);
 	newXS("Win32::Lanman::LsaLookupNames", XS_NT__Lanman_LsaLookupNames, file);
+	newXS("Win32::Lanman::LsaLookupNamesEx", XS_NT__Lanman_LsaLookupNamesEx, file);
 	newXS("Win32::Lanman::LsaLookupSids", XS_NT__Lanman_LsaLookupSids, file);
 	newXS("Win32::Lanman::LsaEnumerateAccountsWithUserRight", 
 				XS_NT__Lanman_LsaEnumerateAccountsWithUserRight, file);
@@ -1112,6 +1257,10 @@ XS(boot_Win32__Lanman)
 				XS_NT__Lanman_LsaRemoveAccountRights, file);
 	newXS("Win32::Lanman::LsaQueryTrustedDomainInfo", 
 				XS_NT__Lanman_LsaQueryTrustedDomainInfo, file);
+	newXS("Win32::Lanman::LsaSetTrustedDomainInformation", 
+				XS_NT__Lanman_LsaSetTrustedDomainInformation, file);
+	newXS("Win32::Lanman::LsaRetrievePrivateData", XS_NT__Lanman_LsaRetrievePrivateData, file);
+	newXS("Win32::Lanman::LsaStorePrivateData", XS_NT__Lanman_LsaStorePrivateData, file);
 
 	// services
 	newXS("Win32::Lanman::StartService", XS_NT__Lanman_StartService, file);
@@ -1151,6 +1300,8 @@ XS(boot_Win32__Lanman)
 				XS_NT__Lanman_GetNumberOfEventLogRecords, file);
 	newXS("Win32::Lanman::GetOldestEventLogRecord", 
 				XS_NT__Lanman_GetOldestEventLogRecord, file);
+	newXS("Win32::Lanman::NotifyChangeEventLog", 
+				XS_NT__Lanman_NotifyChangeEventLog, file);
 		
 	// wts
 	newXS("Win32::Lanman::WTSEnumerateServers", XS_NT__Lanman_WTSEnumerateServers, file);
@@ -1208,9 +1359,6 @@ XS(boot_Win32__Lanman)
 	newXS("Win32::Lanman::QueryServiceStatusEx", XS_NT__Lanman_QueryServiceStatusEx, file);
 	newXS("Win32::Lanman::EnumServicesStatusEx", XS_NT__Lanman_EnumServicesStatusEx, file);
 
-	// move to the security module
-	newXS("Win32::Lanman::BuildSecurityDescriptor", XS_NT__Lanman_BuildSecurityDescriptor, file);
-
 	ST(0) = &PL_sv_yes;
 	
 	XSRETURN(1);
@@ -1231,7 +1379,7 @@ BOOL WINAPI DllMain(HINSTANCE  hinstDLL, DWORD reason, LPVOID  reserved)
 		case DLL_PROCESS_ATTACH:
 			if((TlsIndex = TlsAlloc()) == -1)
 				return 0;
-			InitializeCriticalSection(&LastErrorCritSection);
+			CARE_INIT_CRIT_SECT(&LastErrorCritSection);
 			InitAddDlls();
 			InitWTSDll();
 			break;
@@ -1246,7 +1394,7 @@ BOOL WINAPI DllMain(HINSTANCE  hinstDLL, DWORD reason, LPVOID  reserved)
 		case DLL_PROCESS_DETACH:
 			ReleaseAddDlls();
 			ReleaseWTSDll();
-			DeleteCriticalSection(&LastErrorCritSection);
+			CARE_DEL_CRIT_SECT(&LastErrorCritSection);
 			TlsFree(TlsIndex);
 			break;
 	}

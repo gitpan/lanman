@@ -1,14 +1,16 @@
 #ifndef __MISC_H
 #define __MISC_H
 
+
 #include <windows.h>
 
 
 ///////////////////////////////////////////////////////////////////////////////
 //
-// functions
+// prototypes
 //
 ///////////////////////////////////////////////////////////////////////////////
+
 
 ///////////////////////////////////////////////////////////////////////////////
 //
@@ -250,7 +252,7 @@ int SaveExceptionInformation(PEXCEPTION_POINTERS exception,
 //
 ///////////////////////////////////////////////////////////////////////////////
 
-#define LeaveFalseError(errorNo) ( SetLastError(error = errorNo), LeaveFalse() )
+#define LeaveFalseError(errorNo) { SetLastError(error = errorNo); LeaveFalse(); }
 
 ///////////////////////////////////////////////////////////////////////////////
 //
@@ -258,7 +260,7 @@ int SaveExceptionInformation(PEXCEPTION_POINTERS exception,
 //
 ///////////////////////////////////////////////////////////////////////////////
 
-#define LeaveTrueError(errorNo) ( SetLastError(error = errorNo), LeaveTrue() )
+#define LeaveTrueError(errorNo) { SetLastError(error = errorNo); LeaveTrue(); }
 
 ///////////////////////////////////////////////////////////////////////////////
 //
@@ -501,7 +503,7 @@ int SaveExceptionInformation(PEXCEPTION_POINTERS exception,
 
 ///////////////////////////////////////////////////////////////////////////////
 //
-// close a service control manager or service handle
+// closes a service control manager or service handle
 //
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -562,10 +564,79 @@ int SaveExceptionInformation(PEXCEPTION_POINTERS exception,
 
 ///////////////////////////////////////////////////////////////////////////////
 //
-// returns the size of an array
+// closes an ip socket
 //
 ///////////////////////////////////////////////////////////////////////////////
 
-#define array_size(array) ( sizeof(array) / sizeof(array[0]) )
+#define CleanSocket(sock) \
+	( ( ( sock != INVALID_SOCKET ) ? ( shutdown(sock, SD_BOTH), sock = INVALID_SOCKET, 1 ) : 1 ) )
+
+#define CleanSocketOnErr(sock) \
+	( ( ( error ) ? ( CleanSocket(sock) ) : 1 ) )
+
+#define CleanSocketOnCond(sock) \
+	( ( ( cond ) ? ( CleanSocket(sock) ) : 1 ) )
+ 
+
+///////////////////////////////////////////////////////////////////////////////
+//
+// returns the size of an array, a string or a wide string
+//
+///////////////////////////////////////////////////////////////////////////////
+
+#define array_size(array)	( sizeof(array) / sizeof(array[0]) )
+#define str_size(string)	( (string) ? strlen(string) + 1 : 0 )
+#define wstr_size(string)	( (string) ? (wcslen(string) + 1) * sizeof(WCHAR) : 0 )
+
+
+///////////////////////////////////////////////////////////////////////////////
+//
+// initializes, deletes, enters and leaves critical section objects
+//
+///////////////////////////////////////////////////////////////////////////////
+
+#define CARE_INIT_CRIT_SECT(sect) \
+	( !( (sect)->DebugInfo ) || IsBadCodePtr( (FARPROC) ( (sect)->DebugInfo ) )  ? \
+			InitializeCriticalSection(sect) : 0 )
+
+#define CARE_DEL_CRIT_SECT(sect) \
+	( !IsBadCodePtr( (FARPROC) ( (sect)->DebugInfo ) ) ? DeleteCriticalSection(sect) : 0, \
+		ZeroMemory( sect, sizeof(*sect) )  )
+
+#define CARE_ENTER_CRIT_SECT(sect) \
+	( CARE_INIT_CRIT_SECT(sect), EnterCriticalSection(sect) )
+
+#define CARE_TRY_ENTER_CRIT_SECT(sect) \
+	( CARE_INIT_CRIT_SECT(sect), TryEnterCriticalSection(sect) )
+
+#define CARE_LEAVE_CRIT_SECT(sect) \
+	( ( (sect)->DebugInfo ? 0 : InitializeCriticalSection(sect) ), LeaveCriticalSection(sect) )
+
+
+///////////////////////////////////////////////////////////////////////////////
+//
+// initializes, deletes, enters and leaves critical section objects
+//
+///////////////////////////////////////////////////////////////////////////////
+
+#define CARE_INIT_CRIT_SECT(sect) \
+	( !( (sect)->DebugInfo ) || IsBadCodePtr( (FARPROC) ( (sect)->DebugInfo ) )  ? \
+			InitializeCriticalSection(sect) : 0 )
+
+///////////////////////////////////////////////////////////////////////////////
+//
+//	allocates a lsa string and sets the appropriate members 
+//
+///////////////////////////////////////////////////////////////////////////////
+
+#define NEW_LSA_STR(ptr, string)	\
+	( ptr = (PLSA_UNICODE_STRING)NewMem(sizeof(LSA_UNICODE_STRING) + str_size(string) * sizeof(WCHAR)),	\
+		ptr->MaximumLength = str_size(string) * sizeof(WCHAR),															\
+		ptr->Length = ptr->MaximumLength ? ptr->MaximumLength  - sizeof(WCHAR) : 0,					\
+		ptr->Buffer = string ? (PWSTR)((PSTR)ptr + sizeof(LSA_UNICODE_STRING)) : NULL,			\
+		string ? MultiByteToWideChar(CP_ACP, 0, string, -1, ptr->Buffer, ptr->Length) : 0,	\
+		ptr																																									\
+	)
+
 
 #endif // #ifndef __MISC_H

@@ -1,13 +1,15 @@
 #define WIN32_LEAN_AND_MEAN
 
+
 #ifndef __DOMAIN_CPP
 #define __DOMAIN_CPP
 #endif
 
+
 #include <windows.h>
-#include <stdio.h>
 #include <lm.h>
 #include <lmaccess.h>
+
 
 #include "domain.h"
 #include "wstring.h"

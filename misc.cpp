@@ -2,7 +2,9 @@
 #define __MISC_CPP
 #endif
 
+
 #include <windows.h>
+
 
 #include "misc.h"
 
@@ -164,7 +166,7 @@ PWSTR NewStrAsWide(PSTR str)
 
 int FreeMem(PVOID ptr)
 {
-	return HeapFree(GetProcessHeap(), 0, ptr) ? 0 : 1;
+	return HeapFree(GetProcessHeap(), 0, ptr);
 }
 
 

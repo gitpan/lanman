@@ -1,12 +1,14 @@
 #define WIN32_LEAN_AND_MEAN
 
+
 #ifndef __USE_CPP
 #define __USE_CPP
 #endif
 
+
 #include <windows.h>
-#include <stdio.h>
 #include <lm.h>
+
 
 #include "use.h"
 #include "wstring.h"
@@ -135,7 +137,7 @@ XS(XS_NT__Lanman_NetUseDel)
 		FreeStr(useName);
 	} // if(items == 1 || items == 2)
 	else
-		croak("Usage: Win32::Lanman::NetUseDel($usename, [$forcedel])\n");
+		croak("Usage: Win32::Lanman::NetUseDel($usename [, $forcedel])\n");
 	
 	RETURNRESULT(LastError() == 0);
 }
@@ -196,6 +198,9 @@ XS(XS_NT__Lanman_NetUseEnum)
 					H_STORE_WSTR(properties, "domainname", (PWSTR)info[count].ui2_domainname);
 
 					A_STORE_REF(useInfo, properties);
+
+					// decrement reference count
+					SvREFCNT_dec(properties);
 				}
 		}
 		__except(SetExceptCode(excode))

@@ -1,11 +1,14 @@
 #define WIN32_LEAN_AND_MEAN
 
+
 #ifndef __REGHLP_CPP
 #define __REGHLP_CPP
 #endif
 
+
 #include <windows.h>
 #include <assert.h>
+
 
 #include "reghlp.h"
 #include "misc.h"

@@ -1,11 +1,12 @@
 #define WIN32_LEAN_AND_MEAN
 
+
 #ifndef __GET_CPP
 #define __GET_CPP
 #endif
 
+
 #include <windows.h>
-#include <stdio.h>
 #include <lm.h>
 
 
@@ -356,6 +357,9 @@ XS(XS_NT__Lanman_NetQueryDisplayInformation)
 								H_STORE_INT(properties, "next_index", user[count].usri1_next_index);
 
 								A_STORE_REF(info, properties);
+
+								// decrement reference count
+								SvREFCNT_dec(properties);
 							}
 						}
 						break;
@@ -375,6 +379,9 @@ XS(XS_NT__Lanman_NetQueryDisplayInformation)
 								H_STORE_INT(properties, "next_index", machine[count].usri2_next_index);
 
 								A_STORE_REF(info, properties);
+
+								// decrement reference count
+								SvREFCNT_dec(properties);
 							}
 						}
 						break;
@@ -394,6 +401,9 @@ XS(XS_NT__Lanman_NetQueryDisplayInformation)
 								H_STORE_INT(properties, "next_index", group[count].grpi3_next_index);
 
 								A_STORE_REF(info, properties);
+
+								// decrement reference count
+								SvREFCNT_dec(properties);
 							}
 						}
 						break;

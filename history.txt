@@ -1,12 +1,12 @@
 #########################################################################################################
 
-Version 0.98	1999/01/20
+Version 0.98	01/20/1999
 
 contains the core lanmanager calls
 
 #########################################################################################################
 
-Version 1.00	1999/04/17
+Version 1.00	04/17/1999
 
 Fixed Bugs:
 
@@ -30,7 +30,7 @@ ChangeServiceConfig
 
 #########################################################################################################
 
-Version 1.01	1999/04/17
+Version 1.01	04/17/1999
 
 Fixed Bugs:
 
@@ -49,7 +49,7 @@ SetServiceObjectSecurity
 
 #########################################################################################################
 
-Version 1.02	1999/05/12
+Version 1.02	05/12/1999
 
 Fixed Bugs:
 
@@ -65,7 +65,7 @@ I_NetGetDCList
 
 #########################################################################################################
 
-Version 1.03	1999/08/06
+Version 1.03	08/06/1999
 
 Fixed Bugs:
 
@@ -117,7 +117,7 @@ GetOldestEventLogRecord
 
 #########################################################################################################
 
-Version 1.04	1999/11/17
+Version 1.04	11/17/1999
 
 Fixed Bugs:
 
@@ -139,7 +139,7 @@ PPM ready installation (Win32-Lanman.ppd)
 
 #########################################################################################################
 
-Version 1.04a	1999/11/30
+Version 1.04a	11/30/1999
 
 Fixed Bugs:
 
@@ -154,7 +154,7 @@ New:
 
 #########################################################################################################
 
-Version 1.05	2000/01/25
+Version 1.05	01/25/2000
 
 Fixed Bugs:
 
@@ -206,7 +206,7 @@ has been removed because they are no longer supported in the platform sdk.
 
 #########################################################################################################
 
-Version 1.05a	2000/29/03
+Version 1.05a	29/03/2000
 
 Fixed Bugs:
 
@@ -224,7 +224,7 @@ New:
 
 #########################################################################################################
 
-Version 1.06	2000/22/06
+Version 1.06	22/06/2000
 
 Fixed Bugs:
 
@@ -275,7 +275,7 @@ NetDfsGetDcAddress				- W2K api
 
 #########################################################################################################
 
-Version 1.07	2000/10/07
+Version 1.07	10/07/2000
 
 Fixed Bugs:
 
@@ -285,7 +285,7 @@ Support for Perl 5.6
 
 #########################################################################################################
 
-Version 1.08	2000/25/08
+Version 1.08	25/08/2000
 
 Fixed Bugs:
 
@@ -297,32 +297,32 @@ NetGroupGetUsers				- returns all group users now
 
 New:
 
-SERVICE_NO_CHANGE				- constant added support services
-SERVICE_CONTROL_NETBINDADD			- constant added support services
-SERVICE_CONTROL_NETBINDREMOVE			- constant added support services
-SERVICE_CONTROL_NETBINDENABLE			- constant added support services
-SERVICE_CONTROL_NETBINDDISABLE			- constant added support services
-SERVICE_CONTROL_DEVICEEVENT			- constant added support services
-SERVICE_CONTROL_HARDWAREPROFILECHANGE		- constant added support services
-SERVICE_CONTROL_POWEREVENT			- constant added support services
-SERVICE_RUNS_IN_SYSTEM_PROCESS			- constant added support services
-SERVICE_CONFIG_FAILURE_ACTIONS			- constant added support services
-SERVICE_CONFIG_FAILURE_ACTIONS			- constant added support services
-SERVICE_ADAPTER					- constant added support services
-SERVICE_RECOGNIZER_DRIVER			- constant added support services
-SERVICE_TYPE_ALL				- constant added support services
-SC_MANAGER_ALL_ACCESS				- constant added support services
-SC_MANAGER_CONNECT				- constant added support services
-SC_MANAGER_CREATE_SERVICE			- constant added support services
-SC_MANAGER_ENUMERATE_SERVICE			- constant added support services
-SC_MANAGER_LOCK					- constant added support services
-SC_MANAGER_MODIFY_BOOT_CONFIG			- constant added support services
-SC_MANAGER_QUERY_LOCK_STATUS			- constant added support services
-SC_ACTION_NONE					- constant added support services
-SC_ACTION_REBOOT				- constant added support services
-SC_ACTION_RESTART				- constant added support services
-SC_ACTION_RUN_COMMAND				- constant added support services
-SC_STATUS_PROCESS_INFO				- constant added support services
+SERVICE_NO_CHANGE				- constant added to support services
+SERVICE_CONTROL_NETBINDADD			- constant added to support services
+SERVICE_CONTROL_NETBINDREMOVE			- constant added to support services
+SERVICE_CONTROL_NETBINDENABLE			- constant added to support services
+SERVICE_CONTROL_NETBINDDISABLE			- constant added to support services
+SERVICE_CONTROL_DEVICEEVENT			- constant added to support services
+SERVICE_CONTROL_HARDWAREPROFILECHANGE		- constant added to support services
+SERVICE_CONTROL_POWEREVENT			- constant added to support services
+SERVICE_RUNS_IN_SYSTEM_PROCESS			- constant added to support services
+SERVICE_CONFIG_FAILURE_ACTIONS			- constant added to support services
+SERVICE_CONFIG_FAILURE_ACTIONS			- constant added to support services
+SERVICE_ADAPTER					- constant added to support services
+SERVICE_RECOGNIZER_DRIVER			- constant added to support services
+SERVICE_TYPE_ALL				- constant added to support services
+SC_MANAGER_ALL_ACCESS				- constant added to support services
+SC_MANAGER_CONNECT				- constant added to support services
+SC_MANAGER_CREATE_SERVICE			- constant added to support services
+SC_MANAGER_ENUMERATE_SERVICE			- constant added to support services
+SC_MANAGER_LOCK					- constant added to support services
+SC_MANAGER_MODIFY_BOOT_CONFIG			- constant added to support services
+SC_MANAGER_QUERY_LOCK_STATUS			- constant added to support services
+SC_ACTION_NONE					- constant added to support services
+SC_ACTION_REBOOT				- constant added to support services
+SC_ACTION_RESTART				- constant added to support services
+SC_ACTION_RUN_COMMAND				- constant added to support services
+SC_STATUS_PROCESS_INFO				- constant added to support services
 
 ChangeServiceConfig2				- W2K api
 QueryServiceConfig2				- W2K api
@@ -333,7 +333,7 @@ Documentation for the W2K api completed.
 
 #########################################################################################################
 
-Version 1.0.8.1	2000/16/09
+Version 1.0.8.1	16/09/2000
 
 Fixed Bugs:
 
@@ -343,3 +343,132 @@ NetUserSetGroups				- returns the correct result now
 
 New:
 
+#########################################################################################################
+
+Version 1.0.9.0	05/24/2001
+
+The location of the html doc (lanman.html) was changed. It will installed in the folder
+<perldir>\html\site\lib\win32.
+
+Fixed Bugs:
+
+NetUserGetInfo					- returns the user flags as unicode string
+NetUserSetInfo					- destruction of user wts settings fixed
+NetLocalGroupGetMembers				- if an account was moved from the domain to the AD or was
+						  removed in a account domain NetLocalGroupGetMembers
+						  returns only the account sid; in earlier versions 
+						  NetLocalGroupGetMembers failed with an error 2220 
+						  (NERR_GroupNotFound)
+NetDfsRemove					- the server parameter may not begin with backslashes;
+						  this is in contrast with the msdn documentation and 
+						  seems to be a bug in the dfs implementation; however,
+						  a server name without backslashes will be passed to the
+						  NT function
+NetDfsEnum					- memory leak fixed
+NetDfsGetInfo					- memory leak fixed
+NetDfsGetClientInfo				- memory leak fixed
+NetFileEnum					- memory leak fixed
+NetQueryDisplayInformation			- memory leak fixed
+NetLocalGroupEnum				- memory leak fixed
+NetDfsLocalGroupGetMembers			- memory leak fixed
+NetGroupEnum					- memory leak fixed
+NetGroupGetMembers				- memory leak fixed
+LsaQueryInformationPolicy			- memory leak fixed
+LsaEnumerateTrustedDomains			- memory leak fixed
+LsaLookupNames					- memory leak fixed
+LsaLookupSids					- memory leak fixed
+NetReplExportDirEnum				- memory leak fixed
+NetReplImportDirEnum				- memory leak fixed
+NetScheduleJobEnum				- memory leak fixed
+NetServerEnum					- memory leak fixed
+NetServerTransportEnum				- memory leak fixed
+EnumServicesStatus				- memory leak fixed
+EnumDependentServices				- memory leak fixed
+QueryServiceConfig				- memory leak fixed
+QueryServiceConfig2				- memory leak fixed
+EnumservicesStatusEx				- memory leak fixed
+NetSessionEnum					- memory leak fixed
+NetDfsEnum					- memory leak fixed
+NetShareEnum					- memory leak fixed
+NetConnectionEnum				- memory leak fixed
+WTSEnumerateServers				- memory leak fixed
+WTSEnumerateSessions				- memory leak fixed
+WTSEnumerateProcesses				- memory leak fixed
+NetUseEnum					- memory leak fixed
+NetUserEnum					- memory leak fixed
+NetUserGetGroups				- memory leak fixed
+NetUserGetLocalGroups				- memory leak fixed
+NetWkstaTransportEnum				- memory leak fixed
+NetWkstaUserEnum				- memory leak fixed
+
+New constants:
+
+CONNDLG_CONN_POINT				- constant added to support WNetConnectionDialog call
+CONNDLG_HIDE_BOX				- constant added to support WNetConnectionDialog call
+CONNDLG_NOT_PERSIST				- constant added to support WNetConnectionDialog call
+CONNDLG_PERSIST					- constant added to support WNetConnectionDialog call
+CONNDLG_RO_PATH					- constant added to support WNetConnectionDialog call
+CONNDLG_USE_MRU					- constant added to support WNetConnectionDialog call
+CONNECT_INTERACTIVE				- constant added to support WNetUseConnection call
+CONNECT_LOCALDRIVE				- constant added to support WNetUseConnection call
+CONNECT_PROMPT					- constant added to support WNetUseConnection call
+CONNECT_REDIRECT				- constant added to support WNetUseConnection call
+CONNECT_UPDATE_PROFILE				- constant added to support WNetAddConnection call
+DISC_UPDATE_PROFILE				- constant added to support WNetDisconnectDialog call
+DISC_NO_FORCE					- constant added to support WNetDisconnectDialog call
+REMOTE_NAME_INFO_LEVEL				- constant added to support WNetGetUniversalName call
+RESOURCE_CONTEXT				- constant added to support WNetEnumResource call
+RESOURCE_RECENT					- constant added to support WNetEnumResource call
+RESOURCEUSAGE_ALL				- constant added to support WNetEnumResource call
+UNIVERSAL_NAME_INFO_LEVEL			- constant added to support WNetGetUniversalName call
+WNNC_*						- constants added to support WNetGetNetworkInformation call
+
+New functions:
+
+LsaSetTrustedDomainInformation
+LsaSetTrustedDomainInfo
+LsaSetTrustedDomainNameInfo
+LsaSetTrustedPosixOffsetInfo
+LsaSetTrustedPasswordInfo
+LsaRetrievePrivateData
+LsaStorePrivateData
+NetLocalGroupAddMembersBySid
+NetLocalGroupDelMembersBySid
+NetLocalGroupSetMembersBySid
+WNetAddConnection
+WNetCancelConnection
+WNetEnumResources
+WNetConnectionDialog
+WNetDisconnectDialog
+WNetGetConnection
+WNetGetNetworkInformation
+WNetGetProviderName
+WNetGetResourceInformation
+WNetGetResourceParent
+WNetGetUniversalName
+WNetGetUser
+WNetUseConnection
+NetUserCheckPassword
+GuidToString
+StringToGuid
+
+Removed:
+
+The constants
+ACCESS_SYSTEM_SECURITY
+DELETE
+GENERIC_ALL
+GENERIC_EXECUTE
+GENERIC_READ
+GENERIC_WRITE
+MAXIMUM_ALLOWED
+PROTECTED_DACL_SECURITY_INFORMATION
+PROTECTED_SACL_SECURITY_INFORMATION
+READ_CONTROL
+SYNCHRONIZE
+SPECIFIC_RIGHTS_ALL
+STANDARD_RIGHTS_ALL
+STANDARD_RIGHTS_REQUIRED
+WRITE_DAC
+WRITE_OWNER
+has been removed because they are not used by the module.

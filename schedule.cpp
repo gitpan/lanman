@@ -1,12 +1,14 @@
 #define WIN32_LEAN_AND_MEAN
 
+
 #ifndef __SCHEDULE_CPP
 #define __SCHEDULE_CPP
 #endif
 
+
 #include <windows.h>
-#include <stdio.h>
 #include <lm.h>
+
 
 #include "schedule.h"
 #include "wstring.h"
@@ -197,6 +199,9 @@ XS(XS_NT__Lanman_NetScheduleJobEnum)
 					H_STORE_WSTR(properties, "command", info[count].Command);
 
 					A_STORE_REF(jobInfo, properties);
+
+					// decrement reference count
+					SvREFCNT_dec(properties);
 				}
 		}
 		__except(SetExceptCode(excode))

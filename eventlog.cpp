@@ -1,14 +1,13 @@
 #define WIN32_LEAN_AND_MEAN
 
+
 #ifndef __EVENTLOG_CPP
 #define __EVENTLOG_CPP
 #endif
 
+
 #include <windows.h>
-#include <winnt.h>
-#include <stdio.h>
-#include <lm.h>
-#include <lmaccess.h>
+
 
 #include "eventlog.h"
 #include "wstring.h"
@@ -16,6 +15,7 @@
 #include "misc.h"
 #include "reghlp.h"
 #include "usererror.h"
+
 
 //
 // note: NetAudit* and NetErrorLog* functions are not supported by NT, you can call 
@@ -56,7 +56,7 @@
 //
 // param:  server - computer to execute the command
 //				 source	- which part of the eventlog (system, security, application
-//									or a eventlog backup file)
+//									or an eventlog backup file)
 //         first  - read from the first record ...
 //				 last   - ... til the last record
 //				 events	- array to store information
@@ -859,7 +859,8 @@ XS(XS_NT__Lanman_GetEventDescription)
 // makes a backup from the eventlog
 //
 // param:  server		- computer to execute the command
-//				 source		- which part of the eventlog (system, security or application)
+//				 source		- which part of the eventlog (system, security or 
+//										application)
 //				 fileName - backup file name
 //
 // return: success - 1 
@@ -921,7 +922,8 @@ XS(XS_NT__Lanman_BackupEventLog)
 // clears an eventlog and makes an optionally backup before clearing
 //
 // param:  server		- computer to execute the command
-//				 source		- which part of the eventlog (system, security or application)
+//				 source		- which part of the eventlog (system, security or 
+//										application)
 //				 fileName - backup file name
 //
 // return: success - 1 
@@ -986,7 +988,8 @@ XS(XS_NT__Lanman_ClearEventLog)
 // writes an event to the event log
 //
 // param:  server		- computer to execute the command
-//				 source		- which part of the eventlog (system, security or application)
+//				 source		- which part of the eventlog (system, security or 
+//										application)
 //				 type			- event type (error, warning, information, audit)
 //				 category	- event category
 //				 id				- event id
@@ -1088,7 +1091,8 @@ XS(XS_NT__Lanman_ReportEvent)
 // gets the number of records in an event log
 //
 // param:  server			- computer to execute the command
-//				 source			- which part of the eventlog (system, security or application)
+//				 source			- which part of the eventlog (system, security or 
+//											application)
 //				 numrecords - gets the number of records
 //
 // return: success - 1 
@@ -1156,7 +1160,8 @@ XS(XS_NT__Lanman_GetNumberOfEventLogRecords)
 // gets the oldest record number in an event log
 //
 // param:  server				- computer to execute the command
-//				 source				- which part of the eventlog (system, security or application)
+//				 source				- which part of the eventlog (system, security or 
+//												application)
 //				 oldestrecord - gets the oldest record number
 //
 // return: success - 1 
@@ -1214,6 +1219,82 @@ XS(XS_NT__Lanman_GetOldestEventLogRecord)
 	} // if(items == 3)
 	else
 		croak("Usage: Win32::Lanman::GetOldestEventLogRecord($server, $source, \\$oldestrecord)\n");
+	
+	RETURNRESULT(LastError() == 0);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+//
+// waits until an event is written to the event log or the timeout elapses
+//
+// param:  server				- computer to execute the command (remote computers are
+//												currently not allowed  - GetLastError returns 
+//												ERROR_INVALID_HANDLE)
+//				 source				- which part of the eventlog (system, security or 
+//												application)
+//				 timeout			- optional parameter how long to wait for the event,
+//												default: infinite
+//
+// return: success - 1 
+//         failure - 0 
+//
+// note:   call GetLastError() to get the error code on failure
+//
+///////////////////////////////////////////////////////////////////////////////
+
+XS(XS_NT__Lanman_NotifyChangeEventLog)
+{
+	dXSARGS;
+
+	ErrorAndResult;
+
+	// reset last error
+	LastError(0);
+
+	//SV *records = NULL;
+
+	if(items == 2 || items == 3)
+	{
+		PSTR server = NULL;
+		PSTR source = SvPV(ST(1), PL_na);
+
+		HANDLE hEventLog = NULL, hNotify = NULL;
+		DWORD timeout = items == 3 ? SvIV(ST(2)) : INFINITE;
+
+		__try
+		{
+			server = ServerAsAnsi(SvPV(ST(0), PL_na));
+
+			// open event log
+			if(!(hEventLog = OpenEventLog(server, source)))
+				RaiseFalse();
+
+			// create event
+			if(!(hNotify = CreateEvent(NULL, TRUE, FALSE, NULL)))
+				RaiseFalse();
+			
+			// set up event notification
+			if(!NotifyChangeEventLog(hEventLog, hNotify))
+				RaiseFalse();
+			
+			// wait for the event
+			if((error = WaitForSingleObject(hNotify, timeout)) != WAIT_OBJECT_0)
+				RaiseFalseError(error);
+		}
+		__except(SetExceptCode(excode))
+		{
+			// set last error 
+			LastError(error ? error : excode);
+		}
+
+		// clean up
+		CleanPtr(server);
+		if(hEventLog)
+			CloseEventLog(hEventLog);
+		CleanHandle(hNotify);
+	} // if(items == 3)
+	else
+		croak("Usage: Win32::Lanman::NotifyChangeEventLog($server, $source [, $timeout])\n");
 	
 	RETURNRESULT(LastError() == 0);
 }
