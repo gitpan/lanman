@@ -1,0 +1,335 @@
+#########################################################################################################
+
+Version 0.98	1999/01/20
+
+contains the core lanmanager calls
+
+#########################################################################################################
+
+Version 1.00	1999/04/17
+
+Fixed Bugs:
+
+NetUserEnum	bug with the filter argument fixed (filter constants work now)
+NetUserSetInfo	bug with primary_group_id fixed (primary group id will be set now)
+
+
+New:
+
+StartService
+StopService
+PauseService
+ContinueService
+InterrogateService
+ControlService
+CreateService
+DeleteService
+EnumServicesStatus
+EnumDependentServices
+ChangeServiceConfig
+
+#########################################################################################################
+
+Version 1.01	1999/04/17
+
+Fixed Bugs:
+
+
+New:
+
+GetServiceDisplayName
+GetServiceKeyName
+LockServiceDatabase
+UnlockServiceDatabase
+QueryServiceLockStatus
+QueryServiceConfig
+QueryServiceStatus
+QueryServiceObjectSecurity
+SetServiceObjectSecurity
+
+#########################################################################################################
+
+Version 1.02	1999/05/12
+
+Fixed Bugs:
+
+
+New:
+
+I_NetLogonControl2
+LogonControlRediscover
+LogonControlTCQuery
+LogonControlTransportNotify
+LogonControlFindUser
+I_NetGetDCList
+
+#########################################################################################################
+
+Version 1.03	1999/08/06
+
+Fixed Bugs:
+
+NetGroupEnum		(error 234 - more data available)
+NetGroupGetUsers	(error 234 - more data available)
+NetLocalGroupEnum	(error 234 - more data available)
+NetLocalGroupGetMembers	(error 234 - more data available)
+NetShareGetInfo		(runtime exception if there is not security on the share)
+
+
+New:
+
+LsaQueryInformationPolicy
+LsaSetInformationPolicy
+LsaQueryAuditLogPolicy
+LsaQueryAuditEventsPolicy
+LsaSetAuditEventsPolicy
+LsaQueryPrimaryDomainPolicy
+LsaSetPrimaryDomainPolicy
+LsaQueryPdAccountPolicy
+LsaQueryAccountDomainPolicy
+LsaSetAccountDomainPolicy
+LsaQueryServerRolePolicy
+LsaSetServerRolePolicy
+LsaQueryReplicaSourcePolicy
+LsaSetReplicaSourcePolicy
+LsaQueryDefaultQuotaPolicy
+LsaSetDefaultQuotaPolicy
+LsaQueryAuditFullPolicy
+LsaSetAuditFullPolicy
+LsaQueryDnsDomainPolicy
+LsaSetDnsDomainPolicy
+LsaEnumerateTrustedDomains
+LsaLookupNames
+LsaLookupSids
+LsaEnumerateAccountsWithUserRight
+LsaEnumerateAccountRights
+LsaAddAccountRights
+LsaRemoveAccountRights
+
+ReadEventLog
+GetEventDescription
+GetEventDescription
+BackupEventLog
+ClearEventLog
+ReportEvent
+GetNumberOfEventLogRecords
+GetOldestEventLogRecord
+
+#########################################################################################################
+
+Version 1.04	1999/11/17
+
+Fixed Bugs:
+
+NetShareEnum		- access violation (error 0xc0000005) if you are not an administrator
+NetShareGetInfo 	- access violation (error 0xc0000005) if you are not an administrator
+NetServerGetInfo	- access violation (error 0xc0000005) if you are not an administrator
+NetSessionEnum		- access violation (error 0xc0000005) if you are not an administrator
+NetSessionGetInfo	- access violation (error 0xc0000005) if you are not an administrator
+NetWkstaGetInfo		- access violation (error 0xc0000005) if you are not an administrator
+
+Message "Wrong build number ..." in install.pl fixed if you install the module with 
+ActivePerl 518 or above
+
+New:
+
+BuildSecurityDescriptor	- builds a security descriptor structure to set permissions on shares or services
+
+PPM ready installation (Win32-Lanman.ppd)
+
+#########################################################################################################
+
+Version 1.04a	1999/11/30
+
+Fixed Bugs:
+
+NetShareEnum		- error 50 if the server is not NT
+NetShareGetInfo 	- error 50 if the server is not NT
+NetServerGetInfo	- access violation (error 0xc0000005) if the server is not NT
+NetWkstaGetInfo		- error 998 if the server is not NT
+
+
+New:
+
+
+#########################################################################################################
+
+Version 1.05	2000/01/25
+
+Fixed Bugs:
+
+NetEnumerateTrustedDomains	- returns the right error code now
+
+
+New:
+
+Version information is available now in the lanman.pll and lanman.dll files.
+
+It's not longer necessary to put two backslashes in front of a server name. The module will preface all 
+server names with two backslashes if they are missing.
+
+Jenda Krynicky made a better layout and removed some mistakes in the lanman.pm. Thanks again.
+
+The following Windows Terminal Server APIs are supportted:
+
+WTSEnumerateServers
+WTSOpenServer
+WTSCloseServer
+WTSEnumerateSessions
+WTSEnumerateProcesses
+WTSTerminateProcess
+WTSQuerySessionInformation
+WTSQueryUserConfig
+WTSSetUserConfig
+WTSSendMessage
+WTSDisconnectSession
+WTSLogoffSession
+WTSShutdownSystem
+WTSWaitSystemEvent
+
+SV_TYPE_CLUSTER_NT	- new constant for NetServerEnum
+SV_TYPE_DCE		- new constant for NetServerEnum
+SV_TYPE_TERMINALSERVER	- new constant for NetServerEnum
+
+
+Removed:
+
+The constants
+FILTER_PROXY_ACCOUNT,
+KERB_ETYPE_DES_CBC_MD5_EXP,
+KERB_ETYPE_DES_PLAIN_EXP,
+KERB_LOGON_EMAIL_NAMES,
+KERB_LOGON_SUBUATH and
+KERB_LOGON_UPDATE_STATISTICS
+has been removed because they are no longer supported in the platform sdk.
+
+
+#########################################################################################################
+
+Version 1.05a	2000/29/03
+
+Fixed Bugs:
+
+WTSQuerySessionInformation			- second definition removed from lanman.cpp
+WTSInfoClassAll					- second definition removed from lanman.pm
+WTSSetUserConfig				- setting some properties fixed
+ReadEventLog					- reads events from the eventlog or events from a file saved with 
+						  BackupEventLog; memory leaks fixed
+QueryServiceObjectSecurity			- error 6 - invalid handle
+ChangeServiceConfig				- several properties of a sevice may be changed now without to 
+						  call QueryServiceConfig before
+
+New:
+
+
+#########################################################################################################
+
+Version 1.06	2000/22/06
+
+Fixed Bugs:
+
+GetLastError					- stack adjustment corrected
+
+New:
+
+OWNER_SECURITY_INFORMATION			- constant added to retrieve/set security
+GROUP_SECURITY_INFORMATION			- constant added to retrieve/set security
+DACL_SECURITY_INFORMATION			- constant added to retrieve/set security
+SACL_SECURITY_INFORMATION			- constant added to retrieve/set security
+PROTECTED_DACL_SECURITY_INFORMATION		- constant added to retrieve/set security (not tested)
+PROTECTED_SACL_SECURITY_INFORMATION		- constant added to retrieve/set security (not tested)
+UNPROTECTED_DACL_SECURITY_INFORMATION		- constant added to retrieve/set security (not tested)
+UNPROTECTED_SACL_SECURITY_INFORMATION		- constant added to retrieve/set security (not tested)
+DFS_STORAGE_STATE_ACTIVE			- constant added to retrieve/set dfs state
+
+SV_TYPES		 			- returns a hash with the SV_* constants
+SERVICE_STATES					- returns a hash with the service states
+SERVICE_TYPES					- returns a hash with the service types
+WTS_STATES					- returns a hash with the wts event states
+USER_ENUM_FILTERS				- returns a hash with the user enum filter values
+
+SidToString					- converts a binary sid to a textual form like S-1-...
+StringToSid					- converts a text sid to binary
+
+NetConnectionEnum				- enums connections to a share or from a computer
+NetRemoteComputerSupports			- retrieves the optional features the remote server supports
+
+NetGetJoinableOUs				- W2K api
+NetGetJoinInformation				- W2K api
+NetJoinDomain					- W2K api
+NetRenameMachineInDomain			- W2K api
+NetUnjoinDomain					- W2K api
+NetValidateName					- W2K api
+NetRegisterDomainNameChangeNotification		- W2K api
+NetUnregisterDomainNameChangeNotification	- W2K api
+NetDfsAddFtRoot					- W2K api
+NetDfsRemoveFtRoot				- W2K api
+NetDfsRemoveFtRootForced			- W2K api
+NetDfsAddStdRoot				- W2K api
+NetDfsAddStdRootForced				- W2K api
+NetDfsRemoveStdRoot				- W2K api
+NetDfsManagerInitialize				- W2K api
+NetDfsGetClientInfo				- W2K api
+NetDfsSetClientInfo				- W2K api
+NetDfsGetDcAddress				- W2K api
+
+#########################################################################################################
+
+Version 1.07	2000/10/07
+
+Fixed Bugs:
+
+New:
+
+Support for Perl 5.6
+
+#########################################################################################################
+
+Version 1.08	2000/25/08
+
+Fixed Bugs:
+
+NetRemoteComputerSupports			- returns the correct supported options now
+NetValidateName					- returns the correct result now
+NetValidateName					- returns the correct result now
+NetDfsAdd					- bug with preceding backslashes in the server parameter corrected
+NetUserGetUsers					- returns all group users users now
+
+New:
+
+SERVICE_NO_CHANGE				- constant added support services
+SERVICE_CONTROL_NETBINDADD			- constant added support services
+SERVICE_CONTROL_NETBINDREMOVE			- constant added support services
+SERVICE_CONTROL_NETBINDENABLE			- constant added support services
+SERVICE_CONTROL_NETBINDDISABLE			- constant added support services
+SERVICE_CONTROL_DEVICEEVENT			- constant added support services
+SERVICE_CONTROL_HARDWAREPROFILECHANGE		- constant added support services
+SERVICE_CONTROL_POWEREVENT			- constant added support services
+SERVICE_RUNS_IN_SYSTEM_PROCESS			- constant added support services
+SERVICE_CONFIG_FAILURE_ACTIONS			- constant added support services
+SERVICE_CONFIG_FAILURE_ACTIONS			- constant added support services
+SERVICE_ADAPTER					- constant added support services
+SERVICE_RECOGNIZER_DRIVER			- constant added support services
+SERVICE_TYPE_ALL				- constant added support services
+SC_MANAGER_ALL_ACCESS				- constant added support services
+SC_MANAGER_CONNECT				- constant added support services
+SC_MANAGER_CREATE_SERVICE			- constant added support services
+SC_MANAGER_ENUMERATE_SERVICE			- constant added support services
+SC_MANAGER_LOCK					- constant added support services
+SC_MANAGER_MODIFY_BOOT_CONFIG			- constant added support services
+SC_MANAGER_QUERY_LOCK_STATUS			- constant added support services
+SC_ACTION_NONE					- constant added support services
+SC_ACTION_REBOOT				- constant added support services
+SC_ACTION_RESTART				- constant added support services
+SC_ACTION_RUN_COMMAND				- constant added support services
+SC_STATUS_PROCESS_INFO				- constant added support services
+
+
+
+ChangeServiceConfig2				- W2K api
+QueryServiceConfig2				- W2K api
+QueryServiceStatusEx				- W2K api
+EnumServicesStatusEx				- W2K api
+
+Documentation for the W2K api completed.
+
